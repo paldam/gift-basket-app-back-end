@@ -1,0 +1,29 @@
+package com.damian.controller;
+
+
+import com.damian.dao.ProductsDao;
+import com.damian.model.Products;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+public class ProductsController {
+
+    @Autowired
+    ProductsDao productsDao;
+
+
+    @GetMapping("/products")
+    ResponseEntity<List<Products>> listAllUser(){
+
+        List<Products> lista = productsDao.findAll();
+        return new ResponseEntity<List<Products>>(lista, HttpStatus.OK);
+    }
+
+
+}
