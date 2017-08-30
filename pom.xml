@@ -8,14 +8,20 @@
   <name>warehouse Maven Webapp</name>
   <url>http://maven.apache.org</url>
 
+
   <properties>
     <spring.version>4.3.10.RELEASE</spring.version>
+    <spring.data.jpa>1.11.6.RELEASE</spring.data.jpa>
     <junit.version>4.12</junit.version>
     <javax.persistence.version>1.0.2</javax.persistence.version>
     <hibernate.version>5.2.3.Final</hibernate.version>
     <mysql.version>5.1.40</mysql.version>
     <jackson.version>2.7.5</jackson.version>
+    <javax.servlet.version>3.0.1</javax.servlet.version>
+    <slf4j.version>1.7.5</slf4j.version>
+    <spring.security.vesrion>4.2.3.RELEASE</spring.security.vesrion>
   </properties>
+
 
   <dependencies>
     <dependency>
@@ -49,7 +55,7 @@
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
-      <version>1.11.6.RELEASE</version>
+      <version>${spring.data.jpa}</version>
     </dependency>
 
 
@@ -67,12 +73,12 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-      <version>5.2.3.Final</version>
+      <version>${hibernate.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.5</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
@@ -82,7 +88,7 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
-      <version>3.0.1</version>
+      <version>${javax.servlet.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -90,6 +96,23 @@
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+      <version>${spring.security.vesrion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>${spring.security.vesrion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+      <version>${spring.security.vesrion}</version>
+    </dependency>
+
+
 
 
   </dependencies>
@@ -100,13 +123,18 @@
       <plugins>
 
         <plugin>
-          <groupId>org.apache.tomcat.maven</groupId>
-          <artifactId>tomcat7-maven-plugin</artifactId>
-          <version>2.2</version>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
           <configuration>
-            <path>/warehouse</path>
+            <url>http://localhost:8080/manager/text</url>
+            <server>TomcatServer</server>
+            <path>/</path>
+            <username>admin</username>
+            <password>admin</password>
+            <update>true</update>
           </configuration>
-        </plugin>
+      </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

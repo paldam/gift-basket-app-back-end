@@ -9,7 +9,7 @@ import javax.servlet.ServletException;
 public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class[] getRootConfigClasses() {
-        return new Class[]{AppConfig.class};
+        return new Class[]{SpringSecurityConfig.class};
     }
 
     @Override
