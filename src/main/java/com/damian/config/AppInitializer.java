@@ -9,7 +9,7 @@ import javax.servlet.ServletException;
 public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class[] getRootConfigClasses() {
-        return new Class[]{SpringSecurityConfig.class};
+        return new Class[]{AppConfig.class};
     }
 
     @Override
@@ -25,6 +25,6 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         super.onStartup(servletContext);
-        servletContext.setInitParameter("spring.profiles.active", "prod");   // active profile
+        servletContext.setInitParameter("spring.profiles.active", "dev");   // active profile
     }
 }

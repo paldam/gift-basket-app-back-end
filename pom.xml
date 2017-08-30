@@ -20,6 +20,7 @@
     <javax.servlet.version>3.0.1</javax.servlet.version>
     <slf4j.version>1.7.5</slf4j.version>
     <spring.security.vesrion>4.2.3.RELEASE</spring.security.vesrion>
+    <commons-lang.version>3.5</commons-lang.version>
   </properties>
 
 
@@ -111,7 +112,16 @@
       <artifactId>spring-security-core</artifactId>
       <version>${spring.security.vesrion}</version>
     </dependency>
-
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>2.0.0.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang.version}</version>
+    </dependency>
 
 
 
