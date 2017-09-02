@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 @PropertySource(value = {"classpath:application_${spring.profiles.active}.properties"})
 
 
-@EnableJpaRepositories(basePackages = "com.damian.dao")
+@EnableJpaRepositories(basePackages = "com.damian.repository")
 @EnableTransactionManagement
 public class SpringDataJpaConfig {
 
