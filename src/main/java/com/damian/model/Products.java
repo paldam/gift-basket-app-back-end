@@ -2,44 +2,27 @@ package com.damian.model;
 
 import javax.persistence.*;
 
-
+/**
+ * Created by Damian on 05.09.2017.
+ */
 @Entity
 public class Products {
     private Integer id;
-    private String name;
     private Integer capacity;
     private Integer price;
+    private String productName;
+    private Integer quantity;
+    private ProductsTypes productType;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public Integer getId() {
         return id;
     }
 
-    public Products(){
-
-    }
-
-    public Products(Integer id, String name, Integer capacity, Integer price) {
-        this.id = id;
-        this.name = name;
-        this.capacity = capacity;
-        this.price = price;
-    }
-
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Basic
-    @Column(name = "name", nullable = false, length = 50)
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Basic
@@ -62,6 +45,37 @@ public class Products {
         this.price = price;
     }
 
+    @Basic
+    @Column(name = "product_name", nullable = false, length = 50)
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    @Basic
+    @Column(name = "quantity")
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+
+    @OneToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "product_type")
+    public ProductsTypes getProductType() {
+        return productType;
+    }
+
+    public void setProductType(ProductsTypes productType) {
+        this.productType = productType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -70,9 +84,13 @@ public class Products {
         Products products = (Products) o;
 
         if (id != null ? !id.equals(products.id) : products.id != null) return false;
-        if (name != null ? !name.equals(products.name) : products.name != null) return false;
         if (capacity != null ? !capacity.equals(products.capacity) : products.capacity != null) return false;
         if (price != null ? !price.equals(products.price) : products.price != null) return false;
+        if (productName != null ? !productName.equals(products.productName) : products.productName != null)
+            return false;
+        if (quantity != null ? !quantity.equals(products.quantity) : products.quantity != null) return false;
+        if (productType != null ? !productType.equals(products.productType) : products.productType != null)
+            return false;
 
         return true;
     }
@@ -80,9 +98,11 @@ public class Products {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (capacity != null ? capacity.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
+        result = 31 * result + (productName != null ? productName.hashCode() : 0);
+        result = 31 * result + (quantity != null ? quantity.hashCode() : 0);
+        result = 31 * result + (productType != null ? productType.hashCode() : 0);
         return result;
     }
 }

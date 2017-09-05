@@ -1,11 +1,13 @@
 package com.damian.controller;
 
 
-import com.damian.repository.ProductsDao;
+
 import com.damian.model.Products;
+import com.damian.repository.ProductsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +26,7 @@ public class ProductsController {
         List<Products> lista = productsDao.findAll();
         return new ResponseEntity<List<Products>>(lista, HttpStatus.OK);
     }
-
+    @CrossOrigin
     @GetMapping("/b")
     ResponseEntity<List<Products>> listAllUser2(){
 

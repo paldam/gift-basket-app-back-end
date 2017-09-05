@@ -25,12 +25,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
    private final TokenProvider tokenProvider;
-    //private final CorsFilter corsFilter;
+
 
     public SpringSecurityConfig(UserDetailsService userDetailsService, TokenProvider tokenProvider ) {
         this.userDetailsService = userDetailsService;
         this.tokenProvider = tokenProvider;
-       // this.corsFilter = corsFilter;
     }
 
     @Override
@@ -68,6 +67,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
