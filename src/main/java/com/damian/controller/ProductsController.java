@@ -3,43 +3,66 @@ package com.damian.controller;
 
 
 import com.damian.model.Products;
+import com.damian.model.ProductsTypes;
+import com.damian.model.Test;
+import com.damian.repository.ProductTypeDao;
 import com.damian.repository.ProductsDao;
+import com.damian.repository.TestDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
 public class ProductsController {
 
-    @Autowired
     ProductsDao productsDao;
+    ProductTypeDao productsTypeDao;
 
-
-    @GetMapping("/a")
-    ResponseEntity<List<Products>> listAllUser(){
-
-        List<Products> lista = productsDao.findAll();
-        return new ResponseEntity<List<Products>>(lista, HttpStatus.OK);
+    public ProductsController(ProductTypeDao productsTypeDao, ProductsDao productsDao) {
+        this.productsTypeDao = productsTypeDao;
+        this.productsDao = productsDao;
     }
+
+
     @CrossOrigin
-    @GetMapping("/b")
-    ResponseEntity<List<Products>> listAllUser2(){
+    @GetMapping("/products")
+    ResponseEntity<List<Products>> listAllProducts(){
 
-        List<Products> lista = productsDao.findAll();
-        return new ResponseEntity<List<Products>>(lista, HttpStatus.OK);
+        List<Products> productsList = productsDao.findAllByOrderByIdDesc();
+        return new ResponseEntity<List<Products>>(productsList, HttpStatus.OK);
     }
 
-    @GetMapping("/c")
-    ResponseEntity<List<Products>> listAllUser3(){
+    @CrossOrigin
+    @GetMapping("/products/{id}")
+    ResponseEntity<Products> getProductById(@PathVariable Integer id){
 
-        List<Products> lista = productsDao.findAll();
-        return new ResponseEntity<List<Products>>(lista, HttpStatus.OK);
+        Products product = productsDao.findById(id);
+        return new ResponseEntity<Products>(product, HttpStatus.OK);
     }
+
+    @CrossOrigin
+    @GetMapping("/products/types")
+    ResponseEntity<List<ProductsTypes>> listAllProductsTypes(){
+
+        List<ProductsTypes> productsTypeList = productsTypeDao.findAll();
+        return new ResponseEntity<List<ProductsTypes>>(productsTypeList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PostMapping("/products")
+    ResponseEntity<Products> createProduct(@RequestBody Products products )throws URISyntaxException {
+        productsDao.save(products);
+
+        return new ResponseEntity<Products>(products,HttpStatus.CREATED);
+
+
+    }
+
 
 
 }
