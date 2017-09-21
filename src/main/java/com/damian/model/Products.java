@@ -11,7 +11,7 @@ public class Products {
     private Integer capacity;
     private Integer price;
     private String productName;
-    private Integer quantity;
+    private Integer stock;
     private ProductsTypes productType;
 
     @Id
@@ -56,17 +56,17 @@ public class Products {
     }
 
     @Basic
-    @Column(name = "quantity")
-    public Integer getQuantity() {
-        return quantity;
+    @Column(name = "stock")
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
 
-    @OneToOne(cascade = {CascadeType.ALL})
+    @OneToOne
     @JoinColumn(name = "product_type")
     public ProductsTypes getProductType() {
         return productType;
@@ -83,26 +83,24 @@ public class Products {
 
         Products products = (Products) o;
 
-        if (id != null ? !id.equals(products.id) : products.id != null) return false;
-        if (capacity != null ? !capacity.equals(products.capacity) : products.capacity != null) return false;
-        if (price != null ? !price.equals(products.price) : products.price != null) return false;
-        if (productName != null ? !productName.equals(products.productName) : products.productName != null)
+        if (getId() != null ? !getId().equals(products.getId()) : products.getId() != null) return false;
+        if (getCapacity() != null ? !getCapacity().equals(products.getCapacity()) : products.getCapacity() != null)
             return false;
-        if (quantity != null ? !quantity.equals(products.quantity) : products.quantity != null) return false;
-        if (productType != null ? !productType.equals(products.productType) : products.productType != null)
+        if (getPrice() != null ? !getPrice().equals(products.getPrice()) : products.getPrice() != null) return false;
+        if (getProductName() != null ? !getProductName().equals(products.getProductName()) : products.getProductName() != null)
             return false;
-
-        return true;
+        if (stock != null ? !stock.equals(products.stock) : products.stock != null) return false;
+        return getProductType() != null ? getProductType().equals(products.getProductType()) : products.getProductType() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (capacity != null ? capacity.hashCode() : 0);
-        result = 31 * result + (price != null ? price.hashCode() : 0);
-        result = 31 * result + (productName != null ? productName.hashCode() : 0);
-        result = 31 * result + (quantity != null ? quantity.hashCode() : 0);
-        result = 31 * result + (productType != null ? productType.hashCode() : 0);
+        int result = getId() != null ? getId().hashCode() : 0;
+        result = 31 * result + (getCapacity() != null ? getCapacity().hashCode() : 0);
+        result = 31 * result + (getPrice() != null ? getPrice().hashCode() : 0);
+        result = 31 * result + (getProductName() != null ? getProductName().hashCode() : 0);
+        result = 31 * result + (stock != null ? stock.hashCode() : 0);
+        result = 31 * result + (getProductType() != null ? getProductType().hashCode() : 0);
         return result;
     }
 }
