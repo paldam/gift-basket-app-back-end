@@ -1,15 +1,13 @@
 package com.damian.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 
 /**
  * Created by Damian on 05.09.2017.
  */
 @Entity
-@Table(name = "products_types", schema = "kosze", catalog = "")
-public class ProductsTypes {
+@Table(name = "products_types")
+public class ProductType {
     private Integer typeId;
     private String typeName;
 
@@ -40,7 +38,7 @@ public class ProductsTypes {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ProductsTypes that = (ProductsTypes) o;
+        ProductType that = (ProductType) o;
 
         if (typeId != null ? !typeId.equals(that.typeId) : that.typeId != null) return false;
         if (typeName != null ? !typeName.equals(that.typeName) : that.typeName != null) return false;

@@ -6,13 +6,14 @@ import javax.persistence.*;
  * Created by Damian on 05.09.2017.
  */
 @Entity
-public class Products {
+@Table(name = "products")
+public class Product {
     private Integer id;
     private Integer capacity;
     private Integer price;
     private String productName;
     private Integer stock;
-    private ProductsTypes productType;
+    private ProductType productType;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,11 +69,11 @@ public class Products {
 
     @OneToOne
     @JoinColumn(name = "product_type")
-    public ProductsTypes getProductType() {
+    public ProductType getProductType() {
         return productType;
     }
 
-    public void setProductType(ProductsTypes productType) {
+    public void setProductType(ProductType productType) {
         this.productType = productType;
     }
 
@@ -81,7 +82,7 @@ public class Products {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Products products = (Products) o;
+        Product products = (Product) o;
 
         if (getId() != null ? !getId().equals(products.getId()) : products.getId() != null) return false;
         if (getCapacity() != null ? !getCapacity().equals(products.getCapacity()) : products.getCapacity() != null)
