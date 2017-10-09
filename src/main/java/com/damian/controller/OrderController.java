@@ -1,16 +1,19 @@
 package com.damian.controller;
 
 import com.damian.model.*;
-import com.damian.repository.CustomerDao;
 import com.damian.repository.DeliveryTypeDao;
 import com.damian.repository.OrderDao;
 import com.damian.service.OrderService;
-import com.sun.xml.internal.bind.v2.TODO;
+import com.damian.util.PdfGenerator;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -39,6 +42,24 @@ public class OrderController {
         orderService.createOrder(order);
 
         return new ResponseEntity<Order>(order,HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/order/pdf", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> getPdf() throws IOException {
+
+
+
+        ByteArrayInputStream bis = PdfGenerator.orderPdf();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=order.pdf");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(bis));
     }
 
 }

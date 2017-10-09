@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface OrderDao extends CrudRepository<Order,Long> {
     public List<Order> findAllBy();
+    public List<Order> findAllByOrderByOrderIdDesc();
 }
