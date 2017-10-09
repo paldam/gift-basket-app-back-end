@@ -19,18 +19,16 @@ public class OrderController {
 
     private OrderDao orderDao;
     private OrderService orderService;
-    private DeliveryTypeDao deliveryTypeDao;
 
     OrderController(OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao){
         this.orderDao=orderDao;
         this.orderService=orderService;
-        this.deliveryTypeDao = deliveryTypeDao;
     }
 
     @CrossOrigin
     @GetMapping("/orders")
     ResponseEntity<List<Order>> getOrders(){
-        List<Order> ordersList = orderDao.findAllBy();
+        List<Order> ordersList = orderDao.findAllByOrderByOrderIdDesc();
         return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
     }
 
@@ -42,5 +40,5 @@ public class OrderController {
 
         return new ResponseEntity<Order>(order,HttpStatus.CREATED);
     }
-    
+
 }
