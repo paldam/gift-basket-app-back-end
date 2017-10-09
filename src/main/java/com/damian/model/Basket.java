@@ -13,6 +13,7 @@ public class Basket {
     private String basketName;
     private BasketType basketType;
     private List<BasketItems> basketItems;
+    private Integer basketTotalPrice;
 
 
     @Basic
@@ -57,25 +58,13 @@ public class Basket {
         this.basketItems = basketItems;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Basket basket = (Basket) o;
-
-        if (getBasketName() != null ? !getBasketName().equals(basket.getBasketName()) : basket.getBasketName() != null)
-            return false;
-        if (getBasketId() != null ? !getBasketId().equals(basket.getBasketId()) : basket.getBasketId() != null)
-            return false;
-        return getBasketType() != null ? getBasketType().equals(basket.getBasketType()) : basket.getBasketType() == null;
+    @Basic
+    @Column(name = "basket_total_price", length = 40)
+    public Integer getBasketTotalPrice() {
+        return basketTotalPrice;
     }
 
-    @Override
-    public int hashCode() {
-        int result = getBasketName() != null ? getBasketName().hashCode() : 0;
-        result = 31 * result + (getBasketId() != null ? getBasketId().hashCode() : 0);
-        result = 31 * result + (getBasketType() != null ? getBasketType().hashCode() : 0);
-        return result;
+    public void setBasketTotalPrice(Integer basketTotalPrice) {
+        this.basketTotalPrice = basketTotalPrice;
     }
 }

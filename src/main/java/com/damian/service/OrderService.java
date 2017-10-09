@@ -22,7 +22,7 @@ public class OrderService {
    public void createOrder(Order order){
 
         Customer customer = order.getCustomer();
-        
+
         if (customer.getCustomerId() != null){
             orderDao.save(order);
         }else{

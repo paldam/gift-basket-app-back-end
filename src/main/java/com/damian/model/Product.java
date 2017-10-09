@@ -27,7 +27,7 @@ public class Product {
     }
 
     @Basic
-    @Column(name = "capacity", nullable = false)
+    @Column(name = "capacity")
     public Integer getCapacity() {
         return capacity;
     }
@@ -37,7 +37,7 @@ public class Product {
     }
 
     @Basic
-    @Column(name = "price", nullable = false)
+    @Column(name = "price")
     public Integer getPrice() {
         return price;
     }

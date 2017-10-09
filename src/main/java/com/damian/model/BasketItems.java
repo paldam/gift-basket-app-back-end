@@ -21,7 +21,7 @@ public class BasketItems {
     }
 
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "product_id")
     public Product getProduct() {
         return product;
