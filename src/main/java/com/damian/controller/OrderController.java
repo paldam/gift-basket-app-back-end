@@ -29,7 +29,7 @@ public class OrderController {
     }
 
     @CrossOrigin
-    @GetMapping("/orders")
+    @GetMapping("orders")
     ResponseEntity<List<Order>> getOrders(){
         List<Order> ordersList = orderDao.findAllByOrderByOrderIdDesc();
         return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);

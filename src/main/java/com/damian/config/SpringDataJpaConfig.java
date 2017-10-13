@@ -12,6 +12,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Properties;
 
 @Configuration
 @ComponentScan(basePackages = "com.damian.config")
@@ -33,6 +34,7 @@ public class SpringDataJpaConfig {
         dataSource.setUrl(environment.getRequiredProperty("jdbc.url"));
         dataSource.setUsername(environment.getRequiredProperty("jdbc.username"));
         dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
+
         return dataSource;
     }
 
@@ -45,6 +47,7 @@ public class SpringDataJpaConfig {
         vendorAdapter.setGenerateDdl(true);
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("com.damian.model");
         factory.setDataSource(dataSource());

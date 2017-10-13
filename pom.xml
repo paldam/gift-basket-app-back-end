@@ -13,7 +13,6 @@
     <spring.version>4.3.10.RELEASE</spring.version>
     <spring.data.jpa>1.11.6.RELEASE</spring.data.jpa>
     <junit.version>4.12</junit.version>
-    <javax.persistence.version>1.0.2</javax.persistence.version>
     <hibernate.version>5.2.3.Final</hibernate.version>
     <mysql.version>5.1.40</mysql.version>
     <jackson.version>2.7.5</jackson.version>
@@ -60,11 +59,6 @@
     </dependency>
 
 
-    <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>persistence-api</artifactId>
-      <version>${javax.persistence.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -189,8 +183,9 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
+          <version>2.6</version>
           <configuration>
-            <webXml>src\main\webapp\WEB-INF\web.xml</webXml>
+            <failOnMissingWebXml>false</failOnMissingWebXml>
           </configuration>
         </plugin>
 
