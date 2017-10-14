@@ -29,28 +29,30 @@ public class ProductsController {
 
 
     @CrossOrigin
-    @GetMapping("/products")
+    @GetMapping(value = "/products")
     ResponseEntity<List<Product>> listAllProducts(){
 
         List<Product> productsList = productsDao.findAllByOrderByIdDesc();
         return new ResponseEntity<List<Product>>(productsList, HttpStatus.OK);
+
     }
 
+
     @CrossOrigin
-    @GetMapping("/products/{id}")
+    @GetMapping(value = "/products/{id}",produces = "application/json; charset=utf-8")
     ResponseEntity<Product> getProductById(@PathVariable Integer id){
 
         Product product = productsDao.findById(id);
         return new ResponseEntity<Product>(product, HttpStatus.OK);
     }
 
-    @CrossOrigin
-    @GetMapping("/products/types")
-    ResponseEntity<List<ProductType>> listAllProductsTypes(){
-
-        List<ProductType> productsTypeList = productsTypeDao.findAll();
-        return new ResponseEntity<List<ProductType>>(productsTypeList, HttpStatus.OK);
-    }
+//    @CrossOrigin
+//    @GetMapping("/products/types")
+//    ResponseEntity<List<ProductType>> listAllProductsTypes(){
+//
+//        List<ProductType> productsTypeList = productsTypeDao.findAll();
+//        return new ResponseEntity<List<ProductType>>(productsTypeList, HttpStatus.OK);
+//    }
 
     @CrossOrigin
     @PostMapping("/products")

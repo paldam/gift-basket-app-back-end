@@ -9,11 +9,12 @@ import javax.persistence.*;
 @Table(name = "products")
 public class Product {
     private Integer id;
-    private Integer capacity;
-    private Integer price;
+    private String capacity;
+    private Double price;
     private String productName;
     private Integer stock;
-    private ProductType productType;
+    private String deliver;
+    //private ProductType productType;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,26 +29,26 @@ public class Product {
 
     @Basic
     @Column(name = "capacity")
-    public Integer getCapacity() {
+    public String getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(Integer capacity) {
+    public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
 
     @Basic
     @Column(name = "price")
-    public Integer getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
     @Basic
-    @Column(name = "product_name", nullable = false, length = 50)
+    @Column(name = "product_name", nullable = false, length = 100)
     public String getProductName() {
         return productName;
     }
@@ -66,42 +67,24 @@ public class Product {
         this.stock = stock;
     }
 
-
-    @OneToOne
-    @JoinColumn(name = "product_type")
-    public ProductType getProductType() {
-        return productType;
+    @Basic
+    @Column(name = "deliver")
+    public String getDeliver() {
+        return deliver;
     }
 
-    public void setProductType(ProductType productType) {
-        this.productType = productType;
+    public void setDeliver(String deliver) {
+        this.deliver = deliver;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    //    @OneToOne
+//    @JoinColumn(name = "product_type")
+//    public ProductType getProductType() {
+//        return productType;
+//    }
+//
+//    public void setProductType(ProductType productType) {
+//        this.productType = productType;
+//    }
 
-        Product products = (Product) o;
-
-        if (getId() != null ? !getId().equals(products.getId()) : products.getId() != null) return false;
-        if (getCapacity() != null ? !getCapacity().equals(products.getCapacity()) : products.getCapacity() != null)
-            return false;
-        if (getPrice() != null ? !getPrice().equals(products.getPrice()) : products.getPrice() != null) return false;
-        if (getProductName() != null ? !getProductName().equals(products.getProductName()) : products.getProductName() != null)
-            return false;
-        if (stock != null ? !stock.equals(products.stock) : products.stock != null) return false;
-        return getProductType() != null ? getProductType().equals(products.getProductType()) : products.getProductType() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getId() != null ? getId().hashCode() : 0;
-        result = 31 * result + (getCapacity() != null ? getCapacity().hashCode() : 0);
-        result = 31 * result + (getPrice() != null ? getPrice().hashCode() : 0);
-        result = 31 * result + (getProductName() != null ? getProductName().hashCode() : 0);
-        result = 31 * result + (stock != null ? stock.hashCode() : 0);
-        result = 31 * result + (getProductType() != null ? getProductType().hashCode() : 0);
-        return result;
-    }
 }
