@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 public class ProductsController {
@@ -46,13 +47,21 @@ public class ProductsController {
         return new ResponseEntity<Product>(product, HttpStatus.OK);
     }
 
-//    @CrossOrigin
-//    @GetMapping("/products/types")
-//    ResponseEntity<List<ProductType>> listAllProductsTypes(){
-//
-//        List<ProductType> productsTypeList = productsTypeDao.findAll();
-//        return new ResponseEntity<List<ProductType>>(productsTypeList, HttpStatus.OK);
-//    }
+    @CrossOrigin
+    @DeleteMapping(value = "/products/{id}")
+    ResponseEntity deleteProduct(@PathVariable Integer id){
+
+        Product selectedProduct = productsDao.findById(id);
+
+        if (Objects.isNull(selectedProduct)) {
+            return new ResponseEntity("Nie znaleziono Produktu o id " + id, HttpStatus.NOT_FOUND);
+        }else{
+            productsDao.deleteById(id);
+            return new ResponseEntity(id, HttpStatus.OK);
+        }
+    }
+
+
 
     @CrossOrigin
     @PostMapping("/products")
