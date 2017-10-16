@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class Product {
     private Integer id;
     private String capacity;
-    private Double price;
+    private Integer price;
     private String productName;
     private Integer stock;
     private String deliver;
@@ -39,11 +39,11 @@ public class Product {
 
     @Basic
     @Column(name = "price")
-    public Double getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 

@@ -16,7 +16,9 @@ public class Order {
     private String additionalInformation;
     private Date deliveryDate;
     private DeliveryType deliveryType;
-//
+    private OrderStatus orderStatus;
+    private Integer orderTotalAmount;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,15 +31,6 @@ public class Order {
         this.orderId = orderId;
     }
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    public User getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
     @ManyToOne
     @JoinColumn(name = "customer_id")
     public Customer getCustomer() {
@@ -60,7 +53,7 @@ public class Order {
 
 
     @Basic
-    @Column(name = "order_date")
+    @Column(name = "order_date",columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Date getOrderDate() {
         return orderDate;
     }
@@ -97,5 +90,25 @@ public class Order {
 
     public void setDeliveryType(DeliveryType deliveryType) {
         this.deliveryType = deliveryType;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "order_status_id")
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    @Basic
+    @Column(name = "order_total_amount")
+    public Integer getOrderTotalAmount() {
+        return orderTotalAmount;
+    }
+
+    public void setOrderTotalAmount(Integer orderTotalAmount) {
+        this.orderTotalAmount = orderTotalAmount;
     }
 }
