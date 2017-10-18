@@ -104,6 +104,13 @@ public class Customer {
         this.email = email;
     }
 
+
+    public String AddressDesc(){
+        return
+           address + " " + zipCode +   " " + cityName ;
+    }
+
+
     @Override
     public String toString() {
         return "Customer{" +

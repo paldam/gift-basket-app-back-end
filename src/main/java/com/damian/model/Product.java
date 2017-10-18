@@ -14,7 +14,18 @@ public class Product {
     private String productName;
     private Integer stock;
     private String deliver;
+    private Integer isArchival;
     //private ProductType productType;
+
+    @Basic
+    @Column(name = "is_archival")
+    public Integer getIsArchival() {
+        return isArchival;
+    }
+
+    public void setIsArchival(Integer isArchival) {
+        this.isArchival = isArchival;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -33,7 +33,7 @@ public class ProductsController {
     @GetMapping(value = "/products")
     ResponseEntity<List<Product>> listAllProducts(){
 
-        List<Product> productsList = productsDao.findAllByOrderByIdDesc();
+        List<Product> productsList = productsDao.findAllByIsArchivalNot(1);
         return new ResponseEntity<List<Product>>(productsList, HttpStatus.OK);
 
     }

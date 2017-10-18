@@ -1,5 +1,7 @@
 package com.damian.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -8,12 +10,13 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 public class Order {
-    private Integer orderId;
+    private Long orderId;
    // private User user;
     private Customer customer;
     private List<OrderItem> orderItems;
     private Date orderDate;
     private String additionalInformation;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Europe/Warsaw")
     private Date deliveryDate;
     private DeliveryType deliveryType;
     private OrderStatus orderStatus;
@@ -23,11 +26,11 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id", nullable = false)
-    public Integer getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Integer orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
@@ -73,7 +76,7 @@ public class Order {
     }
 
     @Basic
-    @Column(name = "delivery_date")
+    @Column(name = "delivery_date",columnDefinition="DATE")
     public Date getDeliveryDate() {
         return deliveryDate;
     }
@@ -111,4 +114,6 @@ public class Order {
     public void setOrderTotalAmount(Integer orderTotalAmount) {
         this.orderTotalAmount = orderTotalAmount;
     }
+
+
 }

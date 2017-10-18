@@ -1,15 +1,22 @@
 package com.damian.util;
+import com.damian.model.Order;
+import com.damian.model.OrderItem;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 
+
+import java.text.SimpleDateFormat;
+
 import java.io.*;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.lang.System.out;
 
 public class PdfGenerator {
-    public static ByteArrayInputStream orderPdf() throws IOException {
+
+    public static ByteArrayInputStream generatePdf(Order order) throws IOException {
+
 
         Document document = new Document();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -32,7 +39,6 @@ public class PdfGenerator {
             BaseFont helvetica4 = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
             Font font4=new Font(helvetica4,10,Font.NORMAL,GrayColor.BLACK);
 
-
             PdfPCell cell = new PdfPCell(new Phrase("Nazwa Firmy:",font));
             cell.setColspan(10);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -40,7 +46,7 @@ public class PdfGenerator {
 
             table.addCell(cell);
 
-            PdfPCell cell2 = new PdfPCell(new Phrase("UPC Polska",font2));
+            PdfPCell cell2 = new PdfPCell(new Phrase(order.getCustomer().getOrganizationName(),font2));
             cell2.setColspan(10);
             cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell2.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
@@ -66,19 +72,24 @@ public class PdfGenerator {
             cell5.setBorder(Rectangle.LEFT | Rectangle.TOP| Rectangle.RIGHT);
             table.addCell(cell5);
 // row 3
-            PdfPCell cell6 = new PdfPCell(new Phrase("13.11.2018",font2));
+
+            SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd", Locale.ENGLISH);
+            String deliveryDateString = format.format(order.getDeliveryDate());
+
+            PdfPCell cell6 = new PdfPCell(new Phrase(deliveryDateString,font2));
             cell6.setColspan(3);
+            cell6.setMinimumHeight(30);
             cell6.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell6.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
             table.addCell(cell6);
 
-            PdfPCell cell7 = new PdfPCell(new Phrase("Odbiór osobisty",font2));
+            PdfPCell cell7 = new PdfPCell(new Phrase(order.getDeliveryType().getDeliveryTypeName(),font2));
             cell7.setColspan(3);
             cell7.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell7.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
             table.addCell(cell7);
 
-            PdfPCell cell8 = new PdfPCell(new Phrase("Leśna 17c 05/110 Jabłonna",font2));
+            PdfPCell cell8 = new PdfPCell(new Phrase(" ",font2));
             cell8.setColspan(4);
             cell8.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell8.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
@@ -97,14 +108,14 @@ public class PdfGenerator {
             cell10.setBorder(Rectangle.LEFT |  Rectangle.RIGHT);
             table.addCell(cell10);
 //row 5
-            PdfPCell cell11 = new PdfPCell(new Phrase("12/2008",font2));
+            PdfPCell cell11 = new PdfPCell(new Phrase(order.getOrderId().toString(),font2));
             cell11.setColspan(3);
             cell11.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell11.setBorder(Rectangle.LEFT |Rectangle.BOTTOM|  Rectangle.RIGHT);
             cell11.setMinimumHeight(30);
             table.addCell(cell11);
 
-            PdfPCell cell12 = new PdfPCell(new Phrase("Szkolna 17a  05-200 Warszawa",font2));
+            PdfPCell cell12 = new PdfPCell(new Phrase(order.getCustomer().AddressDesc(),font2));
             cell12.setColspan(7);
             cell12.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell12.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
@@ -137,25 +148,31 @@ public class PdfGenerator {
             table.addCell(cell16);
 // row 7
 
-            PdfPCell cell17 = new PdfPCell(new Phrase("12.11.2018 13:22",font2));
+            SimpleDateFormat format2 = new SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.ENGLISH);
+            String orderDateString = format2.format(order.getOrderDate());
+
+            PdfPCell cell17 = new PdfPCell(new Phrase(orderDateString,font2));
             cell17.setColspan(3);
+            cell17.setMinimumHeight(30);
             cell17.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell17.setBorder(Rectangle.LEFT |Rectangle.BOTTOM |  Rectangle.RIGHT);
             table.addCell(cell17);
 
-            PdfPCell cell18 = new PdfPCell(new Phrase("Damian Paluch",font3));
+            PdfPCell cell18 = new PdfPCell(
+                    new Phrase(order.getCustomer().getCustomerFirstName() + " "+order.getCustomer().getCustomerLastName(),font3));
+
             cell18.setColspan(3);
             cell18.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell18.setBorder(Rectangle.LEFT |Rectangle.BOTTOM |   Rectangle.RIGHT);
             table.addCell(cell18);
 
-            PdfPCell cell19 = new PdfPCell(new Phrase("damian_kamil_paweł.paluch87@gmail.com",font4));
+            PdfPCell cell19 = new PdfPCell(new Phrase(order.getCustomer().getEmail(),font4));
             cell19.setColspan(2);
             cell19.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell19.setBorder(Rectangle.LEFT |Rectangle.BOTTOM |   Rectangle.RIGHT);
             table.addCell(cell19);
 
-            PdfPCell cell20 = new PdfPCell(new Phrase("508703187",font3));
+            PdfPCell cell20 = new PdfPCell(new Phrase(order.getCustomer().getPhoneNumber().toString(),font3));
             cell20.setColspan(2);
             cell20.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell20.setBorder(Rectangle.LEFT |Rectangle.BOTTOM |  Rectangle.RIGHT);
@@ -195,9 +212,10 @@ public class PdfGenerator {
             PdfPTable table2 = new PdfPTable(columnWidths2);
             table2.setWidthPercentage(100);
 
-            for (int i = 0; i < 10; i++) {
-                table2.addCell(new PdfCellExt(new Phrase("kosz świątecczny",font3)));
-                table2.addCell(new PdfCellExt(new Phrase("103",font3)));
+
+            for (OrderItem i: order.getOrderItems()) {
+                table2.addCell(new PdfCellExt(new Phrase(i.getBasket().getBasketName(),font3)));
+                table2.addCell(new PdfCellExt(new Phrase(i.getQuantity().toString(),font3)));
                 table2.addCell(new PdfCellExt(new Phrase("",font3)));
             }
 
@@ -212,7 +230,7 @@ public class PdfGenerator {
             cell24.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
             table3.addCell(cell24);
 //row10
-            PdfPCell cell25 = new PdfPCell(new Phrase("proszę o mozliwie szybką wysłkę: ",font3));
+            PdfPCell cell25 = new PdfPCell(new Phrase(order.getAdditionalInformation(),font3));
             cell25.setColspan(10);
             cell25.setPaddingLeft(10);
             cell25.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -243,7 +261,7 @@ public class PdfGenerator {
             cell28.setMinimumHeight(33);
             table3.addCell(cell28);
 
-            PdfPCell cell29 = new PdfPCell(new Phrase("Gosia ",font2));
+            PdfPCell cell29 = new PdfPCell(new Phrase("System ",font2));
             cell29.setColspan(4);
             cell29.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell29.setBorder(Rectangle.LEFT |Rectangle.BOTTOM | Rectangle.RIGHT);

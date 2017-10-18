@@ -3,6 +3,7 @@ package com.damian.controller;
 import com.damian.model.*;
 import com.damian.repository.DeliveryTypeDao;
 import com.damian.repository.OrderDao;
+import com.damian.repository.OrderStatusDao;
 import com.damian.service.OrderService;
 import com.damian.util.PdfGenerator;
 import org.springframework.core.io.InputStreamResource;
@@ -22,17 +23,32 @@ public class OrderController {
 
     private OrderDao orderDao;
     private OrderService orderService;
+    private OrderStatusDao orderStatusDao;
 
-    OrderController(OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao){
+    OrderController(OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao,OrderStatusDao orderStatusDao){
         this.orderDao=orderDao;
         this.orderService=orderService;
+        this.orderStatusDao=orderStatusDao;
+    }
+    @CrossOrigin
+    @GetMapping(value = "/order/{id}")
+    ResponseEntity<Order> getOrder(@PathVariable Long id){
+        Order order = orderDao.findOne(id);
+        return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
     @CrossOrigin
-    @GetMapping("orders")
+    @GetMapping("/orders")
     ResponseEntity<List<Order>> getOrders(){
-        List<Order> ordersList = orderDao.findAllByOrderByOrderIdDesc();
+        List<Order> ordersList = orderDao.findAllWithoutDeleted();
         return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/order_status")
+    ResponseEntity<List<OrderStatus>> getOrderStatus(){
+        List<OrderStatus> ordersStatusList = orderStatusDao.findAllBy();
+        return new ResponseEntity<List<OrderStatus>>(ordersStatusList, HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -43,14 +59,14 @@ public class OrderController {
 
         return new ResponseEntity<Order>(order,HttpStatus.CREATED);
     }
-
-    @RequestMapping(value = "/order/pdf", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<InputStreamResource> getPdf() throws IOException {
-
+    @CrossOrigin
+    @RequestMapping(value = "/order/pdf/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> getPdf(@PathVariable Long id) throws IOException {
 
 
-        ByteArrayInputStream bis = PdfGenerator.orderPdf();
+        Order orderToGenerate = orderDao.findOne(id);
+       PdfGenerator pdfGenerator = new PdfGenerator();
+        ByteArrayInputStream bis = pdfGenerator.generatePdf(orderToGenerate);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=order.pdf");

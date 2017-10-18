@@ -18,7 +18,9 @@ public interface ProductDao extends CrudRepository<Product,Long> {
 
     public List<Product> findAllByOrderByIdDesc();
     public List<Product> findAllBy();
+    public List<Product> findAllByIsArchivalNot(Integer i);
     public Product findById(Integer id);
     public void deleteById(Integer id);
+
 
 }
