@@ -28,7 +28,7 @@ public class BasketController {
     @CrossOrigin
     @GetMapping("/baskets")
     ResponseEntity<List<Basket>> getBaskets(){
-        List<Basket> basketList = basketDao.findAllByOrderByBasketIdDesc();
+        List<Basket> basketList = basketDao.findAllWithoutDeleted();
         return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
     }
 

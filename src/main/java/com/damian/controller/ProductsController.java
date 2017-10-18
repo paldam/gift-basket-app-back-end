@@ -30,10 +30,10 @@ public class ProductsController {
 
 
     @CrossOrigin
-    @GetMapping(value = "/products")
+    @GetMapping(value = "/products",produces = "application/json; charset=utf-8")
     ResponseEntity<List<Product>> listAllProducts(){
 
-        List<Product> productsList = productsDao.findAllByIsArchivalNot(1);
+        List<Product> productsList = productsDao.findAllWithoutDeleted();
         return new ResponseEntity<List<Product>>(productsList, HttpStatus.OK);
 
     }
