@@ -33,6 +33,13 @@ public class BasketController {
     }
 
     @CrossOrigin
+    @GetMapping("/basket/{id}")
+    ResponseEntity<Basket> getBaskets(@PathVariable Long id){
+        Basket basket = basketDao.findOne(id);
+        return new ResponseEntity<Basket>(basket, HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping("/baskets/types")
     ResponseEntity<List<BasketType>> getBasketsTypes(){
         List<BasketType> basketTypesList = basketTypeDao.findAllBy();

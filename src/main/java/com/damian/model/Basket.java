@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 @Table(name = "baskets")
 public class Basket {
-    private Integer basketId;
+    private Long basketId;
     private String basketName;
     private BasketType basketType;
     private List<BasketItems> basketItems;
@@ -29,11 +29,11 @@ public class Basket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "basket_id", nullable = false)
-    public Integer getBasketId() {
+    public Long getBasketId() {
         return basketId;
     }
 
-    public void setBasketId(Integer basketId) {
+    public void setBasketId(Long basketId) {
         this.basketId = basketId;
     }
 

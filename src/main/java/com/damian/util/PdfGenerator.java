@@ -33,6 +33,12 @@ public class PdfGenerator {
             BaseFont helvetica2 = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
             Font font2=new Font(helvetica2,17,Font.NORMAL,GrayColor.BLACK);
 
+            BaseFont helvetica5 = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
+            Font font5=new Font(helvetica5,53,Font.NORMAL,GrayColor.BLACK);
+
+            BaseFont helvetica6 = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
+            Font font6=new Font(helvetica6,36,Font.NORMAL,GrayColor.BLACK);
+
             BaseFont helvetica3 = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
             Font font3=new Font(helvetica3,13,Font.NORMAL,GrayColor.BLACK);
 
@@ -46,11 +52,11 @@ public class PdfGenerator {
 
             table.addCell(cell);
 
-            PdfPCell cell2 = new PdfPCell(new Phrase(order.getCustomer().getOrganizationName(),font2));
+            PdfPCell cell2 = new PdfPCell(new Phrase(order.getCustomer().getOrganizationName(),font5));
             cell2.setColspan(10);
             cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell2.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
-            cell2.setMinimumHeight(70);
+            cell2.setMinimumHeight(130);
             table.addCell(cell2);
 
 //row 2
@@ -73,17 +79,17 @@ public class PdfGenerator {
             table.addCell(cell5);
 // row 3
 
-            SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd", Locale.ENGLISH);
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM", Locale.ENGLISH);
             String deliveryDateString = format.format(order.getDeliveryDate());
 
-            PdfPCell cell6 = new PdfPCell(new Phrase(deliveryDateString,font2));
+            PdfPCell cell6 = new PdfPCell(new Phrase(deliveryDateString,font6));
             cell6.setColspan(3);
-            cell6.setMinimumHeight(30);
+            cell6.setMinimumHeight(60);
             cell6.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell6.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
             table.addCell(cell6);
 
-            PdfPCell cell7 = new PdfPCell(new Phrase(order.getDeliveryType().getDeliveryTypeName(),font2));
+            PdfPCell cell7 = new PdfPCell(new Phrase(order.getDeliveryType().getDeliveryTypeName(),font6));
             cell7.setColspan(3);
             cell7.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell7.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
@@ -261,7 +267,7 @@ public class PdfGenerator {
             cell28.setMinimumHeight(33);
             table3.addCell(cell28);
 
-            PdfPCell cell29 = new PdfPCell(new Phrase("System ",font2));
+            PdfPCell cell29 = new PdfPCell(new Phrase("system",font2));
             cell29.setColspan(4);
             cell29.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell29.setBorder(Rectangle.LEFT |Rectangle.BOTTOM | Rectangle.RIGHT);
