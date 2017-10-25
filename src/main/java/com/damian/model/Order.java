@@ -11,7 +11,9 @@ import java.util.List;
 @Table(name = "orders")
 public class Order {
     private Long orderId;
-   // private User user;
+    private String orderFvNumber;
+    private String userName;
+    // private User user;
     private Customer customer;
     private List<OrderItem> orderItems;
     private Date orderDate;
@@ -32,6 +34,26 @@ public class Order {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    @Basic
+    @Column(name = "fv_number")
+    public String getOrderFvNumber() {
+        return orderFvNumber;
+    }
+
+    public void setOrderFvNumber(String orderFvNumber) {
+        this.orderFvNumber = orderFvNumber;
+    }
+
+    @Basic
+    @Column(name = "added_by_user")
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @ManyToOne

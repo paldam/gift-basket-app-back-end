@@ -7,8 +7,7 @@ import javax.persistence.*;
 public class Customer {
     private Integer customerId;
     private String organizationName;
-    private String customerFirstName;
-    private String customerLastName;
+    private String name;
     private String address;
     private String zipCode;
     private String cityName;
@@ -37,24 +36,15 @@ public class Customer {
     }
 
     @Basic
-    @Column(name = "first_name", length = 30)
-    public String getCustomerFirstName() {
-        return customerFirstName;
+    @Column(name = "name", length = 100)
+    public String getName() {
+        return name;
     }
 
-    public void setCustomerFirstName(String customerFirstName) {
-        this.customerFirstName = customerFirstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Basic
-    @Column(name = "last_name", length = 35)
-    public String getCustomerLastName() {
-        return customerLastName;
-    }
-
-    public void setCustomerLastName(String customerLastName) {
-        this.customerLastName = customerLastName;
-    }
 
     @Basic
     @Column(name = "address", length = 35)
@@ -110,14 +100,12 @@ public class Customer {
            address + " " + zipCode +   " " + cityName ;
     }
 
-
     @Override
     public String toString() {
         return "Customer{" +
                 "customerId=" + customerId +
                 ", organizationName='" + organizationName + '\'' +
-                ", customerFirstName='" + customerFirstName + '\'' +
-                ", customerLastName='" + customerLastName + '\'' +
+                ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", zipCode='" + zipCode + '\'' +
                 ", cityName='" + cityName + '\'' +

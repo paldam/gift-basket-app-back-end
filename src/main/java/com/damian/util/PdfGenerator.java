@@ -114,7 +114,7 @@ public class PdfGenerator {
             cell10.setBorder(Rectangle.LEFT |  Rectangle.RIGHT);
             table.addCell(cell10);
 //row 5
-            PdfPCell cell11 = new PdfPCell(new Phrase(order.getOrderId().toString(),font2));
+            PdfPCell cell11 = new PdfPCell(new Phrase(order.getOrderFvNumber(),font2));
             cell11.setColspan(3);
             cell11.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell11.setBorder(Rectangle.LEFT |Rectangle.BOTTOM|  Rectangle.RIGHT);
@@ -165,7 +165,7 @@ public class PdfGenerator {
             table.addCell(cell17);
 
             PdfPCell cell18 = new PdfPCell(
-                    new Phrase(order.getCustomer().getCustomerFirstName() + " "+order.getCustomer().getCustomerLastName(),font3));
+                    new Phrase(order.getCustomer().getName() ,font3));
 
             cell18.setColspan(3);
             cell18.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -178,7 +178,14 @@ public class PdfGenerator {
             cell19.setBorder(Rectangle.LEFT |Rectangle.BOTTOM |   Rectangle.RIGHT);
             table.addCell(cell19);
 
-            PdfPCell cell20 = new PdfPCell(new Phrase(order.getCustomer().getPhoneNumber().toString(),font3));
+            String phoneTmp = "";
+
+            if (order.getCustomer().getPhoneNumber()==null){
+                phoneTmp = "brak";
+            }else{
+                phoneTmp = order.getCustomer().getPhoneNumber().toString();
+            }
+            PdfPCell cell20 = new PdfPCell(new Phrase(phoneTmp,font3));
             cell20.setColspan(2);
             cell20.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell20.setBorder(Rectangle.LEFT |Rectangle.BOTTOM |  Rectangle.RIGHT);
@@ -267,7 +274,7 @@ public class PdfGenerator {
             cell28.setMinimumHeight(33);
             table3.addCell(cell28);
 
-            PdfPCell cell29 = new PdfPCell(new Phrase("system",font2));
+            PdfPCell cell29 = new PdfPCell(new Phrase(order.getUserName(),font2));
             cell29.setColspan(4);
             cell29.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell29.setBorder(Rectangle.LEFT |Rectangle.BOTTOM | Rectangle.RIGHT);

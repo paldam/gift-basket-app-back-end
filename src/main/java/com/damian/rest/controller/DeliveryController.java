@@ -1,4 +1,4 @@
-package com.damian.controller;
+package com.damian.rest.controller;
 
 import com.damian.model.*;
 import com.damian.repository.DeliveryTypeDao;
