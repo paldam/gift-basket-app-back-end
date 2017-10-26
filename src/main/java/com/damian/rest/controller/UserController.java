@@ -1,8 +1,10 @@
 package com.damian.rest.controller;
 
 import com.damian.dto.UserDto;
+import com.damian.model.Authority;
 import com.damian.model.Customer;
 import com.damian.model.User;
+import com.damian.repository.AuthorityRepository;
 import com.damian.repository.UserRepository;
 import com.damian.rest.controller.util.HeaderUtil;
 import com.damian.service.UserService;
@@ -26,10 +28,12 @@ public class UserController {
     private static final String ENTITY_NAME = "userManagement";
     private final UserRepository userRepository;
     private final UserService userService;
+    private  AuthorityRepository authorityRepository;
 
-    public UserController(UserRepository userRepository, UserService userService) {
+    public UserController(UserRepository userRepository, UserService userService,AuthorityRepository authorityRepository ) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.authorityRepository = authorityRepository;
     }
 
 
@@ -77,5 +81,11 @@ public class UserController {
         return ResponseEntity.ok().headers(HeaderUtil.createAlert("A user is updated with identifier " + updatedUser.getLogin(), updatedUser.getLogin())).body(updatedUser);
 
 
+    }
+
+    @GetMapping("/users/authorities")
+
+    public List<Authority> getAuthorities() {
+        return authorityRepository.findAll();
     }
 }

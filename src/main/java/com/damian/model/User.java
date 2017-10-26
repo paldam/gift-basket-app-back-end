@@ -2,6 +2,8 @@ package com.damian.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.BatchSize;
+
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -49,9 +51,8 @@ public class User implements Serializable {
     @Column(nullable = false)
     private boolean activated = false;
 
-
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch =FetchType.EAGER)
     @JoinTable(
             name = "user_authority",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},

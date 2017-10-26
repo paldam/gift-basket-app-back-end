@@ -39,15 +39,9 @@ public class UserService {
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
-
-        if (userDto.getAuthorities() != null) {
-            Set<Authority> authorities = new HashSet<>();
-            userDto.getAuthorities().forEach(
-                    authority -> authorities.add(authorityRepository.findOne(authority))
-            );
-            user.setAuthorities(authorities);
-        }
+        user.setAuthorities(userDto.getAuthorities());
         String encryptedPassword = passwordEncoder.encode(userDto.getPassword());
+        System.out.println("ddedede"+userDto.getPassword());
         user.setPassword(encryptedPassword);
         user.setActivated(true);
         userRepository.save(user);
@@ -62,11 +56,12 @@ public class UserService {
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setActivated(userDto.isActivated());
-//        Set<Authority> managedAuthorities = user.getAuthorities();
-//        managedAuthorities.clear();
-//        userDto.getAuthorities().stream()
-//                .map(authorityRepository::findOne)
-//                .forEach(managedAuthorities::add);
+        String encryptedPassword = passwordEncoder.encode(userDto.getPassword());
+        user.setPassword(encryptedPassword);
+        System.out.println("ffffffffffffffffffffffffffffffff" + user.getAuthorities());
+        Set<Authority> managedAuthorities = userDto.getAuthorities();
+
+        user.setAuthorities(managedAuthorities);
 
         userRepository.save(user);
 

@@ -17,9 +17,7 @@ public class UserDto {
     private String email;
     private String password;
     private boolean activated = false;
-
-
-    private Set<String> authorities;
+    private Set<Authority> authorities;
 
     public UserDto() {
         // Empty constructor needed for Jackson.
@@ -28,13 +26,12 @@ public class UserDto {
     public UserDto(User user) {
         this(user.getId(), user.getLogin(), user.getFirstName(), user.getLastName(),
                 user.getEmail(),user.getPassword(), user.getActivated(),
-                user.getAuthorities().stream().map(Authority::getName)
-                        .collect(Collectors.toSet()));
+                user.getAuthorities());
     }
 
     public UserDto(Long id, String login, String firstName, String lastName,
                    String email,String password, boolean activated,
-                   Set<String> authorities) {
+                   Set<Authority> authorities) {
 
         this.id = id;
         this.login = login;
@@ -102,11 +99,11 @@ public class UserDto {
         this.activated = activated;
     }
 
-    public Set<String> getAuthorities() {
+    public Set<Authority> getAuthorities() {
         return authorities;
     }
 
-    public void setAuthorities(Set<String> authorities) {
+    public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
     }
 
