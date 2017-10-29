@@ -23,6 +23,7 @@ public class Order {
     private DeliveryType deliveryType;
     private OrderStatus orderStatus;
     private Integer orderTotalAmount;
+    private Integer cod;
 
 
     @Id
@@ -137,5 +138,13 @@ public class Order {
         this.orderTotalAmount = orderTotalAmount;
     }
 
+    @Basic
+    @Column(name = "cod")
+    public Integer getCod() {
+        return cod;
+    }
 
+    public void setCod(Integer cod) {
+        this.cod = cod;
+    }
 }

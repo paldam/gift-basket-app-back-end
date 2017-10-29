@@ -11,7 +11,7 @@ public class Customer {
     private String address;
     private String zipCode;
     private String cityName;
-    private Integer phoneNumber;
+    private String phoneNumber;
     private String email;
 
     @Id
@@ -26,7 +26,7 @@ public class Customer {
     }
 
     @Basic
-    @Column(name = "organizationName", length = 60)
+    @Column(name = "organizationName", length = 300)
     public String getOrganizationName() {
         return organizationName;
     }
@@ -36,7 +36,7 @@ public class Customer {
     }
 
     @Basic
-    @Column(name = "name", length = 100)
+    @Column(name = "name", length = 300)
     public String getName() {
         return name;
     }
@@ -47,7 +47,7 @@ public class Customer {
 
 
     @Basic
-    @Column(name = "address", length = 35)
+    @Column(name = "address", length = 350)
     public String getAddress() {
         return address;
     }
@@ -56,7 +56,7 @@ public class Customer {
         this.address = address;
     }
     @Basic
-    @Column(name = "zip_code", length = 35)
+    @Column(name = "zip_code", length = 100)
     public String getZipCode() {
         return zipCode;
     }
@@ -65,7 +65,7 @@ public class Customer {
         this.zipCode = zipCode;
     }
     @Basic
-    @Column(name = "city_name", length = 35)
+    @Column(name = "city_name", length = 100)
     public String getCityName() {
         return cityName;
     }
@@ -75,17 +75,17 @@ public class Customer {
     }
 
     @Basic
-    @Column(name = "phone_number", length = 20)
-    public Integer getPhoneNumber() {
+    @Column(name = "phone_number", length = 300)
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(Integer phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
     @Basic
-    @Column(name = "email", length = 60)
+    @Column(name = "email", length = 300)
     public String getEmail() {
         return email;
     }

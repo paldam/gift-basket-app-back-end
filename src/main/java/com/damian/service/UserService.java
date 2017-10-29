@@ -41,7 +41,6 @@ public class UserService {
         user.setEmail(userDto.getEmail());
         user.setAuthorities(userDto.getAuthorities());
         String encryptedPassword = passwordEncoder.encode(userDto.getPassword());
-        System.out.println("ddedede"+userDto.getPassword());
         user.setPassword(encryptedPassword);
         user.setActivated(true);
         userRepository.save(user);
@@ -56,9 +55,11 @@ public class UserService {
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setActivated(userDto.isActivated());
-        String encryptedPassword = passwordEncoder.encode(userDto.getPassword());
-        user.setPassword(encryptedPassword);
-        System.out.println("ffffffffffffffffffffffffffffffff" + user.getAuthorities());
+
+        if (userDto.getPassword() != null) {
+            String encryptedPassword = passwordEncoder.encode(userDto.getPassword());
+            user.setPassword(encryptedPassword);
+        }
         Set<Authority> managedAuthorities = userDto.getAuthorities();
 
         user.setAuthorities(managedAuthorities);

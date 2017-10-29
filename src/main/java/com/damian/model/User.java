@@ -51,7 +51,7 @@ public class User implements Serializable {
     @Column(nullable = false)
     private boolean activated = false;
 
-    @JsonIgnore
+
     @ManyToMany(fetch =FetchType.EAGER)
     @JoinTable(
             name = "user_authority",
