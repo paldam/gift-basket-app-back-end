@@ -32,27 +32,16 @@ public class User implements Serializable {
     @JsonIgnore
 
     @Size(min = 60, max = 60)
-    @Column(name = "password_hash",length = 60)
+    @Column(name = "password_hash", length = 60)
     private String password;
 
-    @Size(max = 50)
-    @Column(name = "first_name", length = 50)
-    private String firstName;
-
-    @Size(max = 50)
-    @Column(name = "last_name", length = 50)
-    private String lastName;
-
-    @Size(min = 5, max = 100)
-    @Column(length = 100, unique = true)
-    private String email;
 
     @NotNull
     @Column(nullable = false)
     private boolean activated = false;
 
 
-    @ManyToMany(fetch =FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_authority",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
@@ -60,7 +49,6 @@ public class User implements Serializable {
 
 
     private Set<Authority> authorities = new HashSet<Authority>();
-
 
 
     public Set<Authority> getAuthorities() {
@@ -95,30 +83,6 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
 
     public boolean getActivated() {
         return activated;
@@ -140,11 +104,6 @@ public class User implements Serializable {
         if (getLogin() != null ? !getLogin().equals(user.getLogin()) : user.getLogin() != null) return false;
         if (getPassword() != null ? !getPassword().equals(user.getPassword()) : user.getPassword() != null)
             return false;
-        if (getFirstName() != null ? !getFirstName().equals(user.getFirstName()) : user.getFirstName() != null)
-            return false;
-        if (getLastName() != null ? !getLastName().equals(user.getLastName()) : user.getLastName() != null)
-            return false;
-        if (getEmail() != null ? !getEmail().equals(user.getEmail()) : user.getEmail() != null) return false;
         return getAuthorities() != null ? getAuthorities().equals(user.getAuthorities()) : user.getAuthorities() == null;
     }
 
@@ -153,25 +112,8 @@ public class User implements Serializable {
         int result = getId() != null ? getId().hashCode() : 0;
         result = 31 * result + (getLogin() != null ? getLogin().hashCode() : 0);
         result = 31 * result + (getPassword() != null ? getPassword().hashCode() : 0);
-        result = 31 * result + (getFirstName() != null ? getFirstName().hashCode() : 0);
-        result = 31 * result + (getLastName() != null ? getLastName().hashCode() : 0);
-        result = 31 * result + (getEmail() != null ? getEmail().hashCode() : 0);
         result = 31 * result + (getActivated() ? 1 : 0);
         result = 31 * result + (getAuthorities() != null ? getAuthorities().hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", activated=" + activated +
-                ", authorities=" + authorities +
-                '}';
     }
 }

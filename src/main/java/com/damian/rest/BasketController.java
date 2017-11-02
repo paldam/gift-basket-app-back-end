@@ -1,8 +1,7 @@
-package com.damian.rest.controller;
+package com.damian.rest;
 
 import com.damian.model.Basket;
 import com.damian.model.BasketType;
-import com.damian.model.Product;
 import com.damian.repository.BasketDao;
 import com.damian.repository.BasketTypeDao;
 import org.springframework.http.HttpStatus;

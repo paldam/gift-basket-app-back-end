@@ -1,4 +1,4 @@
-package com.damian.rest.controller;
+package com.damian.rest;
 
 import com.damian.model.Basket;
 import com.damian.model.Customer;

@@ -1,4 +1,4 @@
-package com.damian.rest.controller.util;
+package com.damian.rest.util;
 
 import org.springframework.http.HttpHeaders;
 

@@ -59,7 +59,7 @@ public class Product {
     }
 
     @Basic
-    @Column(name = "product_name", nullable = false, length = 100)
+    @Column(name = "product_name", nullable = false, length = 300)
     public String getProductName() {
         return productName;
     }

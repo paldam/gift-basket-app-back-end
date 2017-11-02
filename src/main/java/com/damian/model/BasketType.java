@@ -20,7 +20,7 @@ public class BasketType {
     }
 
     @Basic
-    @Column(name = "basket_type_name", nullable = false, length = 30)
+    @Column(name = "basket_type_name", nullable = false, length = 100)
     public String getBasketTypeName() {
         return basketTypeName;
     }

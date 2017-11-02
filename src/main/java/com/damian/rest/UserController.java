@@ -1,22 +1,17 @@
-package com.damian.rest.controller;
+package com.damian.rest;
 
 import com.damian.dto.UserDto;
 import com.damian.model.Authority;
-import com.damian.model.Customer;
 import com.damian.model.User;
+import com.damian.model.UserPasswordChange;
 import com.damian.repository.AuthorityRepository;
 import com.damian.repository.UserRepository;
-import com.damian.rest.controller.util.HeaderUtil;
+import com.damian.rest.util.HeaderUtil;
 import com.damian.service.UserService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -69,11 +64,11 @@ public class UserController {
     @PutMapping("/users")
     public ResponseEntity updateUser(@RequestBody UserDto userDto) {
 
-        Optional<User> existingUser = userRepository.findOneByEmail(userDto.getEmail());
-        if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDto.getId()))) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "emailexists", "Email already in use")).body(null);
-        }
-        existingUser = userRepository.findOneByLogin(userDto.getLogin().toLowerCase());
+//        Optional<User> existingUser = userRepository.findOneByEmail(userDto.getEmail());
+//        if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDto.getId()))) {
+//            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "emailexists", "Email already in use")).body(null);
+//        }
+        Optional<User> existingUser = userRepository.findOneByLogin(userDto.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDto.getId()))) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "userexists", "Login already in use")).body(null);
         }
@@ -90,6 +85,22 @@ public class UserController {
             userRepository.resetPassword(login);
         });
         return ResponseEntity.ok().body("Zresetowno hasło dla użytkownika "+ login);
+
+
+    }
+
+    @PutMapping("/users/reset/")
+    public ResponseEntity changePassword(@RequestBody UserPasswordChange userPasswordChange ) {
+
+        int status = userService.resetPassword(userPasswordChange);
+
+        if (status ==1){
+            return ResponseEntity.ok().body("Zmieniono hasło użytkownikowi "+ userPasswordChange.getLogin());
+        }else{
+            return ResponseEntity.badRequest().body("Stare hasło jest nie poprawne");
+        }
+
+
 
 
     }

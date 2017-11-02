@@ -56,7 +56,7 @@ public class Customer {
         this.address = address;
     }
     @Basic
-    @Column(name = "zip_code", length = 100)
+    @Column(name = "zip_code", length = 300)
     public String getZipCode() {
         return zipCode;
     }
@@ -65,7 +65,7 @@ public class Customer {
         this.zipCode = zipCode;
     }
     @Basic
-    @Column(name = "city_name", length = 100)
+    @Column(name = "city_name", length = 300)
     public String getCityName() {
         return cityName;
     }

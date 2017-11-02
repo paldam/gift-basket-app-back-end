@@ -17,7 +17,7 @@ public class Basket {
 
 
     @Basic
-    @Column(name = "basket_name", nullable = false, length = 40)
+    @Column(name = "basket_name", nullable = false, length = 100)
     public String getBasketName() {
         return basketName;
     }

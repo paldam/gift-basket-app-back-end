@@ -38,7 +38,7 @@ public class Order {
     }
 
     @Basic
-    @Column(name = "fv_number")
+    @Column(name = "fv_number", length = 300)
     public String getOrderFvNumber() {
         return orderFvNumber;
     }
@@ -48,7 +48,7 @@ public class Order {
     }
 
     @Basic
-    @Column(name = "added_by_user")
+    @Column(name = "added_by_user", length = 300)
     public String getUserName() {
         return userName;
     }
@@ -57,7 +57,7 @@ public class Order {
         this.userName = userName;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL,fetch =FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     public Customer getCustomer() {
         return customer;
@@ -89,7 +89,7 @@ public class Order {
     }
 
     @Basic
-    @Column(name = "additional_information")
+    @Column(name = "additional_information", length = 1000)
     public String getAdditionalInformation() {
         return additionalInformation;
     }
