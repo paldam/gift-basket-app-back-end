@@ -2,6 +2,7 @@ package com.damian.service;
 
 import com.damian.model.Customer;
 import com.damian.model.Order;
+import com.damian.model.OrderItem;
 import com.damian.repository.CustomerDao;
 import com.damian.repository.OrderDao;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,23 @@ public class OrderService {
         Customer customer = order.getCustomer();
 
         if (customer.getCustomerId() != null){
-            orderDao.save(order);
+            Customer customerToSave = order.getCustomer();
+            //order.setCustomer(null);
+            customerDao.saveAndFlush(customer);
+            orderDao.saveAndFlush(order);
+
+            //orderDao.de
         }else{
             Customer savedCustomer = customerDao.saveAndFlush(customer);
             order.setCustomer(savedCustomer);
             orderDao.save(order);
         }
+
+        order.getOrderItems().forEach(orderItem->{
+            orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+                System.out.println(basketItems.getProduct().getProductName() + basketItems.getQuantity());
+
+            });
+        });
     }
 }

@@ -4,9 +4,11 @@ import com.damian.model.*;
 import com.damian.repository.DeliveryTypeDao;
 import com.damian.repository.OrderDao;
 import com.damian.repository.OrderStatusDao;
+import com.damian.repository.ProductDao;
 import com.damian.service.OrderService;
 import com.damian.util.PdfGenerator;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -24,11 +27,12 @@ public class OrderController {
     private OrderDao orderDao;
     private OrderService orderService;
     private OrderStatusDao orderStatusDao;
-
-    OrderController(OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao,OrderStatusDao orderStatusDao){
+private ProductDao productDao;
+    OrderController(OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao){
         this.orderDao=orderDao;
         this.orderService=orderService;
         this.orderStatusDao=orderStatusDao;
+        this.productDao=productDao;
     }
     @CrossOrigin
     @GetMapping(value = "/order/{id}")
@@ -45,11 +49,30 @@ public class OrderController {
     }
 
     @CrossOrigin
+    @GetMapping("/orders/daterange")
+    ResponseEntity<List<Order>> getOrdersByDateRange(
+            @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+            @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
+        List<Order> ordersList = orderDao.findOrdersByDateRange(startDate,endDate);
+        return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping("/order_status")
     ResponseEntity<List<OrderStatus>> getOrderStatus(){
         List<OrderStatus> ordersStatusList = orderStatusDao.findAllBy();
         return new ResponseEntity<List<OrderStatus>>(ordersStatusList, HttpStatus.OK);
     }
+
+    @CrossOrigin
+    @GetMapping("/orders/products_to_order/daterange")
+    ResponseEntity<List<Order>> getProductsToOrder(
+            @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+            @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
+        List<Order> productToOrderList = orderDao.findProductToOrder(startDate,endDate);
+        return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
+    }
+
 
     @CrossOrigin
     @PostMapping("/orders")

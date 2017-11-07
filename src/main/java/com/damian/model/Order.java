@@ -57,7 +57,7 @@ public class Order {
         this.userName = userName;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch =FetchType.EAGER)
+    @ManyToOne(fetch =FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     public Customer getCustomer() {
         return customer;

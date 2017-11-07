@@ -9,6 +9,9 @@ public class OrderItem {
     private Integer orderItemId;
     private Basket basket;
     private Integer quantity;
+    //private Order order;
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,4 +44,13 @@ public class OrderItem {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+
+//    @ManyToOne
+//    public Order getOrder() {
+//        return order;
+//    }
+//
+//    public void setOrder(Order order) {
+//        this.order = order;
+//    }
 }
