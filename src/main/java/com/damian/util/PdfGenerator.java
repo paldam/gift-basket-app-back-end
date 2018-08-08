@@ -8,6 +8,7 @@ import com.itextpdf.text.pdf.*;
 import java.text.SimpleDateFormat;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +16,14 @@ import java.util.logging.Logger;
 
 public class PdfGenerator {
 
-    public static ByteArrayInputStream generatePdf(Order order) throws IOException {
+    static  Integer orderTypeId ;
+    static Order order;
+
+    public static ByteArrayInputStream generatePdf(Order orderToPrint) throws IOException {
+
+
+          orderTypeId = orderToPrint.getDeliveryType().getDeliveryTypeId();
+          order = orderToPrint;
 
 
         Document document = new Document();
@@ -89,7 +97,7 @@ public class PdfGenerator {
             cell6.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
             table.addCell(cell6);
 
-            PdfPCell cell7 = new PdfPCell(new Phrase(order.getDeliveryType().getDeliveryTypeName(),font6));
+            PdfPCell cell7 = new PdfPCell(new Phrase(order.getDeliveryType().getDeliveryTypeName(),font2));
             cell7.setColspan(3);
             cell7.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell7.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
@@ -243,7 +251,9 @@ public class PdfGenerator {
             cell24.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
             table3.addCell(cell24);
 //row10
-            PdfPCell cell25 = new PdfPCell(new Phrase(order.getAdditionalInformation(),font3));
+            
+
+            PdfPCell cell25 = new PdfPCell(new Phrase(getAdditionalInformtionMassage(),font3));
             cell25.setColspan(10);
             cell25.setPaddingLeft(10);
             cell25.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -295,5 +305,23 @@ public class PdfGenerator {
         }
 
         return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    private static String getAdditionalInformtionMassage(){
+
+        StringBuilder additionalInformationTmp = new StringBuilder();
+
+        if(Arrays.asList(5,6,7).contains(orderTypeId)) {
+            additionalInformationTmp
+                    .append("Pobranie ")
+                    .append((double)order.getCod()/100)
+                    .append(" zł | ")
+                    .append(order.getAdditionalInformation());
+        } else{
+            additionalInformationTmp.append(order.getAdditionalInformation())  ;
+        }
+
+        return additionalInformationTmp.toString();
+
     }
 }
