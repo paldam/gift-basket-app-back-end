@@ -15,4 +15,7 @@ public interface BasketDao extends CrudRepository<Basket,Long> {
 
     @Query(value = "SELECT * FROM baskets WHERE basket_type != 99", nativeQuery = true)
     public List<Basket> findAllWithoutDeleted();
+
+    @Query(value = "SELECT * FROM baskets WHERE basket_type = 99", nativeQuery = true)
+    public List<Basket> findAllDeleted();
 }

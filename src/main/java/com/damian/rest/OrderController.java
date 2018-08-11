@@ -6,6 +6,7 @@ import com.damian.repository.OrderDao;
 import com.damian.repository.OrderStatusDao;
 import com.damian.repository.ProductDao;
 import com.damian.service.OrderService;
+import com.damian.util.PdfDeliveryConfirmation;
 import com.damian.util.PdfGenerator;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -90,6 +91,25 @@ private ProductDao productDao;
         Order orderToGenerate = orderDao.findOne(id);
        PdfGenerator pdfGenerator = new PdfGenerator();
         ByteArrayInputStream bis = pdfGenerator.generatePdf(orderToGenerate);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=order.pdf");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(bis));
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/order/deliverypdf/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> getDeliveryPdf(@PathVariable Long id) throws IOException {
+
+
+        Order orderToGenerate = orderDao.findOne(id);
+        PdfDeliveryConfirmation pdfDeliveryConfirmation  = new PdfDeliveryConfirmation();
+        ByteArrayInputStream bis = pdfDeliveryConfirmation.generatePdf(orderToGenerate);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=order.pdf");
