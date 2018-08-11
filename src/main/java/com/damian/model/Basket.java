@@ -14,6 +14,7 @@ public class Basket {
     private BasketType basketType;
     private List<BasketItems> basketItems;
     private Integer basketTotalPrice;
+    private String season;
 
 
     @Basic
@@ -66,5 +67,15 @@ public class Basket {
 
     public void setBasketTotalPrice(Integer basketTotalPrice) {
         this.basketTotalPrice = basketTotalPrice;
+    }
+
+    @Basic
+    @Column(name = "season", length = 200)
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
     }
 }
