@@ -25,10 +25,7 @@ import javax.servlet.MultipartConfigElement;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -101,85 +98,6 @@ public class OrderController {
         return new ResponseEntity<Order>(order,HttpStatus.CREATED);
     }
 
-
-//    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-//    public @ResponseBody ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) throws IllegalStateException, IOException {
-//
-//                DbFile uploadedFile = new DbFile();
-//                uploadedFile.setFileName(file.getOriginalFilename());
-//                uploadedFile.setFileType(file.getContentType());
-//                uploadedFile.setData(file.getBytes());
-//
-//                dbFileDao.save(uploadedFile);
-//
-//        return new ResponseEntity<>("ds",HttpStatus.CREATED);
-//    }
-    @CrossOrigin
-    @PostMapping("/uploadfiles")
-    public ResponseEntity uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @RequestParam("orderId") Long orderId)  {
-
-
-          dbFileService.uploadFiles(files,orderId);
-
-        return new ResponseEntity<>("ds",HttpStatus.CREATED);
-    }
-
-    @CrossOrigin
-    @GetMapping("/file/{fileId}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable Long fileId) {
-
-
-        DbFile dbFile = dbFileDao.findOne(fileId);
-
-        HttpHeaders header  = new HttpHeaders();
-        header.setAccessControlExposeHeaders(Collections.singletonList("Content-Disposition"));;
-        header.set("Content-Disposition", "attachment; filename=" + dbFile.getFileName());
-
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(dbFile.getFileType()))
-                .headers(header)
-                .body(new ByteArrayResource(dbFile.getData()));
-    }
-
-
-    @CrossOrigin
-    @RequestMapping(value = "/order/pdf/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<InputStreamResource> getPdf(@PathVariable Long id) throws IOException {
-
-
-        Order orderToGenerate = orderDao.findOne(id);
-       PdfGenerator pdfGenerator = new PdfGenerator();
-        ByteArrayInputStream bis = pdfGenerator.generatePdf(orderToGenerate);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=order.pdf");
-        new InputStreamResource(bis)  ;
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(bis));
-    }
-
-    @CrossOrigin
-    @RequestMapping(value = "/order/deliverypdf/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<InputStreamResource> getDeliveryPdf(@PathVariable Long id) throws IOException {
-
-
-        Order orderToGenerate = orderDao.findOne(id);
-        PdfDeliveryConfirmation pdfDeliveryConfirmation  = new PdfDeliveryConfirmation();
-        ByteArrayInputStream bis = pdfDeliveryConfirmation.generatePdf(orderToGenerate);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=order.pdf");
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(bis));
-    }
 
     @Bean(name = "multipartResolver")     
     public CommonsMultipartResolver multipartResolver() {

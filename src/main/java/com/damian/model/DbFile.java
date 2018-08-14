@@ -1,4 +1,6 @@
 package com.damian.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.sql.Blob;
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ public class DbFile {
     @Column(name = "file_type", length = 100)
     private String fileType;
     
-
+    @JsonIgnore
     @Basic
     @Column(name = "data", columnDefinition = "LONGBLOB")
     private byte[] data;

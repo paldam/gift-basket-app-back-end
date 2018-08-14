@@ -11,5 +11,7 @@ import java.util.List;
 public interface DbFileDao extends JpaRepository<DbFile,Long> {
     @Override
     public List<DbFile> findAll() ;
+    public List<DbFile> findByOrderId(Long id)   ;
+    public DbFile findByFileId(Long id);
 
 }
