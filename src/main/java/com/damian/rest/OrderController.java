@@ -1,39 +1,56 @@
 package com.damian.rest;
 
 import com.damian.model.*;
-import com.damian.repository.DeliveryTypeDao;
-import com.damian.repository.OrderDao;
-import com.damian.repository.OrderStatusDao;
-import com.damian.repository.ProductDao;
+import com.damian.repository.*;
+import com.damian.service.DbFileService;
 import com.damian.service.OrderService;
 import com.damian.util.PdfDeliveryConfirmation;
 import com.damian.util.PdfGenerator;
+import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.MultipartConfigElement;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class OrderController {
 
+    private static final Logger logger = Logger.getLogger(OrderController.class);
+
     private OrderDao orderDao;
     private OrderService orderService;
     private OrderStatusDao orderStatusDao;
-private ProductDao productDao;
-    OrderController(OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao){
+    private ProductDao productDao;
+    private DbFileDao dbFileDao;
+    private DbFileService dbFileService;
+    OrderController(DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao,
+                    DbFileDao dbFileDao){
         this.orderDao=orderDao;
         this.orderService=orderService;
         this.orderStatusDao=orderStatusDao;
         this.productDao=productDao;
+        this.dbFileDao= dbFileDao;
+        this.dbFileService = dbFileService;
+        
     }
     @CrossOrigin
     @GetMapping(value = "/order/{id}")
@@ -83,6 +100,49 @@ private ProductDao productDao;
 
         return new ResponseEntity<Order>(order,HttpStatus.CREATED);
     }
+
+
+//    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+//    public @ResponseBody ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) throws IllegalStateException, IOException {
+//
+//                DbFile uploadedFile = new DbFile();
+//                uploadedFile.setFileName(file.getOriginalFilename());
+//                uploadedFile.setFileType(file.getContentType());
+//                uploadedFile.setData(file.getBytes());
+//
+//                dbFileDao.save(uploadedFile);
+//
+//        return new ResponseEntity<>("ds",HttpStatus.CREATED);
+//    }
+    @CrossOrigin
+    @PostMapping("/uploadfiles")
+    public ResponseEntity uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, @RequestParam("orderId") Long orderId)  {
+
+
+          dbFileService.uploadFiles(files,orderId);
+
+        return new ResponseEntity<>("ds",HttpStatus.CREATED);
+    }
+
+    @CrossOrigin
+    @GetMapping("/file/{fileId}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable Long fileId) {
+
+
+        DbFile dbFile = dbFileDao.findOne(fileId);
+
+        HttpHeaders header  = new HttpHeaders();
+        header.setAccessControlExposeHeaders(Collections.singletonList("Content-Disposition"));;
+        header.set("Content-Disposition", "attachment; filename=" + dbFile.getFileName());
+
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(dbFile.getFileType()))
+                .headers(header)
+                .body(new ByteArrayResource(dbFile.getData()));
+    }
+
+
     @CrossOrigin
     @RequestMapping(value = "/order/pdf/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<InputStreamResource> getPdf(@PathVariable Long id) throws IOException {
@@ -94,7 +154,7 @@ private ProductDao productDao;
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=order.pdf");
-
+        new InputStreamResource(bis)  ;
         return ResponseEntity
                 .ok()
                 .headers(headers)
@@ -119,6 +179,13 @@ private ProductDao productDao;
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(bis));
+    }
+
+    @Bean(name = "multipartResolver")     
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(112000000); //12MB
+        return multipartResolver;
     }
 
 }
