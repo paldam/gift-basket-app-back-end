@@ -11,4 +11,6 @@ import java.util.List;
  */
 public interface CustomerDao extends JpaRepository<Customer,Long> {
     public List<Customer> findAllBy();
+
+
 }
