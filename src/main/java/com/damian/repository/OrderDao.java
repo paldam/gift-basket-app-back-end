@@ -19,6 +19,10 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     //public Order (Integer id);
 
 
+    @Query(value = "SELECT * FROM orders WHERE customer_id = ?1", nativeQuery = true)
+    public List<Order> findByCustomerId(Integer id);
+
+
 
     @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ORDER BY order_date DESC ", nativeQuery = true)
     public List<Order> findAllWithoutDeleted();

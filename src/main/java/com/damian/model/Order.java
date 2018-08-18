@@ -26,6 +26,8 @@ public class Order {
     private OrderStatus orderStatus;
     private Integer orderTotalAmount;
     private Integer cod;
+    private Long addressId;
+
 
 
     @Id
@@ -150,5 +152,13 @@ public class Order {
         this.cod = cod;
     }
 
+    @Basic
+    @Column(name = "address_id")
+    public Long getAddressId() {
+        return addressId;
+    }
 
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
+    }
 }
