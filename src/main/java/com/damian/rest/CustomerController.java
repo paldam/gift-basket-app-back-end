@@ -45,7 +45,7 @@ public class CustomerController {
     @PostMapping("/customers2")
 
     void getCustomers2() {
-        orderService.changeDBStructure();
+        //orderService.changeDBStructure();
 
     }
 

@@ -26,7 +26,7 @@ public class Order {
     private OrderStatus orderStatus;
     private Integer orderTotalAmount;
     private Integer cod;
-    private Long addressId;
+    private Address address;
 
 
 
@@ -152,13 +152,13 @@ public class Order {
         this.cod = cod;
     }
 
-    @Basic
-    @Column(name = "address_id")
-    public Long getAddressId() {
-        return addressId;
+    @ManyToOne(cascade = CascadeType.MERGE,fetch =FetchType.EAGER)
+    @JoinColumn(name = "address_id")
+    public Address getAddress() {
+        return address;
     }
 
-    public void setAddressId(Long addressId) {
-        this.addressId = addressId;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }

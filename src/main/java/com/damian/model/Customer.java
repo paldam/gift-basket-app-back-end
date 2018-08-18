@@ -1,6 +1,9 @@
 package com.damian.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "customers")
@@ -8,10 +11,7 @@ public class Customer {
     private Integer customerId;
     private String organizationName;
     private String name;
-    private String address;
-    private String zipCode;
-    private String cityName;
-    private String phoneNumber;
+    private List<Address> addresses;
     private String email;
 
     @Id
@@ -45,43 +45,14 @@ public class Customer {
         this.name = name;
     }
 
-
-    @Basic
-    @Column(name = "address", length = 350)
-    public String getAddress() {
-        return address;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,fetch =FetchType.EAGER)
+    public List<Address> getAddresses() {
+        return addresses;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-    @Basic
-    @Column(name = "zip_code", length = 300)
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
-    @Basic
-    @Column(name = "city_name", length = 300)
-    public String getCityName() {
-        return cityName;
-    }
-
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
-
-    @Basic
-    @Column(name = "phone_number", length = 300)
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
     }
 
     @Basic
@@ -95,22 +66,6 @@ public class Customer {
     }
 
 
-    public String AddressDesc(){
-        return
-           address + " " + zipCode +   " " + cityName ;
-    }
 
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "customerId=" + customerId +
-                ", organizationName='" + organizationName + '\'' +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", zipCode='" + zipCode + '\'' +
-                ", cityName='" + cityName + '\'' +
-                ", phoneNumber=" + phoneNumber +
-                ", email='" + email + '\'' +
-                '}';
-    }
+
 }

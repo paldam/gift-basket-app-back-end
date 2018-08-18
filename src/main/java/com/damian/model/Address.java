@@ -1,5 +1,8 @@
 package com.damian.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 
@@ -7,18 +10,17 @@ import javax.persistence.*;
 @Table(name = "addresses")
 public class Address {
     private Long addressId;
-    private Integer customerId;
     private String address;
     private String zipCode;
     private String cityName;
     private String phoneNumber;
+    private Customer customer;
 
 
     public Address() {
     }
 
     public Address(Integer  customerId, String address, String zipCode, String cityName, String phoneNumber) {
-        this.customerId = customerId;
         this.address = address;
         this.zipCode = zipCode;
         this.cityName = cityName;
@@ -35,17 +37,18 @@ public class Address {
     public void setAddressId(Long addressId) {
         this.addressId = addressId;
     }
-    
 
-    @Column(name = "customer_id",nullable = false)
-    public Integer  getCustomerId() {
-        return customerId;
+
+    @JsonBackReference
+    @ManyToOne (cascade = CascadeType.MERGE,fetch =FetchType.EAGER)
+    @JoinColumn(name = "customer_id")
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(Integer  customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
-
 
     @Basic
     @Column(name = "address", length = 350)
@@ -85,5 +88,10 @@ public class Address {
         this.phoneNumber = phoneNumber;
     }
 
-    
+
+
+    public String AddressDesc(){
+        return
+                address + " " + zipCode +   " " + cityName ;
+    }
 }

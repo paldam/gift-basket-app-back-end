@@ -33,6 +33,8 @@ public class OrderService {
 
         Customer customer = order.getCustomer();
 
+        logger.info(order.getCustomer().getCustomerId());
+
         if (customer.getCustomerId() != null) {
             Customer customerToSave = order.getCustomer();
             //order.setCustomer(null);
@@ -55,36 +57,36 @@ public class OrderService {
     }
 
 
-    @Transactional
-    public void changeDBStructure() {
-
-
-        List<Customer> customerList = customerDao.findAllBy();
-
-
-        customerList.forEach(customer -> {
-            Address address = new Address(customer.getCustomerId(), customer.getAddress(), customer.getZipCode(), customer.getCityName(), customer.getPhoneNumber());
-
-
-            Long tempAddressId;
-            Address addressTmp = addressDao.save(address);
-            tempAddressId = addressTmp.getAddressId();
-
-
-            List<Order> orderListWithSpecificCustomer = orderDao.findByCustomerId(customer.getCustomerId());
-
-              logger.info(orderListWithSpecificCustomer);
-
-            orderListWithSpecificCustomer.forEach(order -> {
-
-                order.setAddressId(tempAddressId);
-                orderDao.save(order);
-            });
-
-        });
-
-
-    }
+//    @Transactional
+//    public void changeDBStructure() {
+//
+//
+//        List<Customer> customerList = customerDao.findAllBy();
+//
+//
+//        customerList.forEach(customer -> {
+//            Address address = new Address(customer.getCustomerId(), customer.getAddress(), customer.getZipCode(), customer.getCityName(), customer.getPhoneNumber());
+//
+//
+//            Long tempAddressId;
+//            Address addressTmp = addressDao.save(address);
+//            tempAddressId = addressTmp.getAddressId();
+//
+//
+//            List<Order> orderListWithSpecificCustomer = orderDao.findByCustomerId(customer.getCustomerId());
+//
+//              logger.info(orderListWithSpecificCustomer);
+//
+//            orderListWithSpecificCustomer.forEach(order -> {
+//
+//                order.setAddressId(tempAddressId);
+//                orderDao.save(order);
+//            });
+//
+//        });
+//
+//
+//    }
 
 }
 

@@ -129,7 +129,7 @@ public class PdfGenerator {
             cell11.setMinimumHeight(30);
             table.addCell(cell11);
 
-            PdfPCell cell12 = new PdfPCell(new Phrase(order.getCustomer().AddressDesc(),font2));
+            PdfPCell cell12 = new PdfPCell(new Phrase(order.getAddress().AddressDesc(),font2));
             cell12.setColspan(7);
             cell12.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell12.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
@@ -188,10 +188,10 @@ public class PdfGenerator {
 
             String phoneTmp = "";
 
-            if (order.getCustomer().getPhoneNumber()==null){
+            if (order.getAddress().getPhoneNumber()==null){
                 phoneTmp = "brak";
             }else{
-                phoneTmp = order.getCustomer().getPhoneNumber().toString();
+                phoneTmp = order.getAddress().getPhoneNumber().toString();
             }
             PdfPCell cell20 = new PdfPCell(new Phrase(phoneTmp,font3));
             cell20.setColspan(2);
