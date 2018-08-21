@@ -1,5 +1,6 @@
 package com.damian.rest;
 
+import com.damian.dto.CustomerAddressDTO;
 import com.damian.model.Address;
 import com.damian.model.Basket;
 import com.damian.model.Customer;
@@ -7,6 +8,7 @@ import com.damian.model.Order;
 import com.damian.repository.AddressDao;
 import com.damian.repository.CustomerDao;
 import com.damian.repository.OrderDao;
+import com.damian.service.CustomerService;
 import com.damian.service.OrderService;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -23,12 +25,14 @@ public class CustomerController {
     private AddressDao addressDao;
     private OrderDao orderDao;
     private OrderService orderService;
+    private CustomerService customerService;
 
-    public CustomerController(CustomerDao customerDao , AddressDao addressDao, OrderDao orderDao, OrderService orderService){
+    public CustomerController(CustomerDao customerDao , AddressDao addressDao, OrderDao orderDao, OrderService orderService, CustomerService customerService){
         this.customerDao=customerDao;
         this.addressDao=addressDao;
         this.orderDao = orderDao;
         this.orderService= orderService;
+        this.customerService= customerService;
     }
 
     @CrossOrigin
@@ -38,6 +42,15 @@ public class CustomerController {
         return new ResponseEntity<List<Customer>>(customerList, HttpStatus.OK);
     }
 
+    @CrossOrigin
+    @GetMapping("/customer/{id}")
+    ResponseEntity<Customer> getCustomer(@PathVariable Integer id){
+        Customer customer = customerDao.findByCustomerId(id) ;
+        return new ResponseEntity<Customer>(customer, HttpStatus.OK);
+    }
+
+
+    
     @CrossOrigin
     @PostMapping("/customers")
     ResponseEntity<Customer> saveCustomers(@RequestBody Customer customer){
@@ -53,5 +66,14 @@ public class CustomerController {
         //orderService.changeDBStructure();
 
     }
+
+
+    @CrossOrigin
+    @GetMapping("/customersaddr")
+    ResponseEntity<List<CustomerAddressDTO>> getCustomersWithAddr(){
+        List<CustomerAddressDTO> customerList = customerService.getCustomerWithAddressList();
+        return new ResponseEntity<List<CustomerAddressDTO>>(customerList, HttpStatus.OK);
+    }
+
 
 }

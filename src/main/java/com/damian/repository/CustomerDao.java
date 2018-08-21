@@ -4,6 +4,7 @@ import com.damian.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 /**
@@ -11,6 +12,7 @@ import java.util.List;
  */
 public interface CustomerDao extends JpaRepository<Customer,Long> {
     public List<Customer> findAllBy();
+    public Customer findByCustomerId(Integer id) ;
 
 
 }

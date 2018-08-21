@@ -64,6 +64,14 @@ public class OrderController {
     }
 
     @CrossOrigin
+    @GetMapping("/order/customer/{id}")
+    ResponseEntity<List<Order>> getOrdersByCustomer( @PathVariable Integer id) {
+
+        List<Order> ordersList = orderDao.findByCustomerId(id);
+        return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping("/orders/daterange")
     ResponseEntity<List<Order>> getOrdersByDateRange(
             @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,

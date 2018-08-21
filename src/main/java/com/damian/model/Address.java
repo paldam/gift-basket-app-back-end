@@ -15,6 +15,7 @@ public class Address {
     private String cityName;
     private String phoneNumber;
     private Customer customer;
+    private byte isPrimaryAddress;
 
 
     public Address() {
@@ -88,7 +89,15 @@ public class Address {
         this.phoneNumber = phoneNumber;
     }
 
+    @Basic
+    @Column(name = "is_primary_address",nullable = false)
+    public byte getIsPrimaryAddress() {
+        return isPrimaryAddress;
+    }
 
+    public void setIsPrimaryAddress(byte isPrimaryAddress) {
+        this.isPrimaryAddress = isPrimaryAddress;
+    }
 
     public String AddressDesc(){
         return

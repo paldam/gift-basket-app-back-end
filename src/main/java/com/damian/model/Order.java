@@ -152,7 +152,7 @@ public class Order {
         this.cod = cod;
     }
 
-    @ManyToOne(cascade = CascadeType.MERGE,fetch =FetchType.EAGER)
+    @ManyToOne(fetch =FetchType.EAGER)
     @JoinColumn(name = "address_id")
     public Address getAddress() {
         return address;

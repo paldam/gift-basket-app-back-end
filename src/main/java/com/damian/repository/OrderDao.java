@@ -24,6 +24,7 @@ public interface OrderDao extends JpaRepository<Order,Long> {
 
 
 
+
     @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ORDER BY order_date DESC ", nativeQuery = true)
     public List<Order> findAllWithoutDeleted();
 
