@@ -146,10 +146,10 @@ public class PdfDeliveryConfirmation {
 
             String phoneTmp = "";
 
-        if (order.getAddress().getPhoneNumber()==null){
+        if (order.getCustomer().getPhoneNumber()==null){
             phoneTmp = "brak";
         }else{
-            phoneTmp = order.getAddress().getPhoneNumber().toString();
+            phoneTmp = order.getCustomer().getPhoneNumber().toString();
         }
             PdfPCell cell20 = new PdfPCell(new Phrase(phoneTmp,font3));
             cell20.setColspan(3);

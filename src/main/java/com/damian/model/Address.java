@@ -13,7 +13,6 @@ public class Address {
     private String address;
     private String zipCode;
     private String cityName;
-    private String phoneNumber;
     private Customer customer;
     private byte isPrimaryAddress;
 
@@ -21,11 +20,10 @@ public class Address {
     public Address() {
     }
 
-    public Address(Integer  customerId, String address, String zipCode, String cityName, String phoneNumber) {
+    public Address(Integer  customerId, String address, String zipCode, String cityName) {
         this.address = address;
         this.zipCode = zipCode;
         this.cityName = cityName;
-        this.phoneNumber = phoneNumber;
     }
 
     @Id
@@ -79,15 +77,6 @@ public class Address {
         this.cityName = cityName;
     }
 
-    @Basic
-    @Column(name = "phone_number", length = 300)
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
 
     @Basic
     @Column(name = "is_primary_address",nullable = false)

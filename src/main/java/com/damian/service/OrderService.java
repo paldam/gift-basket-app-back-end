@@ -65,7 +65,7 @@ public class OrderService {
 //
 //
 //        customerList.forEach(customer -> {
-//            Address address = new Address(customer.getCustomerId(), customer.getAddress(), customer.getZipCode(), customer.getCityName(), customer.getPhoneNumber());
+//            Address address = new Address(customer.getCustomerId(), customer.getAddress(), customer.getZipCode(), customer.getCityName());
 //
 //
 //            Long tempAddressId;

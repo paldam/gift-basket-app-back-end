@@ -30,11 +30,12 @@ public class CustomerAddressDTO {
         this.organizationName = cust.getOrganizationName();
         this.name = cust.getName();
         this.email = cust.getEmail();
+        this.phoneNumber = cust.getPhoneNumber();
         this.addressId = addr.getAddressId();
         this.address = addr.getAddress();
         this.zipCode = addr.getZipCode();
         this.cityName = addr.getCityName();
-        this.phoneNumber = addr.getPhoneNumber();
+
     }
 
 

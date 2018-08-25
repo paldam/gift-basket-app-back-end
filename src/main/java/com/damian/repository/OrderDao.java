@@ -16,6 +16,7 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     public List<Order> findAllByOrderByOrderIdDesc();
     public List<Order> findAllByOrderStatus_OrderStatusId(Integer i);
     public Order findByOrderId(Integer id);
+    public Order findByAddress_AddressId(Long id);
     //public Order (Integer id);
 
 

@@ -13,6 +13,7 @@ public class Customer {
     private String name;
     private List<Address> addresses;
     private String email;
+    private String phoneNumber;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,7 +66,13 @@ public class Customer {
         this.email = email;
     }
 
+    @Basic
+    @Column(name = "phone_number", length = 300)
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-
-
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 }

@@ -33,8 +33,9 @@ public class ProductsController {
     @GetMapping(value = "/products",produces = "application/json; charset=utf-8")
     ResponseEntity<List<Product>> listAllProducts(){
 
-        List<Product> productsList = productsDao.findAllWithoutDeleted();
-        return new ResponseEntity<List<Product>>(productsList, HttpStatus.OK);
+            List<Product> productsList = productsDao.findAllWithoutDeleted();
+            return new ResponseEntity<List<Product>>(productsList, HttpStatus.OK);
+
 
     }
 
@@ -43,8 +44,11 @@ public class ProductsController {
     @GetMapping(value = "/products/{id}",produces = "application/json; charset=utf-8")
     ResponseEntity<Product> getProductById(@PathVariable Integer id){
 
-        Product product = productsDao.findById(id);
-        return new ResponseEntity<Product>(product, HttpStatus.OK);
+
+
+            Product product = productsDao.findById(id);
+            return new ResponseEntity<Product>(product, HttpStatus.OK);
+
     }
 
     @CrossOrigin
