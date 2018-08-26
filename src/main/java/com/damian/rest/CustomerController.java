@@ -75,5 +75,13 @@ public class CustomerController {
         return new ResponseEntity<List<CustomerAddressDTO>>(customerList, HttpStatus.OK);
     }
 
+    @CrossOrigin
+    @DeleteMapping ("/customer/{id}")
+    ResponseEntity deleteCustomer(@PathVariable Integer id) {
+
+        return customerService.deleteCustomer(id) ;
+
+    }
+
 
 }

@@ -43,13 +43,21 @@ public class AddressController {
     }
 
     @CrossOrigin
-    @DeleteMapping("/address/")
+    @DeleteMapping(value = "/address/",produces = "application/json; charset=utf-8")
     ResponseEntity deleteAddress(@RequestParam Long id, Integer customerId) {
 
-
-
-        System.out.println("cust: "+ customerId);
         return addresService.deleteAddr(id,customerId);
+
+    }
+
+    @CrossOrigin
+    @DeleteMapping ("/primaryaddress/")
+    ResponseEntity changePrimaryAddr(@RequestParam Long id, Integer customerId) {
+        
+
+        addresService.changePrimaryAddr(id,customerId);
+
+        return new ResponseEntity(HttpStatus.OK)  ;
 
     }
 }

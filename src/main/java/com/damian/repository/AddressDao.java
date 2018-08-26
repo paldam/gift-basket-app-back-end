@@ -25,7 +25,23 @@ public interface AddressDao extends JpaRepository<Address,Long> {
     @Query(value = "DELETE FROM addresses WHERE address_id = ?1", nativeQuery = true)
     public void deleteByAddressId(Long id);
 
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM addresses WHERE customer_id = ?1", nativeQuery = true)
+    public void deleteByCustomerId(Integer id);
+
+
     @Query(value = "SELECT * FROM addresses WHERE customer_id = ?1", nativeQuery = true)
     public List<Address> findAllAddrByCustomerId(Integer id);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE addresses SET is_primary_address = 0 WHERE customer_id = ?1", nativeQuery = true)
+    public void setAllCustomerAdrressPrimaryNo(Integer id);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE addresses SET is_primary_address = 1 WHERE address_id = ?1", nativeQuery = true)
+    public void setAddreesAsPrimary(Long id);
 
 }

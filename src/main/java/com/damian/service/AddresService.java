@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -55,12 +56,18 @@ public class AddresService {
 
     }
 
+    @Transactional
+    public void changePrimaryAddr(Long id, Integer customerId){
+         this.addressDao.setAllCustomerAdrressPrimaryNo(customerId);
+         this.addressDao.setAddreesAsPrimary(id);
+    }
+
 
     private boolean existsAtLeastOneOrder(Long id){
 
-        Order orderTmp = orderDao.findByAddress_AddressId(id);
+        List<Order> ordersTmp = orderDao.findByAddress_AddressId(id);
 
-        if (Objects.isNull(orderTmp) ) {
+        if (ordersTmp.isEmpty() ) {
             return false;
         }else{
             return true;
