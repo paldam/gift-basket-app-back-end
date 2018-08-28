@@ -3,6 +3,7 @@ package com.damian.repository;
 import com.damian.model.Basket;
 import com.damian.model.Product;
 import com.damian.model.ProductToOrder;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -27,6 +28,11 @@ public interface ProductDao extends CrudRepository<Product,Long> {
 
     @Query(value = "SELECT * FROM products WHERE is_archival != 1 or is_archival = null", nativeQuery = true)
     public List<Product> findAllWithoutDeleted();
+
+    @Transactional
+    @Modifying
+    @Query(value ="update products set supplier_id =  ?1 WHERE id = ?2", nativeQuery = true)
+    void update(Integer supp , Integer prod_id);
 
 
 }

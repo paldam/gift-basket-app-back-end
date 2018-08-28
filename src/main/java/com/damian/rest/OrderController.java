@@ -107,6 +107,30 @@ public class OrderController {
     }
 
 
+    @CrossOrigin
+    @DeleteMapping ("/order/{id}")
+    ResponseEntity deleteOrderPermanent(@PathVariable Long id) {
+        
+        orderDao.delete(id);
+
+
+        return new ResponseEntity(HttpStatus.OK)  ;
+
+    }
+
+
+    @CrossOrigin
+    @DeleteMapping ("/order/aaaa")
+    ResponseEntity change() {
+
+        orderService.change2();
+
+
+        return new ResponseEntity(HttpStatus.OK)  ;
+
+    }
+
+
     @Bean(name = "multipartResolver")     
     public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();

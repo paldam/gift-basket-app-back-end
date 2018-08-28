@@ -15,7 +15,8 @@ public class Product {
     private Integer stock;
     private String deliver;
     private Integer isArchival;
-    //private ProductType productType;
+    private Supplier supplier;
+
 
     @Basic
     @Column(name = "is_archival")
@@ -88,14 +89,13 @@ public class Product {
         this.deliver = deliver;
     }
 
-    //    @OneToOne
-//    @JoinColumn(name = "product_type")
-//    public ProductType getProductType() {
-//        return productType;
-//    }
-//
-//    public void setProductType(ProductType productType) {
-//        this.productType = productType;
-//    }
+    @ManyToOne
+    @JoinColumn(name = "supplier_id")
+    public Supplier getSupplier() {
+        return supplier;
+    }
 
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
 }

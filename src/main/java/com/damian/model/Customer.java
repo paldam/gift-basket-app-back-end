@@ -67,7 +67,7 @@ public class Customer {
     }
 
     @Basic
-    @Column(name = "phone_number", length = 300)
+    @Column(name = "phone_number", length = 100, columnDefinition = "varchar(100)")
     public String getPhoneNumber() {
         return phoneNumber;
     }

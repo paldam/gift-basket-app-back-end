@@ -5,9 +5,11 @@ package com.damian.rest;
 import com.damian.model.BasketType;
 import com.damian.model.Product;
 import com.damian.model.ProductType;
+import com.damian.model.Supplier;
 import com.damian.repository.BasketTypeDao;
 import com.damian.repository.ProductTypeDao;
 import com.damian.repository.ProductDao;
+import com.damian.repository.SupplierDao;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +21,15 @@ import java.util.Objects;
 @RestController
 public class ProductsController {
 
-    ProductDao productsDao;
-    ProductTypeDao productsTypeDao;
+    private ProductDao productsDao;
+    private ProductTypeDao productsTypeDao;
+   private SupplierDao supplierDao;
 
 
-    public ProductsController(ProductTypeDao productsTypeDao, ProductDao productsDao) {
+    public ProductsController(ProductTypeDao productsTypeDao, ProductDao productsDao, SupplierDao supplierDao) {
         this.productsTypeDao = productsTypeDao;
         this.productsDao = productsDao;
+        this.supplierDao = supplierDao;
     }
 
 
@@ -36,6 +40,14 @@ public class ProductsController {
             List<Product> productsList = productsDao.findAllWithoutDeleted();
             return new ResponseEntity<List<Product>>(productsList, HttpStatus.OK);
 
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/products/supplier",produces = "application/json; charset=utf-8")
+    ResponseEntity<List<Supplier>> listAllSuppliers(){
+
+        List<Supplier> supplierList = supplierDao.findAll();
+        return new ResponseEntity<List<Supplier>>(supplierList, HttpStatus.OK);
 
     }
 
