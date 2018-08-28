@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
@@ -51,6 +52,14 @@ public class ProductsController {
 
     }
 
+    @CrossOrigin
+    @GetMapping(value = "/productsbysupplier/{id}",produces = "application/json; charset=utf-8")
+    ResponseEntity<List<Product>> listAllSuppliers(@PathVariable Integer id){
+
+        List<Product> productList = productsDao.findBySupplier_SupplierId(id);
+        return new ResponseEntity<List<Product>>(productList, HttpStatus.OK);
+
+    }
 
     @CrossOrigin
     @GetMapping(value = "/products/{id}",produces = "application/json; charset=utf-8")
@@ -60,6 +69,16 @@ public class ProductsController {
 
             Product product = productsDao.findById(id);
             return new ResponseEntity<Product>(product, HttpStatus.OK);
+
+    }
+
+    @CrossOrigin
+    @PostMapping("/products/supplier/")
+    ResponseEntity<Supplier> createSupplier(@RequestBody Supplier supplier )throws URISyntaxException {
+        supplierDao.save(supplier);
+
+        return new ResponseEntity<Supplier>(supplier,HttpStatus.CREATED);
+
 
     }
 
