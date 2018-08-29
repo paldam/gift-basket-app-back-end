@@ -1,5 +1,6 @@
 package com.damian.repository;
 
+import com.damian.dto.FileDto;
 import com.damian.model.DbFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 

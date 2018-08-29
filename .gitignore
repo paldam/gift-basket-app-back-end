@@ -1,8 +1,8 @@
 ######################
 # Project Specific
 ######################
-.properties
-/target/www/**
+/src/main/resources/application_dev.properties
+/src/main/resources/application_prod.properties
 /src/test/javascript/coverage/
 /src/test/javascript/PhantomJS*/
 
@@ -32,7 +32,6 @@ tmp/**/*
 *.swp
 *~.nib
 local.properties
-.properties
 .classpath
 .settings/
 .loadpath

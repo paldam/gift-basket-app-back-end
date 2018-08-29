@@ -1,5 +1,6 @@
 package com.damian.rest;
 
+import com.damian.dto.FileDto;
 import com.damian.model.DbFile;
 import com.damian.model.Order;
 import com.damian.repository.DbFileDao;
@@ -44,6 +45,16 @@ public class FileController {
         List<DbFile> fileList = dbFileDao.findByOrderId(id) ;
         return new ResponseEntity<List<DbFile>>(fileList, HttpStatus.OK);
     }
+
+
+    @CrossOrigin
+    @GetMapping(value = "/orderfiledto")
+    ResponseEntity<List<FileDto>> getFilesDto(){
+        List<FileDto> fileDtoList = dbFileService.getFileDto() ;
+        return new ResponseEntity <List<FileDto>>(fileDtoList, HttpStatus.OK);
+    }
+    
+
 
     @CrossOrigin
     @PostMapping("/uploadfiles")

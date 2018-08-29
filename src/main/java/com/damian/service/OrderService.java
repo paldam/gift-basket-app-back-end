@@ -72,7 +72,7 @@ public class OrderService {
 //
 //            List<Order> orderListWithSpecificCustomer = orderDao.findByCustomerId(customer.getCustomerId());
 //
-//              logger.info(orderListWithSpecificCustomer);
+//            logger.info(orderListWithSpecificCustomer);
 //
 //            orderListWithSpecificCustomer.forEach(order -> {
 //
