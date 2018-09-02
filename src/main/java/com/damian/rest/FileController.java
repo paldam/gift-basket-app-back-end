@@ -3,6 +3,7 @@ package com.damian.rest;
 import com.damian.dto.FileDto;
 import com.damian.model.DbFile;
 import com.damian.model.Order;
+import com.damian.model.OrderItem;
 import com.damian.repository.DbFileDao;
 import com.damian.repository.OrderDao;
 import com.damian.service.DbFileService;
@@ -125,6 +126,28 @@ public class FileController {
 
 
         Order orderToGenerate = orderDao.findOne(id);
+        PdfDeliveryConfirmation pdfDeliveryConfirmation  = new PdfDeliveryConfirmation();
+        ByteArrayInputStream bis = pdfDeliveryConfirmation.generatePdf(orderToGenerate);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=order.pdf");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(bis));
+    }
+
+
+
+    @CrossOrigin
+    @RequestMapping(value = "/order/deliverypdfwithmodyfication/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> getDeliveryPdfwithModyfications(@PathVariable Long id, @RequestBody List<OrderItem> orderItems) throws IOException {
+
+
+        Order orderToGenerate = orderDao.findOne(id);
+        orderToGenerate.setOrderItems(orderItems);
         PdfDeliveryConfirmation pdfDeliveryConfirmation  = new PdfDeliveryConfirmation();
         ByteArrayInputStream bis = pdfDeliveryConfirmation.generatePdf(orderToGenerate);
 
