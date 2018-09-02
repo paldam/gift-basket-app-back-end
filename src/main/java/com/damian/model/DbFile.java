@@ -25,7 +25,7 @@ public class DbFile {
     @Basic
     @Column(name = "file_type", length = 100)
     private String fileType;
-    
+
     @JsonIgnore
     @Basic
     @Column(name = "data", columnDefinition = "LONGBLOB")
@@ -34,6 +34,9 @@ public class DbFile {
     @Basic
     @Column(name = "order_id")
     private Long  orderId;
+
+
+    
 
     public DbFile() {
     }
@@ -84,5 +87,13 @@ public class DbFile {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    @Override
+    public String toString() {
+        return "DbFile{" +
+                "fileId=" + fileId +
+                ", orderId=" + orderId +
+                '}';
     }
 }

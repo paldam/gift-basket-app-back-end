@@ -10,6 +10,7 @@ import com.damian.repository.BasketTypeDao;
 import com.damian.repository.ProductTypeDao;
 import com.damian.repository.ProductDao;
 import com.damian.repository.SupplierDao;
+import com.damian.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +26,13 @@ public class ProductsController {
     private ProductDao productsDao;
     private ProductTypeDao productsTypeDao;
    private SupplierDao supplierDao;
+    private  ProductService productService;
 
-
-    public ProductsController(ProductTypeDao productsTypeDao, ProductDao productsDao, SupplierDao supplierDao) {
+    public ProductsController(ProductService productService, ProductTypeDao productsTypeDao, ProductDao productsDao, SupplierDao supplierDao) {
         this.productsTypeDao = productsTypeDao;
         this.productsDao = productsDao;
         this.supplierDao = supplierDao;
+        this.productService = productService;
     }
 
 
@@ -79,6 +81,17 @@ public class ProductsController {
 
         return new ResponseEntity<Supplier>(supplier,HttpStatus.CREATED);
 
+
+    }
+
+
+    @CrossOrigin
+    @PostMapping(value = "/product/stock",produces = "application/json; charset=utf-8")
+    ResponseEntity changeProductsStock(@RequestParam Integer productId, Integer addValue) {
+
+         productService.changeStock(productId,addValue);
+
+        return new ResponseEntity<Supplier>(HttpStatus.OK);
 
     }
 

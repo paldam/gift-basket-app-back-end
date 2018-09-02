@@ -36,4 +36,10 @@ public interface ProductDao extends CrudRepository<Product,Long> {
     void update(Integer supp , Integer prod_id);
 
 
+    @Transactional
+    @Modifying
+    @Query(value ="update products set stock =  stock + ?2, last_stock_edit_date = CURRENT_TIMESTAMP  WHERE id = ?1", nativeQuery = true)
+    void updateStock(Integer productId , Integer addValue);
+
+
 }

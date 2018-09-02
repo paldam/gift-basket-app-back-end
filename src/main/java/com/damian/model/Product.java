@@ -1,6 +1,7 @@
 package com.damian.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by Damian on 05.09.2017.
@@ -16,6 +17,7 @@ public class Product {
     private String deliver;
     private Integer isArchival;
     private Supplier supplier;
+    private Date lastStockEditDate;
 
 
     @Basic
@@ -97,5 +99,16 @@ public class Product {
 
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
+    }
+
+
+    @Basic
+    @Column(name = "last_stock_edit_date")
+    public Date getLastStockEditDate() {
+        return lastStockEditDate;
+    }
+
+    public void setLastStockEditDate(Date lastStockEditDate) {
+        this.lastStockEditDate = lastStockEditDate;
     }
 }

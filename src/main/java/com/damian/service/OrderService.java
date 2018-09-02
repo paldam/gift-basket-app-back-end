@@ -1,14 +1,18 @@
 package com.damian.service;
 
+import com.damian.dto.FileDto;
+import com.damian.dto.OrderDto;
 import com.damian.model.*;
 import com.damian.repository.*;
 import com.damian.rest.OrderController;
 import org.apache.log4j.Logger;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -19,14 +23,16 @@ public class OrderService {
     private AddressDao addressDao;
     private ProductDao productDao;
     private SupplierDao supplierDao;
+    private DbFileDao dbFileDao;
 
-    OrderService(OrderDao orderDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao, SupplierDao supplierDao
+    OrderService(OrderDao orderDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao,DbFileDao dbFileDao, SupplierDao supplierDao
                  ) {
         this.orderDao = orderDao;
         this.customerDao = customerDao;
         this.addressDao = addressDao;
         this.productDao = productDao ;
         this.supplierDao = supplierDao;
+        this.dbFileDao = dbFileDao;
 
     }
 
@@ -34,6 +40,12 @@ public class OrderService {
     public void createOrder(Order order) {
 
         Customer customer = order.getCustomer();
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(order.getDeliveryDate());
+        c.add(Calendar.DATE, 1);
+        Date convertedDeliveryDate = c.getTime();
+        order.setDeliveryDate(convertedDeliveryDate);
 
 
         if (customer.getCustomerId() != null) {
@@ -53,49 +65,39 @@ public class OrderService {
 
     }
 
+    public List<OrderDto> getOrderDao(){
 
-//    @Transactional
-//    public void changeDBStructure() {
-//
-//
-//        List<Customer> customerList = customerDao.findAllBy();
-//
-//
-//        customerList.forEach(customer -> {
-//            Address address = new Address(customer.getCustomerId(), customer.getAddress(), customer.getZipCode(), customer.getCityName());
-//
-//
-//            Long tempAddressId;
-//            Address addressTmp = addressDao.save(address);
-//            tempAddressId = addressTmp.getAddressId();
-//
-//
-//            List<Order> orderListWithSpecificCustomer = orderDao.findByCustomerId(customer.getCustomerId());
-//
-//            logger.info(orderListWithSpecificCustomer);
-//
-//            orderListWithSpecificCustomer.forEach(order -> {
-//
-//                order.setAddressId(tempAddressId);
-//                orderDao.save(order);
-//            });
-//
-//        });
-//
-//
-//    }
-     @Transactional
-    public void change2(){
+        List<Order> orderList = orderDao.findAllWithoutDeleted();
+         List<OrderDto>   orderDtoList = new ArrayList<>() ;
+        List<DbFile>   dbFileDtoList = dbFileDao.findAll() ;
+       
+   
 
 
-      List<Product> tmpListProducts =   productDao.findAllBy();
+        orderList.forEach(order -> {
+            List<DbFile> result = new LinkedList<>();
+            //result =  dbFileDtoList.stream().filter(data -> data.getOrderId() == 835).collect(Collectors.toList());
+
+            result =  dbFileDtoList.stream()
+                    .filter(data -> order.getOrderId().equals(data.getOrderId()))
+                    .collect(Collectors.toList());
+            
+            Long fileIdTmp = null;
 
 
-      tmpListProducts.forEach(product -> {
-         Integer tmpSuplierId = supplierDao.findBySupplierName(product.getDeliver()).getSupplierId();
-         productDao.update(tmpSuplierId,product.getId());
+                 if(result.size() >0) {
+                     fileIdTmp = result.get(0).getFileId();
+                 }else{
+                     fileIdTmp = 0L;
+                 }
 
-      });
+              orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
+                    order.getAdditionalInformation(), order.getDeliveryDate(),order.getDeliveryType(),
+                    order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp)) ;
+        });
+
+        
+        return orderDtoList;
 
     }
 

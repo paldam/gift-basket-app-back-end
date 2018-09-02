@@ -1,5 +1,7 @@
 package com.damian.rest;
 
+import com.damian.dto.NumberOfBasketOrderedByDate;
+import com.damian.dto.OrderDto;
 import com.damian.model.*;
 import com.damian.repository.*;
 import com.damian.service.DbFileService;
@@ -64,6 +66,21 @@ public class OrderController {
     }
 
     @CrossOrigin
+    @GetMapping("/orderitem")
+    ResponseEntity<List<Order>> getOrderItem(){
+        List<Order> ordersList = orderDao.findAllWithoutDeleted();
+        return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
+    }
+
+//    @CrossOrigin
+//    @GetMapping("/orderswithattch/")
+//    ResponseEntity<List<Order>> getOrdersWithAttach(){
+//        List<Order> ordersList = orderDao.findAllByDbFileIsNotNull();
+//        return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
+//    }
+
+
+    @CrossOrigin
     @GetMapping("/order/customer/{id}")
     ResponseEntity<List<Order>> getOrdersByCustomer( @PathVariable Integer id) {
 
@@ -90,11 +107,43 @@ public class OrderController {
     @CrossOrigin
     @GetMapping("/orders/products_to_order/daterange")
     ResponseEntity<List<Order>> getProductsToOrder(
-            @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-            @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
+                    @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+                    @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
         List<Order> productToOrderList = orderDao.findProductToOrder(startDate,endDate);
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }
+
+
+    @CrossOrigin
+    @GetMapping("/baskets/statistic/daterange")
+    ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrdered(
+            @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+            @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
+
+
+
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(endDate);
+                        c.add(Calendar.DATE, 1);
+                        Date endDateconvertedToTimeStamp = c.getTime();
+
+
+
+        List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrdered(startDate,endDateconvertedToTimeStamp) ;
+        return new ResponseEntity<List<NumberOfBasketOrderedByDate>>(basketList, HttpStatus.OK);
+    }
+
+
+    @CrossOrigin
+    @GetMapping("/orderdao")
+    ResponseEntity<List<OrderDto>> getOrderDao( )
+    {
+        List<OrderDto> orderDtoList =  orderService.getOrderDao();
+        return new ResponseEntity<List<OrderDto>>(orderDtoList, HttpStatus.OK);
+    }
+
+
+
 
 
     @CrossOrigin
@@ -117,18 +166,7 @@ public class OrderController {
         return new ResponseEntity(HttpStatus.OK)  ;
 
     }
-
-
-    @CrossOrigin
-    @DeleteMapping ("/order/aaaa")
-    ResponseEntity change() {
-
-        orderService.change2();
-
-
-        return new ResponseEntity(HttpStatus.OK)  ;
-
-    }
+    
 
 
     @Bean(name = "multipartResolver")     

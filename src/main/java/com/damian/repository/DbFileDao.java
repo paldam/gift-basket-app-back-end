@@ -2,7 +2,9 @@ package com.damian.repository;
 
 import com.damian.dto.FileDto;
 import com.damian.model.DbFile;
+import com.damian.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -14,5 +16,9 @@ public interface DbFileDao extends JpaRepository<DbFile,Long> {
     public List<DbFile> findAll() ;
     public List<DbFile> findByOrderId(Long id)   ;
     public DbFile findByFileId(Long id);
+
+   
+
+
 
 }

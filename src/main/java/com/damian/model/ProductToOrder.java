@@ -1,5 +1,6 @@
 package com.damian.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,17 +10,19 @@ import org.springframework.stereotype.Component;
 public class ProductToOrder {
     private Integer id ;
     private String product_name;
-    private String deliver;
+    private Supplier supplier;
     private Integer stock;
     private Long suma ;
+    private String capacity;
 
 
-    public ProductToOrder(Integer id, String product_name,String deliver,Integer stock,Long suma) {
+    public ProductToOrder(Integer id, String product_name,Supplier supplier,Integer stock,Long suma,String capacity) {
         this.id = id;
         this.product_name = product_name;
-        this.deliver = deliver;
+        this.supplier = supplier;
         this.stock = stock;
         this.suma = suma;
+        this.capacity = capacity;
 
     }
 
@@ -57,11 +60,20 @@ public class ProductToOrder {
         this.product_name = product_name;
     }
 
-    public String getDeliver() {
-        return deliver;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public void setDeliver(String deliver) {
-        this.deliver = deliver;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+
+    public String getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(String capacity) {
+        this.capacity = capacity;
     }
 }
+

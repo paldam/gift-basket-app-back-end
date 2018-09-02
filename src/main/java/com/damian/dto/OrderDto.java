@@ -1,25 +1,17 @@
-package com.damian.model;
+package com.damian.dto;
 
+import com.damian.model.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.*;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
-@Entity
-@Table(name = "orders")
-public class Order {
+public class OrderDto {
+
     private Long orderId;
     private String orderFvNumber;
-    private String userName;
-    // private User user;
     private Customer customer;
-    private List<OrderItem> orderItems;
     private Date orderDate;
     private String additionalInformation;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Europe/Warsaw")
@@ -27,15 +19,25 @@ public class Order {
     private DeliveryType deliveryType;
     private OrderStatus orderStatus;
     private Integer orderTotalAmount;
-    private Integer cod;
-    private Address address;
+    private Long dbFileId;
+
+    public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
+                    String additionalInformation, Date deliveryDate, DeliveryType deliveryType,
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId) {
+        this.orderId = orderId;
+        this.orderFvNumber = orderFvNumber;
+        this.customer = customer;
+        this.orderDate = orderDate;
+        this.additionalInformation = additionalInformation;
+        this.deliveryDate = deliveryDate;
+        this.deliveryType = deliveryType;
+        this.orderStatus = orderStatus;
+        this.orderTotalAmount = orderTotalAmount;
+        this.dbFileId = dbFileId;
+    }
 
 
 
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id", nullable = false)
     public Long getOrderId() {
         return orderId;
     }
@@ -44,8 +46,6 @@ public class Order {
         this.orderId = orderId;
     }
 
-    @Basic
-    @Column(name = "fv_number", length = 300)
     public String getOrderFvNumber() {
         return orderFvNumber;
     }
@@ -54,18 +54,6 @@ public class Order {
         this.orderFvNumber = orderFvNumber;
     }
 
-    @Basic
-    @Column(name = "added_by_user", length = 300)
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    @ManyToOne(fetch =FetchType.EAGER)
-    @JoinColumn(name = "customer_id")
     public Customer getCustomer() {
         return customer;
     }
@@ -74,19 +62,6 @@ public class Order {
         this.customer = customer;
     }
 
-    @OneToMany(cascade = CascadeType.ALL,fetch =FetchType.EAGER)
-    @JoinColumn(name = "order_id",referencedColumnName ="order_id" )
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
-
-
-    @Basic
-    @Column(name = "order_date",columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Date getOrderDate() {
         return orderDate;
     }
@@ -95,8 +70,6 @@ public class Order {
         this.orderDate = orderDate;
     }
 
-    @Basic
-    @Column(name = "additional_information", length = 1000)
     public String getAdditionalInformation() {
         return additionalInformation;
     }
@@ -105,8 +78,6 @@ public class Order {
         this.additionalInformation = additionalInformation;
     }
 
-    @Basic
-    @Column(name = "delivery_date",columnDefinition="DATE")
     public Date getDeliveryDate() {
         return deliveryDate;
     }
@@ -115,8 +86,6 @@ public class Order {
         this.deliveryDate = deliveryDate;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "delivery_type")
     public DeliveryType getDeliveryType() {
         return deliveryType;
     }
@@ -125,8 +94,6 @@ public class Order {
         this.deliveryType = deliveryType;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "order_status_id")
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
@@ -135,8 +102,6 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    @Basic
-    @Column(name = "order_total_amount")
     public Integer getOrderTotalAmount() {
         return orderTotalAmount;
     }
@@ -145,26 +110,14 @@ public class Order {
         this.orderTotalAmount = orderTotalAmount;
     }
 
-    @Basic
-    @Column(name = "cod")
-    public Integer getCod() {
-        return cod;
+
+    public Long getDbFileId() {
+        return dbFileId;
     }
 
-    public void setCod(Integer cod) {
-        this.cod = cod;
+    public void setDbFileId(Long dbFileId) {
+        this.dbFileId = dbFileId;
     }
-
-    @ManyToOne(fetch =FetchType.EAGER)
-    @JoinColumn(name = "address_id")
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
 
 
 }
