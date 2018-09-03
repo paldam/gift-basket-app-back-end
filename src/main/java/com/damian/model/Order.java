@@ -1,10 +1,12 @@
 package com.damian.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Order implements Serializable {
     private Long orderId;
     private String orderFvNumber;
     private String userName;
@@ -22,15 +24,13 @@ public class Order {
     private List<OrderItem> orderItems;
     private Date orderDate;
     private String additionalInformation;
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Europe/Warsaw")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
     private Date deliveryDate;
     private DeliveryType deliveryType;
     private OrderStatus orderStatus;
     private Integer orderTotalAmount;
     private Integer cod;
     private Address address;
-
-
 
 
     @Id
@@ -64,7 +64,7 @@ public class Order {
         this.userName = userName;
     }
 
-    @ManyToOne(fetch =FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     public Customer getCustomer() {
         return customer;
@@ -74,8 +74,8 @@ public class Order {
         this.customer = customer;
     }
 
-    @OneToMany(cascade = CascadeType.ALL,fetch =FetchType.EAGER)
-    @JoinColumn(name = "order_id",referencedColumnName ="order_id" )
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     public List<OrderItem> getOrderItems() {
         return orderItems;
     }
@@ -86,7 +86,7 @@ public class Order {
 
 
     @Basic
-    @Column(name = "order_date",columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "order_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Date getOrderDate() {
         return orderDate;
     }
@@ -106,7 +106,7 @@ public class Order {
     }
 
     @Basic
-    @Column(name = "delivery_date",columnDefinition="DATE")
+    @Column(name = "delivery_date", columnDefinition = "DATE")
     public Date getDeliveryDate() {
         return deliveryDate;
     }
@@ -155,7 +155,7 @@ public class Order {
         this.cod = cod;
     }
 
-    @ManyToOne(fetch =FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id")
     public Address getAddress() {
         return address;
@@ -166,5 +166,22 @@ public class Order {
     }
 
 
-
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderId=" + orderId +
+                ", orderFvNumber='" + orderFvNumber + '\'' +
+                ", userName='" + userName + '\'' +
+                ", customer=" + customer +
+                ", orderItems=" + orderItems +
+                ", orderDate=" + orderDate +
+                ", additionalInformation='" + additionalInformation + '\'' +
+                ", deliveryDate=" + deliveryDate +
+                ", deliveryType=" + deliveryType +
+                ", orderStatus=" + orderStatus +
+                ", orderTotalAmount=" + orderTotalAmount +
+                ", cod=" + cod +
+                ", address=" + address +
+                '}';
+    }
 }

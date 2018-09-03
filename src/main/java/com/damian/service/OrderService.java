@@ -41,11 +41,11 @@ public class OrderService {
 
         Customer customer = order.getCustomer();
 
-        Calendar c = Calendar.getInstance();
-        c.setTime(order.getDeliveryDate());
-        c.add(Calendar.DATE, 1);
-        Date convertedDeliveryDate = c.getTime();
-        order.setDeliveryDate(convertedDeliveryDate);
+//        Calendar c = Calendar.getInstance();
+//        c.setTime(order.getDeliveryDate());
+//        c.add(Calendar.DATE, 1);
+//        Date convertedDeliveryDate = c.getTime();
+//        order.setDeliveryDate(convertedDeliveryDate);
 
 
         if (customer.getCustomerId() != null) {

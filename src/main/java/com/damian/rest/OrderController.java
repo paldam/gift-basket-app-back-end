@@ -41,14 +41,16 @@ public class OrderController {
     private ProductDao productDao;
     private DbFileDao dbFileDao;
     private DbFileService dbFileService;
+    private OrderEditAuditDao orderEditAuditDao;
     OrderController(DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao,
-                    DbFileDao dbFileDao){
+                    DbFileDao dbFileDao,OrderEditAuditDao orderEditAuditDao){
         this.orderDao=orderDao;
         this.orderService=orderService;
         this.orderStatusDao=orderStatusDao;
         this.productDao=productDao;
         this.dbFileDao= dbFileDao;
         this.dbFileService = dbFileService;
+        this.orderEditAuditDao = orderEditAuditDao;
         
     }
     @CrossOrigin
@@ -140,6 +142,14 @@ public class OrderController {
     {
         List<OrderDto> orderDtoList =  orderService.getOrderDao();
         return new ResponseEntity<List<OrderDto>>(orderDtoList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/order/audit/{id}")
+    ResponseEntity<List<OrderEditAudit>> getOrderAudit(@PathVariable Long id )
+    {
+        List<OrderEditAudit> orderAuditList = orderEditAuditDao.findByOrderId(id) ;
+        return new ResponseEntity<List<OrderEditAudit>>(orderAuditList, HttpStatus.OK);
     }
 
 

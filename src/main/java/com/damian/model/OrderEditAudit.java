@@ -7,10 +7,18 @@ import java.util.Date;
 @Table(name = "order_edit_audits")
 public class OrderEditAudit {
     private Long orderEditAuditId;
-    private Order order;
-    private User user;
+    private String userName;
     private Date changeDate;
+    private Long orderId;
 
+
+    public OrderEditAudit() {
+    }
+
+    public OrderEditAudit(String userName, Long orderId) {
+        this.userName = userName;
+        this.orderId = orderId;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,27 +31,16 @@ public class OrderEditAudit {
         this.orderEditAuditId = orderEditAuditId;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id")
-    public Order getOrder() {
-        return order;
+
+  
+
+    public String getUserName() {
+        return userName;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
 
     @Basic
     @Column(name = "change_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -53,6 +50,14 @@ public class OrderEditAudit {
 
     public void setChangeDate(Date changeDate) {
         this.changeDate = changeDate;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 }
 

@@ -281,9 +281,9 @@ public class PdfDeliveryConfirmation {
                     .append("Pobranie ")
                     .append((double)order.getCod()/100)
                     .append(" zł | ")
-                    .append(order.getAdditionalInformation());
+                    .append((order.getAdditionalInformation()== null) ? "": order.getAdditionalInformation());
         } else{
-            additionalInformationTmp.append(order.getAdditionalInformation())  ;
+            additionalInformationTmp.append((order.getAdditionalInformation()== null) ? "": order.getAdditionalInformation());
         }
 
         return additionalInformationTmp.toString();

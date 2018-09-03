@@ -1,6 +1,7 @@
 package com.damian.config;
 
 
+import com.damian.hibernateInterceptor.CustomInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
@@ -29,6 +30,8 @@ public class SpringDataJpaConfig {
 
     @Autowired
     Environment environment;
+    @Autowired
+    CustomInterceptor customInterceptor ;
 
 
     @Bean
@@ -43,7 +46,6 @@ public class SpringDataJpaConfig {
     }
 
 
-
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 
@@ -53,6 +55,10 @@ public class SpringDataJpaConfig {
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 
+        Properties props = new Properties();
+        props.put("hibernate.ejb.interceptor", customInterceptor);
+
+        factory.setJpaProperties(props);
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("com.damian.model");
         factory.setDataSource(dataSource());
