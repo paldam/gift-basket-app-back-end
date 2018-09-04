@@ -102,6 +102,21 @@ public class OrderService {
     }
 
 
+    public List<Order> getOrderListFromIdList(List<Long> orederIdList) {
+
+        List<Order> ordersList = new ArrayList<>();
+
+        orederIdList.forEach(orderId -> {
+            Order orderToAdd = orderDao.findOne(orderId);
+            ordersList.add(orderToAdd);
+
+        });
+
+        return  ordersList;
+    }
+
+
+
 }
 
 

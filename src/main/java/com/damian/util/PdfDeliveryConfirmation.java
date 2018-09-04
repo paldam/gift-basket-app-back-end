@@ -15,9 +15,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by Damian on 11.08.2018.
- */
+
 public class PdfDeliveryConfirmation {
     static  Integer orderTypeId ;
     static Order order;

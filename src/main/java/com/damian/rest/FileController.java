@@ -7,8 +7,10 @@ import com.damian.model.OrderItem;
 import com.damian.repository.DbFileDao;
 import com.damian.repository.OrderDao;
 import com.damian.service.DbFileService;
+import com.damian.service.OrderService;
 import com.damian.util.PdfDeliveryConfirmation;
 import com.damian.util.PdfGenerator;
+import com.damian.util.PdfMultiDeliveryConfirmation;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -34,10 +37,12 @@ public class FileController {
     private DbFileDao dbFileDao;
     private DbFileService dbFileService;
     private OrderDao orderDao;
-    public FileController(DbFileDao dbFileDao, DbFileService dbFileService, OrderDao orderDao) {
+    private OrderService orderService;
+    public FileController(DbFileDao dbFileDao, DbFileService dbFileService, OrderDao orderDao, OrderService orderService) {
         this.dbFileDao= dbFileDao;
         this.dbFileService = dbFileService;
         this.orderDao= orderDao;
+        this.orderService = orderService;
     }
 
     @CrossOrigin
@@ -107,8 +112,10 @@ public class FileController {
 
 
         Order orderToGenerate = orderDao.findOne(id);
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(orderToGenerate);
         PdfGenerator pdfGenerator = new PdfGenerator();
-        ByteArrayInputStream bis = pdfGenerator.generatePdf(orderToGenerate);
+        ByteArrayInputStream bis = pdfGenerator.generatePdf(orderList);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=order.pdf");
@@ -119,6 +126,50 @@ public class FileController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(bis));
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/order/multipdf", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> getMultiPdf(@RequestParam("ordersIdList") List<Long> ordersToPrintList) throws IOException {
+
+        orderService.getOrderListFromIdList(ordersToPrintList);
+
+
+        PdfGenerator pdfGenerator = new PdfGenerator();
+        ByteArrayInputStream bis = pdfGenerator.generatePdf(orderService.getOrderListFromIdList(ordersToPrintList));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=order.pdf");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(bis));
+    }
+
+
+
+    @CrossOrigin
+    @RequestMapping(value = "/order/multideliverypdf", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> getMultiDeliveryPdf(@RequestParam("ordersIdList") List<Long> ordersToPrintList) throws IOException {
+
+        orderService.getOrderListFromIdList(ordersToPrintList);
+
+
+        PdfMultiDeliveryConfirmation pdfMultiDeliveryConfirmation = new PdfMultiDeliveryConfirmation();
+        ByteArrayInputStream bis = pdfMultiDeliveryConfirmation.generateMultiPdf(orderService.getOrderListFromIdList(ordersToPrintList));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=order.pdf");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(bis));
+    }
+
+
 
     @CrossOrigin
     @RequestMapping(value = "/order/deliverypdf/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
@@ -138,6 +189,7 @@ public class FileController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(bis));
     }
+
 
 
 
