@@ -1,10 +1,13 @@
 package com.damian.service;
 
 import com.damian.dto.FileDto;
+import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.dto.OrderDto;
+import com.damian.exceptions.OrderStatusException;
 import com.damian.model.*;
 import com.damian.repository.*;
 import com.damian.rest.OrderController;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Repository;
@@ -17,7 +20,7 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private static final Logger logger = Logger.getLogger(OrderController.class);
+    private static final Logger logger = Logger.getLogger(OrderService.class);
     private OrderDao orderDao;
     private CustomerDao customerDao;
     private AddressDao addressDao;
@@ -37,16 +40,132 @@ public class OrderService {
     }
 
     @Transactional
-    public void createOrder(Order order) {
+    public void createOrder(Order order) throws OrderStatusException {
+
+
+
+        if (Objects.isNull(order.getOrderId()) ){
+
+
+           } else {
+
+            Order orderPrevState = orderDao.findByOrderId(order.getOrderId());
+            Integer prevOrderStatus = orderPrevState.getOrderStatus().getOrderStatusId();
+            Integer newOrderStatus = order.getOrderStatus().getOrderStatusId();
+
+
+
+
+            if (prevOrderStatus == 1 && (newOrderStatus == 2 || newOrderStatus == 5)) {
+                logger.info("brak możliwości zmiany ");
+
+                throw new OrderStatusException("brak możliwości zmiany statusu z 'nowy' na 'wyslany' lub 'zrealizowny'");
+
+            }
+
+
+            if (prevOrderStatus == 99 && newOrderStatus != 99) {
+                logger.info("brak możliwości zmiany statusu, zamówienie archiwalne");
+
+                throw new OrderStatusException("brak możliwości zmiany statusu, zamówienie archiwalne");
+
+            }
+
+
+            if (prevOrderStatus == 1 && newOrderStatus == 4) {
+                logger.info("AAA Stan 1- nowe   4-przyjete");
+                changeStockStatusNoweToPrzyjete(order);
+
+            }
+            if (prevOrderStatus == 1 && newOrderStatus == 3) {
+                logger.info("AAA Stan 1- nowe   3-skompletowane");
+                changeStockStatusNoweSkompletowane(order);
+            }
+
+
+            if (prevOrderStatus == 4 && newOrderStatus == 4) {
+                logger.info("AAA Stan 4- przyjete   4-przyjete");
+                changeStockStatusPrzyjteToPrzyjete(order);
+
+            }
+
+
+            if (prevOrderStatus == 4 && newOrderStatus == 1|| prevOrderStatus == 4 && newOrderStatus == 99) {
+                logger.info("AAA Stan 4- przyjete   1-nowe lub 99 usuniete");
+                changeStockStatusPrzyjeteToNoweUsuniete(order.getOrderId());
+
+            }
+            if (prevOrderStatus == 4 && newOrderStatus == 3) {
+                logger.info("AAA Stan 4- przyjete   3-skmpletowane");
+                changeStockStatusPrzyjeteSkompletowane(order);
+
+            }
+            if (prevOrderStatus == 4 && newOrderStatus == 2|| prevOrderStatus == 4 && newOrderStatus == 5) {
+                logger.info("AAA Stan 4- przyjete   2-wysłane lub 5 zrealizwane;");
+                changeStockStatusPrzyjeteToWyslaneZrealizowane(order);
+
+            }
+
+            if (prevOrderStatus == 3 && newOrderStatus == 4) {
+                logger.info("AAA Stan 3-skmpletowane    4- przyjete ");
+                changeStockStatusSkompletowanePrzyjete(order);
+
+            }
+
+            if (prevOrderStatus == 3 && newOrderStatus == 2|| prevOrderStatus == 3 && newOrderStatus == 5) {
+                logger.info("AAA Stan 3- skompletowane   2-wysłane lub 5 zrealizwane;");
+                changeStockStatusSkompletowaneToWyslaneZrealizowane(order);
+
+            }
+
+            if (prevOrderStatus == 3 && newOrderStatus == 3) {
+                logger.info("AAA Stan 3-skmpletowane    3- skompletowane ");
+                changeStockStatusSkompletowaneToSkompletowane(order);
+
+            }
+
+            if (prevOrderStatus == 3 && newOrderStatus == 1 || prevOrderStatus == 3 && newOrderStatus == 99) {
+                logger.info("AAA Stan 3- skompletowane   1-nowe lub 99 usuniete");
+                changeStockStatusSkompletowaneToNoweUsuniete(order.getOrderId());
+
+            }
+
+            if ((prevOrderStatus == 2 || prevOrderStatus == 5) && ( newOrderStatus == 3)) {
+                logger.info("AAA Stan 2- wysłane lub zrealizowne 5  ->  3 - skompletowane");
+                changeStockStatuswyslaneOrZrezalizowaneToSkompletowane(order);
+
+            }
+
+            if ((prevOrderStatus == 2 || prevOrderStatus == 5) && ( newOrderStatus == 4)) {
+                logger.info("AAA Stan 2- wysłane lub zrealizowne 5  ->  4 - przyjete");
+                changeStockStatuswyslaneOrZrezalizowaneToPrzyjete(order);
+
+            }
+
+
+            if ((prevOrderStatus == 2 || prevOrderStatus == 5) && ( newOrderStatus == 1)) {
+                logger.info("AAA Stan 2- wysłane lub zrealizowne 5  ->  1- nowe");
+                changeStockStatuswyslaneOrZrezalizowaneToNowe(order);
+
+            }
+
+
+        }   //
+//            1 -nowe
+//            4-przyjete
+//            3-skompletowane
+
+
+//            2-wyslane
+//            5-zrealizwane;
+
+
+
+//            6 - usuniete
+
+
 
         Customer customer = order.getCustomer();
-
-//        Calendar c = Calendar.getInstance();
-//        c.setTime(order.getDeliveryDate());
-//        c.add(Calendar.DATE, 1);
-//        Date convertedDeliveryDate = c.getTime();
-//        order.setDeliveryDate(convertedDeliveryDate);
-
 
         if (customer.getCustomerId() != null) {
             Customer customerToSave = order.getCustomer();
@@ -101,6 +220,7 @@ public class OrderService {
 
     }
 
+@Transactional
 
     public List<Order> getOrderListFromIdList(List<Long> orederIdList) {
 
@@ -116,8 +236,341 @@ public class OrderService {
     }
 
 
+ @Transactional
+ public void changeStockStatusPrzyjteToPrzyjete(Order order) {
 
-}
+     List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(order.getOrderId());
+
+     numberProductsToChangeStocks.forEach(product -> {
+
+         productDao.updateStockTmpMinus(product.getProductId(), product.getQuantityToChange());
+
+     });
+
+
+     order.getOrderItems().forEach(orderItem -> {
+          int v1 = orderItem.getQuantity();
+         orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+
+
+                 int v2 = basketItems.getQuantity();
+
+
+             logger.info(basketItems.getProduct().getProductName() + " Liczba " +(v1 * v2));
+
+             productDao.updateStockTmpAdd(basketItems.getProduct().getId(),(new Long(v1*v2)));
+
+
+         });
+
+     });
+
+ }
+
+
+
+    public void changeStockStatusNoweSkompletowane(Order order) {
+
+        order.getOrderItems().forEach(orderItem -> {
+            int v1 = orderItem.getQuantity();
+            orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+
+
+                int v2 = basketItems.getQuantity();
+
+
+                logger.info(basketItems.getProduct().getProductName() + " Liczba " +(v1 * v2));
+
+                productDao.updateStockMinus(basketItems.getProduct().getId(),(new Long(v1*v2)));
+
+
+            });
+
+        });
+    }
+
+
+
+    public void changeStockStatusPrzyjeteSkompletowane(Order order) {
+
+        List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(order.getOrderId());
+
+
+        numberProductsToChangeStocks.forEach(product ->{
+
+            productDao.updateStockTmpMinus(product.getProductId(),product.getQuantityToChange());
+
+        });
+
+        order.getOrderItems().forEach(orderItem -> {
+            int v1 = orderItem.getQuantity();
+            orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+
+
+                int v2 = basketItems.getQuantity();
+
+
+                logger.info(basketItems.getProduct().getProductName() + " Liczba " +(v1 * v2));
+
+                productDao.updateStockMinus(basketItems.getProduct().getId(),(new Long(v1*v2)));
+
+
+            });
+
+        });
+
+
+    }
+
+
+
+
+    public void changeStockStatusPrzyjeteToNoweUsuniete(Long orderId) {
+
+        List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(orderId);
+
+
+        numberProductsToChangeStocks.forEach(product ->{
+
+            productDao.updateStockTmpMinus(product.getProductId(),product.getQuantityToChange());
+
+        });
+    }
+
+
+    public void changeStockStatusPrzyjeteToWyslaneZrealizowane(Order order) {
+
+        List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(order.getOrderId());
+
+
+        numberProductsToChangeStocks.forEach(product ->{
+
+            productDao.updateStockTmpMinus(product.getProductId(),product.getQuantityToChange());
+
+        });
+
+        order.getOrderItems().forEach(orderItem -> {
+            int v1 = orderItem.getQuantity();
+            orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+
+
+                int v2 = basketItems.getQuantity();
+
+
+                logger.info(basketItems.getProduct().getProductName() + " Liczba " +(v1 * v2));
+
+                productDao.updateStockMinus(basketItems.getProduct().getId(),(new Long(v1*v2)));
+
+
+            });
+
+        });
+    }
+
+
+
+
+    public void changeStockStatusNoweToPrzyjete(Order order) {
+
+        order.getOrderItems().forEach(orderItem -> {
+            int v1 = orderItem.getQuantity();
+            orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+
+
+                int v2 = basketItems.getQuantity();
+
+
+                logger.info(basketItems.getProduct().getProductName() + " Liczba " +(v1 * v2));
+
+                productDao.updateStockTmpAdd(basketItems.getProduct().getId(),(new Long(v1*v2)));
+
+
+            });
+
+        });
+    }
+
+
+
+    public void changeStockStatusSkompletowaneToWyslaneZrealizowane(Order order) {
+
+        List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(order.getOrderId());
+
+        numberProductsToChangeStocks.forEach(product -> {
+
+            productDao.updateStockAdd(product.getProductId(), product.getQuantityToChange());
+
+        });
+
+
+        order.getOrderItems().forEach(orderItem -> {
+            int v1 = orderItem.getQuantity();
+            orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+
+
+                int v2 = basketItems.getQuantity();
+
+
+                logger.info(basketItems.getProduct().getProductName() + " Liczba " + (v1 * v2));
+
+                productDao.updateStockMinus(basketItems.getProduct().getId(), (new Long(v1 * v2)));
+
+
+            });
+
+        });
+    }
+
+    public void changeStockStatusSkompletowaneToNoweUsuniete(Long orderId) {
+
+        List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(orderId);
+
+        numberProductsToChangeStocks.forEach(product ->{
+
+            productDao.updateStockAdd(product.getProductId(),product.getQuantityToChange());
+
+        });
+    }
+
+
+
+    public void changeStockStatusSkompletowanePrzyjete(Order order) {
+
+        List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(order.getOrderId());
+
+        numberProductsToChangeStocks.forEach(product ->{
+
+            productDao.updateStockAdd(product.getProductId(),product.getQuantityToChange());
+
+        });
+
+
+        order.getOrderItems().forEach(orderItem -> {
+            int v1 = orderItem.getQuantity();
+            orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+
+
+                int v2 = basketItems.getQuantity();
+
+
+                logger.info(basketItems.getProduct().getProductName() + " Liczba " +(v1 * v2));
+
+                productDao.updateStockTmpAdd(basketItems.getProduct().getId(),(new Long(v1*v2)));
+
+
+            });
+
+        });
+
+    }
+
+
+
+    public void changeStockStatusSkompletowaneToSkompletowane(Order order) {
+
+        List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(order.getOrderId());
+
+        numberProductsToChangeStocks.forEach(product -> {
+
+            productDao.updateStockAdd(product.getProductId(), product.getQuantityToChange());
+
+        });
+
+
+        order.getOrderItems().forEach(orderItem -> {
+            int v1 = orderItem.getQuantity();
+            orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+
+
+                int v2 = basketItems.getQuantity();
+
+
+                logger.info(basketItems.getProduct().getProductName() + " Liczba " + (v1 * v2));
+
+                productDao.updateStockMinus(basketItems.getProduct().getId(), (new Long(v1 * v2)));
+
+
+            });
+
+        });
+
+    }
+
+        public void changeStockStatuswyslaneOrZrezalizowaneToSkompletowane(Order order) {
+
+            List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(order.getOrderId());
+
+            numberProductsToChangeStocks.forEach(product -> {
+
+                productDao.updateStockAdd(product.getProductId(), product.getQuantityToChange());
+
+            });
+
+
+            order.getOrderItems().forEach(orderItem -> {
+                int v1 = orderItem.getQuantity();
+                orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+
+
+                    int v2 = basketItems.getQuantity();
+
+
+                    logger.info(basketItems.getProduct().getProductName() + " Liczba " + (v1 * v2));
+
+                    productDao.updateStockMinus(basketItems.getProduct().getId(), (new Long(v1 * v2)));
+
+
+                });
+
+            });
+        }
+
+
+            public void changeStockStatuswyslaneOrZrezalizowaneToPrzyjete(Order order) {
+
+                List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(order.getOrderId());
+
+                numberProductsToChangeStocks.forEach(product -> {
+
+                    productDao.updateStockAdd(product.getProductId(), product.getQuantityToChange());
+
+                });
+
+
+                order.getOrderItems().forEach(orderItem -> {
+                    int v1 = orderItem.getQuantity();
+                    orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+
+
+                        int v2 = basketItems.getQuantity();
+
+
+                        logger.info(basketItems.getProduct().getProductName() + " Liczba " + (v1 * v2));
+
+                        productDao.updateStockTmpAdd(basketItems.getProduct().getId(), (new Long(v1 * v2)));
+
+
+                    });
+
+                });
+
+            }
+
+
+    public void changeStockStatuswyslaneOrZrezalizowaneToNowe(Order order) {
+
+        List<NumberProductsToChangeStock> numberProductsToChangeStocks = productDao.numberProductsToChangeStock(order.getOrderId());
+
+        numberProductsToChangeStocks.forEach(product -> {
+
+            productDao.updateStockAdd(product.getProductId(), product.getQuantityToChange());
+
+        });
+
+        
+
+
+}}
 
 
 

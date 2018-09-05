@@ -1,7 +1,9 @@
 package com.damian.rest;
 
 import com.damian.dto.NumberOfBasketOrderedByDate;
+import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.dto.OrderDto;
+import com.damian.exceptions.OrderStatusException;
 import com.damian.model.*;
 import com.damian.repository.*;
 import com.damian.service.DbFileService;
@@ -154,17 +156,30 @@ public class OrderController {
 
 
 
+//    @CrossOrigin
+//    @GetMapping("/aaa")
+//    ResponseEntity<List<NumberProductsToChangeStock>> getOrderAudit( )
+//    {
+//        List<NumberProductsToChangeStock> list = productDao.numberProductsToChangeStock(859L) ;
+//        return new ResponseEntity<List<NumberProductsToChangeStock>>(list, HttpStatus.OK);
+//    }
+
+
+
 
 
     @CrossOrigin
     @PostMapping("/orders")
-    ResponseEntity<Order> createOrder(@RequestBody Order order )throws URISyntaxException {
+    ResponseEntity createOrder(@RequestBody Order order )throws URISyntaxException, OrderStatusException {
 
-        orderService.createOrder(order);
 
-        return new ResponseEntity<Order>(order,HttpStatus.CREATED);
+        try {
+            orderService.createOrder(order);
+            return new ResponseEntity<Order>(order, HttpStatus.CREATED);
+        } catch (OrderStatusException oEx) {
+            return ResponseEntity.badRequest().body(oEx.getMessage());
+        }
     }
-
 
     @CrossOrigin
     @DeleteMapping ("/order/{id}")

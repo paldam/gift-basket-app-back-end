@@ -14,6 +14,7 @@ public class Product {
     private Integer price;
     private String productName;
     private Integer stock;
+    private Integer tmpStock;
     private String deliver;
     private Integer isArchival;
     private Supplier supplier;
@@ -62,7 +63,7 @@ public class Product {
     }
 
     @Basic
-    @Column(name = "product_name", nullable = false, length = 300)
+    @Column(name = "product_name", nullable = false, length = 300 )
     public String getProductName() {
         return productName;
     }
@@ -79,6 +80,16 @@ public class Product {
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    @Basic
+    @Column(name = "tmp_stock")
+    public Integer getTmpStock() {
+        return tmpStock;
+    }
+
+    public void setTmpStock(Integer tmpStock) {
+        this.tmpStock = tmpStock;
     }
 
     @Basic

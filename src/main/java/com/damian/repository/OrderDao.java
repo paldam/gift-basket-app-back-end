@@ -1,6 +1,7 @@
 package com.damian.repository;
 
 import com.damian.dto.NumberOfBasketOrderedByDate;
+import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.model.Order;
 import com.damian.model.Product;
 import com.damian.model.ProductToOrder;
@@ -17,6 +18,7 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     public List<Order> findAllByOrderByOrderIdDesc();
     public List<Order> findAllByOrderStatus_OrderStatusId(Integer i);
     public Order findByOrderId(Integer id);
+    public Order findByOrderId(Long id);
     public List<Order> findByAddress_AddressId(Long id);
     public List<Order> findByCustomer_CustomerId(Integer id);
     //public Order (Integer id);
@@ -42,10 +44,11 @@ public interface OrderDao extends JpaRepository<Order,Long> {
 
 
     @Query(value = "SELECT NEW com.damian.model.ProductToOrder(p.id,p.productName,p.supplier, p.stock,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
-                                          "JOIN oi.basket b " +
-                                          "JOIN b.basketItems bi JOIN bi.product p WHERE o.orderStatus.orderStatusId=1 AND o.deliveryDate BETWEEN ?1 AND ?2  GROUP BY p.id")
+            "JOIN oi.basket b " +
+            "JOIN b.basketItems bi JOIN bi.product p WHERE o.orderStatus.orderStatusId=1 AND o.deliveryDate BETWEEN ?1 AND ?2  GROUP BY p.id")
 
     public List<Order> findProductToOrder(Date startDate, Date endDate);
+
 
 
 
