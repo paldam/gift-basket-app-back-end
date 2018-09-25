@@ -165,7 +165,7 @@ public class PdfDeliveryConfirmation {
 
 // row 8b
             PdfPCell cell21 = new PdfPCell(new Phrase("Nazwa Kosza",font));
-            cell21.setColspan(4);
+            cell21.setColspan(3);
             cell21.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell21.setBorder(Rectangle.BOTTOM |Rectangle.LEFT) ;
             cell21.setMinimumHeight(13);
@@ -177,15 +177,21 @@ public class PdfDeliveryConfirmation {
             cell22.setBorder(Rectangle.BOTTOM);
             table.addCell(cell22);
 
+            PdfPCell cell222 = new PdfPCell(new Phrase("Sezon",font));
+            cell222.setColspan(2);
+            cell222.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell222.setBorder(Rectangle.BOTTOM);
+            table.addCell(cell222);
+
             PdfPCell cell23 = new PdfPCell(new Phrase("Zmiany",font));
-            cell23.setColspan(4);
+            cell23.setColspan(3);
             cell23.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell23.setBorder(Rectangle.BOTTOM|Rectangle.RIGHT);
             table.addCell(cell23);
 
 
 
-            float[] columnWidths2 = {4,2,4};
+            float[] columnWidths2 = {3,2,2,3};
             PdfPTable table2 = new PdfPTable(columnWidths2);
             table2.setWidthPercentage(100);
 
@@ -193,6 +199,7 @@ public class PdfDeliveryConfirmation {
         for (OrderItem i: order.getOrderItems()) {
             table2.addCell(new PdfCellExt(new Phrase(i.getBasket().getBasketName(),font3)));
             table2.addCell(new PdfCellExt(new Phrase(i.getQuantity().toString(),font3)));
+            table2.addCell(new PdfCellExt(new Phrase(i.getBasket().getSeason(),font3)));
             table2.addCell(new PdfCellExt(new Phrase("",font3)));
         }
 

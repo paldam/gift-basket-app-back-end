@@ -33,7 +33,7 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ORDER BY order_date DESC ", nativeQuery = true)
     public List<Order> findAllWithoutDeleted();
 
-    @Query(value = "SELECT * FROM orders WHERE delivery_date BETWEEN ?1 AND ?2 AND delivery_type !=2", nativeQuery = true)
+    @Query(value = "SELECT * FROM orders WHERE delivery_date BETWEEN ?1 AND ?2 AND delivery_type =3", nativeQuery = true)
     public List<Order> findOrdersByDateRange(Date startDate, Date endDate);
 
 //    @Query(value = "SELECT NEW com.damian.model.ProductToOrder(p.id,p.productName) FROM Product p")
@@ -45,7 +45,7 @@ public interface OrderDao extends JpaRepository<Order,Long> {
 
     @Query(value = "SELECT NEW com.damian.model.ProductToOrder(p.id,p.productName,p.supplier, p.stock,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
             "JOIN oi.basket b " +
-            "JOIN b.basketItems bi JOIN bi.product p WHERE o.orderStatus.orderStatusId=1 AND o.deliveryDate BETWEEN ?1 AND ?2  GROUP BY p.id")
+            "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId=1 OR o.orderStatus.orderStatusId=4) AND o.deliveryDate BETWEEN ?1 AND ?2  GROUP BY p.id")
 
     public List<Order> findProductToOrder(Date startDate, Date endDate);
 
@@ -53,7 +53,7 @@ public interface OrderDao extends JpaRepository<Order,Long> {
 
 
     @Query(value = "select new com.damian.dto.NumberOfBasketOrderedByDate(b.basketName,sum(oi.quantity)) FROM Order o JOIN o.orderItems oi JOIN oi.basket b  where " +
-            "o.orderDate between ?1 and ?2 and o.orderStatus !=99 group by b.basketName")
+            "o.deliveryDate between ?1 and ?2 and o.orderStatus !=99 group by b.basketName")
     public List<NumberOfBasketOrderedByDate> getNumberOfBasketOrdered (Date startDate, Date endDate);
 
 

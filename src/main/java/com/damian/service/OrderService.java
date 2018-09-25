@@ -166,8 +166,9 @@ public class OrderService {
 
 
         Customer customer = order.getCustomer();
-
+        logger.info("Id customera "+ customer.getCustomerId());
         if (customer.getCustomerId() != null) {
+            logger.info("zamówienie z klientem z bazy");
             Customer customerToSave = order.getCustomer();
             //order.setCustomer(null);
             customer.setAddresses(null);
@@ -175,6 +176,7 @@ public class OrderService {
             orderDao.saveAndFlush(order);
 
         } else {
+            logger.info("zamówienie z nowym klientem");
             Customer savedCustomer = customerDao.saveAndFlush(customer);
             Address tmpAddres = savedCustomer.getAddresses().get(0);
             order.setAddress(tmpAddres);

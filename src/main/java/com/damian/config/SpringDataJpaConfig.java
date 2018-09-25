@@ -42,6 +42,7 @@ public class SpringDataJpaConfig {
         dataSource.setUsername(environment.getRequiredProperty("jdbc.username"));
         dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
 
+
         return dataSource;
     }
 
@@ -57,7 +58,8 @@ public class SpringDataJpaConfig {
 
         Properties props = new Properties();
         props.put("hibernate.ejb.interceptor", customInterceptor);
-
+        props.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+        
         factory.setJpaProperties(props);
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("com.damian.model");

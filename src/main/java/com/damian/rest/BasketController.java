@@ -31,6 +31,14 @@ public class BasketController {
         return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
     }
 
+
+    @CrossOrigin
+    @GetMapping("/extbaskets")
+    ResponseEntity<List<Basket>> getBasketsForExternalPartner(){
+        List<Basket> basketList = basketDao.findAllBasketForExternalPartner();
+        return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
+    }
+
     @CrossOrigin
     @GetMapping("/deletedbaskets/")
     ResponseEntity<List<Basket>> getDeletedBaskets(){
