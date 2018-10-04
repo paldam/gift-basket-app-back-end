@@ -31,7 +31,7 @@ public class PdfGenerator {
             document.open();
         } catch (DocumentException ex) {
 
-         }
+        }
 
         orderToPrint.forEach(order->{
 

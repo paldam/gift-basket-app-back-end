@@ -4,6 +4,7 @@ import com.damian.model.Basket;
 import com.damian.model.BasketType;
 import com.damian.repository.BasketDao;
 import com.damian.repository.BasketTypeDao;
+import com.damian.service.BasketExtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +15,14 @@ import java.util.List;
 @RestController
 public class BasketController {
 
-    BasketDao basketDao;
-    BasketTypeDao basketTypeDao;
+     private BasketExtService basketExtService;
+    private BasketDao basketDao;
+   private BasketTypeDao basketTypeDao;
 
-    public BasketController(BasketDao basketDao, BasketTypeDao basketTypeDao) {
+    public BasketController(BasketDao basketDao, BasketTypeDao basketTypeDao, BasketExtService basketExtService) {
         this.basketDao = basketDao;
         this.basketTypeDao = basketTypeDao;
+        this.basketExtService = basketExtService;
     }
 
 
@@ -64,6 +67,18 @@ public class BasketController {
     @PostMapping("/baskets")
     ResponseEntity<Basket> createBasket(@RequestBody Basket basket)throws URISyntaxException {
         basketDao.save(basket);
+
+        return new ResponseEntity<Basket>(basket,HttpStatus.CREATED);
+
+
+    }
+    @CrossOrigin
+    @PostMapping("/basketext")
+    ResponseEntity<Basket> createExternalBasket(@RequestBody Basket basket)throws URISyntaxException {
+        basketDao.save(basket);
+
+
+         basketExtService.saveExternalBasket(basket);
 
         return new ResponseEntity<Basket>(basket,HttpStatus.CREATED);
 
