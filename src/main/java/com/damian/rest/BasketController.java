@@ -1,21 +1,28 @@
 package com.damian.rest;
 
 import com.damian.model.Basket;
+import com.damian.model.BasketExt;
+import com.damian.model.BasketItems;
 import com.damian.model.BasketType;
 import com.damian.repository.BasketDao;
 import com.damian.repository.BasketTypeDao;
 import com.damian.service.BasketExtService;
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class BasketController {
 
-     private BasketExtService basketExtService;
+    private static final Logger logger = Logger.getLogger(BasketController.class);
+
+
+    private BasketExtService basketExtService;
     private BasketDao basketDao;
    private BasketTypeDao basketTypeDao;
 
@@ -74,14 +81,33 @@ public class BasketController {
     }
     @CrossOrigin
     @PostMapping("/basketext")
-    ResponseEntity<Basket> createExternalBasket(@RequestBody Basket basket)throws URISyntaxException {
-        basketDao.save(basket);
+    ResponseEntity<BasketExt> createExternalBasket(@RequestBody BasketExt basketExt)throws URISyntaxException {
 
 
-         basketExtService.saveExternalBasket(basket);
+        System.out.println("22222" + basketExt.getBasketName());
+        System.out.println("DDDDDDDD" + basketExt.getBasketImg().length);
+         basketExtService.saveExternalBasket(basketExt);
 
-        return new ResponseEntity<Basket>(basket,HttpStatus.CREATED);
+        return new ResponseEntity<BasketExt>(basketExt,HttpStatus.CREATED);
 
 
     }
+
+    @CrossOrigin
+    @GetMapping("/basketsextlist")
+    ResponseEntity<List<BasketExt>> getBasketsExtList(){
+
+        List<Basket> basketList = basketDao.findALLExportBasket();
+
+        List<BasketExt> basketExtList = new ArrayList<>();
+
+        basketList.forEach(basket -> {
+
+            basketExtList.add(new BasketExt(basket)) ;
+        });
+
+
+        return new ResponseEntity<List<BasketExt>>(basketExtList, HttpStatus.OK);
+    }
+
 }

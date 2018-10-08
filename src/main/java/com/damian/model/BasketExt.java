@@ -1,55 +1,44 @@
 package com.damian.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Lob;
 import java.util.List;
 
+/**
+ * Created by Damian on 05.10.2018.
+ */
+public class BasketExt {
 
-@Entity
-@Table(name = "baskets")
-public class Basket {
+
     private Long basketId;
     private String basketName;
     private BasketType basketType;
     private List<BasketItems> basketItems;
     private Integer basketTotalPrice;
     private String season;
+    private byte[] basketImg;
+    private String basketImgContentType;
     private boolean isAlcoholic;
     private boolean isAvailable;
 
-
-
-    public Basket() {
-        this.basketId = basketId;
+    public BasketExt() {
     }
 
-    public Basket(BasketExt basketExt) {
-        this.basketId = basketExt.getBasketId();
-        this.basketName = basketExt.getBasketName();
-        this.basketType = basketExt.getBasketType();
-        this.basketItems = basketExt.getBasketItems();
-        this.basketTotalPrice = basketExt.getBasketTotalPrice();
-        this.season = basketExt.getSeason();
-        this.isAlcoholic = basketExt.isAlcoholic();
-        this.isAvailable = basketExt.isAvailable();
+    public BasketExt(Basket basket) {
+
+
+        this.basketId = basket.getBasketId();
+        this.basketName = basket.getBasketName();
+        this.basketType  = basket.getBasketType();
+        this.basketItems= basket.getBasketItems();
+        this.basketTotalPrice = basket.getBasketTotalPrice();
+        this.season = basket.getSeason();
+        this.isAlcoholic = basket.isAlcoholic();
+        this.isAvailable = basket.isAvailable();
+
+
     }
 
-
-
-    @Basic
-    @Column(name = "basket_name", nullable = false, length = 300)
-    public String getBasketName() {
-        return basketName;
-    }
-
-    public void setBasketName(String basketName) {
-        this.basketName = basketName;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "basket_id", nullable = false)
     public Long getBasketId() {
         return basketId;
     }
@@ -58,9 +47,14 @@ public class Basket {
         this.basketId = basketId;
     }
 
+    public String getBasketName() {
+        return basketName;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "basket_type")
+    public void setBasketName(String basketName) {
+        this.basketName = basketName;
+    }
+
     public BasketType getBasketType() {
         return basketType;
     }
@@ -69,8 +63,6 @@ public class Basket {
         this.basketType = basketType;
     }
 
-    @OneToMany(cascade = CascadeType.ALL,fetch =FetchType.EAGER)
-    @JoinColumn(name="basket_id", referencedColumnName="basket_id")
     public List<BasketItems> getBasketItems() {
         return basketItems;
     }
@@ -79,8 +71,6 @@ public class Basket {
         this.basketItems = basketItems;
     }
 
-    @Basic
-    @Column(name = "basket_total_price", length = 40)
     public Integer getBasketTotalPrice() {
         return basketTotalPrice;
     }
@@ -89,8 +79,6 @@ public class Basket {
         this.basketTotalPrice = basketTotalPrice;
     }
 
-    @Basic
-    @Column(name = "season", length = 200)
     public String getSeason() {
         return season;
     }
@@ -99,8 +87,23 @@ public class Basket {
         this.season = season;
     }
 
-    @Basic
-    @Column(name = "isAlcoholic", length = 200)
+
+    public byte[] getBasketImg() {
+        return basketImg;
+    }
+
+    public void setBasketImg(byte[] basketImg) {
+        this.basketImg = basketImg;
+    }
+
+    public String getBasketImgContentType() {
+        return basketImgContentType;
+    }
+
+    public void setBasketImgContentType(String basketImgContentType) {
+        this.basketImgContentType = basketImgContentType;
+    }
+
     public boolean isAlcoholic() {
         return isAlcoholic;
     }
@@ -108,8 +111,7 @@ public class Basket {
     public void setAlcoholic(boolean alcoholic) {
         isAlcoholic = alcoholic;
     }
-    @Basic
-    @Column(name = "isAvailable", length = 200)
+
     public boolean isAvailable() {
         return isAvailable;
     }
@@ -118,3 +120,5 @@ public class Basket {
         isAvailable = available;
     }
 }
+
+

@@ -8,6 +8,14 @@ public class BasketType {
     private Integer basketTypeId;
     private String basketTypeName;
 
+    public BasketType() {
+    }
+
+    public BasketType(Integer basketTypeId, String basketTypeName) {
+        this.basketTypeId = basketTypeId;
+        this.basketTypeName = basketTypeName;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "basket_type_id", nullable = false)
