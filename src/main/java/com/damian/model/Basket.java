@@ -15,8 +15,8 @@ public class Basket {
     private List<BasketItems> basketItems;
     private Integer basketTotalPrice;
     private String season;
-    private boolean isAlcoholic;
-    private boolean isAvailable;
+    private Integer isAlcoholic;
+    private Integer isAvailable;
 
 
 
@@ -31,8 +31,8 @@ public class Basket {
         this.basketItems = basketExt.getBasketItems();
         this.basketTotalPrice = basketExt.getBasketTotalPrice();
         this.season = basketExt.getSeason();
-        this.isAlcoholic = basketExt.isAlcoholic();
-        this.isAvailable = basketExt.isAvailable();
+        this.isAlcoholic = basketExt.getIsAlcoholic();
+        this.isAvailable = basketExt.getIsAvailable();
     }
 
 
@@ -99,22 +99,25 @@ public class Basket {
         this.season = season;
     }
 
+
+
     @Basic
-    @Column(name = "isAlcoholic", length = 200)
-    public boolean isAlcoholic() {
+    @Column(name = "is_alcoholic", length = 40, columnDefinition = "INT DEFAULT 0")
+    public Integer getIsAlcoholic() {
         return isAlcoholic;
     }
 
-    public void setAlcoholic(boolean alcoholic) {
-        isAlcoholic = alcoholic;
+    public void setIsAlcoholic(Integer isAlcoholic) {
+        this.isAlcoholic = isAlcoholic;
     }
     @Basic
-    @Column(name = "isAvailable", length = 200)
-    public boolean isAvailable() {
+    @Column(name = "is_available", length = 40, columnDefinition = "INT DEFAULT 1")
+    public Integer getIsAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(boolean available) {
-        isAvailable = available;
+    public void setIsAvailable(Integer isAvailable) {
+        this.isAvailable = isAvailable;
     }
 }
+        

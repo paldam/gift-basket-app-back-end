@@ -84,12 +84,22 @@ public class BasketController {
     ResponseEntity<BasketExt> createExternalBasket(@RequestBody BasketExt basketExt)throws URISyntaxException {
 
 
-        System.out.println("22222" + basketExt.getBasketName());
-        System.out.println("DDDDDDDD" + basketExt.getBasketImg().length);
+        System.out.println("22222" + basketExt.toString());
+
          basketExtService.saveExternalBasket(basketExt);
 
         return new ResponseEntity<BasketExt>(basketExt,HttpStatus.CREATED);
 
+    }
+
+    @CrossOrigin
+    @PostMapping("/basketextstatus")
+    ResponseEntity<BasketExt> externalBasketStatus(@RequestBody BasketExt basketExt)throws URISyntaxException {
+
+        Basket basketToChange = new Basket(basketExt);
+        Basket savedBasket= basketDao.save(basketToChange);
+
+        return new ResponseEntity<BasketExt>(basketExt,HttpStatus.CREATED);
 
     }
 

@@ -2,6 +2,7 @@ package com.damian.model;
 
 import javax.persistence.Column;
 import javax.persistence.Lob;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,8 +19,8 @@ public class BasketExt {
     private String season;
     private byte[] basketImg;
     private String basketImgContentType;
-    private boolean isAlcoholic;
-    private boolean isAvailable;
+    private Integer isAlcoholic;
+    private Integer isAvailable;
 
     public BasketExt() {
     }
@@ -33,8 +34,8 @@ public class BasketExt {
         this.basketItems= basket.getBasketItems();
         this.basketTotalPrice = basket.getBasketTotalPrice();
         this.season = basket.getSeason();
-        this.isAlcoholic = basket.isAlcoholic();
-        this.isAvailable = basket.isAvailable();
+        this.isAlcoholic = basket.getIsAlcoholic();
+        this.isAvailable = basket.getIsAvailable();
 
 
     }
@@ -104,20 +105,37 @@ public class BasketExt {
         this.basketImgContentType = basketImgContentType;
     }
 
-    public boolean isAlcoholic() {
+
+    public Integer getIsAlcoholic() {
         return isAlcoholic;
     }
 
-    public void setAlcoholic(boolean alcoholic) {
-        isAlcoholic = alcoholic;
+    public void setIsAlcoholic(Integer isAlcoholic) {
+        this.isAlcoholic = isAlcoholic;
     }
 
-    public boolean isAvailable() {
+    public Integer getIsAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(boolean available) {
-        isAvailable = available;
+    public void setIsAvailable(Integer isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+
+    @Override
+    public String toString() {
+        return "BasketExt{" +
+                "basketId=" + basketId +
+                ", basketName='" + basketName + '\'' +
+                ", basketType=" + basketType +
+                ", basketItems=" + basketItems +
+                ", basketTotalPrice=" + basketTotalPrice +
+                ", season='" + season + '\'' +
+                ", basketImg=" + Arrays.toString(basketImg) +
+                ", basketImgContentType='" + basketImgContentType + '\'' +
+                ", isAlcoholic=" + isAlcoholic +
+                ", isAvailable=" + isAvailable +
+                '}';
     }
 }
 
