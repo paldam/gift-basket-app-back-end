@@ -43,13 +43,6 @@ public class BasketController {
 
 
     @CrossOrigin
-    @GetMapping("/extbaskets")
-    ResponseEntity<List<Basket>> getBasketsForExternalPartner(){
-        List<Basket> basketList = basketDao.findAllBasketForExternalPartner();
-        return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
-    }
-
-    @CrossOrigin
     @GetMapping("/deletedbaskets/")
     ResponseEntity<List<Basket>> getDeletedBaskets(){
         List<Basket> basketList = basketDao.findAllDeleted();
@@ -112,12 +105,22 @@ public class BasketController {
         List<BasketExt> basketExtList = new ArrayList<>();
 
         basketList.forEach(basket -> {
+            BasketExt basketTmp = new BasketExt(basket) ;
+            basketTmp.setBasketTotalPrice(basketTmp.getBasketTotalPrice()/100) ;
 
-            basketExtList.add(new BasketExt(basket)) ;
+            basketExtList.add(basketTmp) ;
         });
 
 
         return new ResponseEntity<List<BasketExt>>(basketExtList, HttpStatus.OK);
+    }
+
+
+    @CrossOrigin
+    @GetMapping("/extbaskets")
+    ResponseEntity<List<Basket>> getBasketsForExternalPartner(){
+        List<Basket> basketList = basketDao.findAllBasketForExternalPartner();
+        return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
     }
 
 }
