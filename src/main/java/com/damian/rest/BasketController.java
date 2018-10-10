@@ -1,5 +1,6 @@
 package com.damian.rest;
 
+import com.damian.dto.BasketExtStockDao;
 import com.damian.model.Basket;
 import com.damian.model.BasketExt;
 import com.damian.model.BasketItems;
@@ -113,6 +114,19 @@ public class BasketController {
 
 
         return new ResponseEntity<List<BasketExt>>(basketExtList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/basket_ext_stock")
+    ResponseEntity<List<BasketExtStockDao>> getBasketsExtStock(){
+
+        List<Basket> basketList = basketDao.findALLExportBasket();
+        List<BasketExtStockDao> basketExtList = new ArrayList<>();
+
+       basketList.forEach(basket -> basketExtList.add(new BasketExtStockDao(basket)) );
+
+
+        return new ResponseEntity<List<BasketExtStockDao>>(basketExtList, HttpStatus.OK);
     }
 
 
