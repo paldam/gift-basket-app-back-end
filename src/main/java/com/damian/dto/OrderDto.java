@@ -16,13 +16,14 @@ public class OrderDto {
     private String additionalInformation;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Europe/Warsaw")
     private Date deliveryDate;
+    private Integer weekOfYear;
     private DeliveryType deliveryType;
     private OrderStatus orderStatus;
     private Integer orderTotalAmount;
     private Long dbFileId;
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
-                    String additionalInformation, Date deliveryDate, DeliveryType deliveryType,
+                    String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
                     OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId) {
         this.orderId = orderId;
         this.orderFvNumber = orderFvNumber;
@@ -30,6 +31,7 @@ public class OrderDto {
         this.orderDate = orderDate;
         this.additionalInformation = additionalInformation;
         this.deliveryDate = deliveryDate;
+        this.weekOfYear =weekOfYear;
         this.deliveryType = deliveryType;
         this.orderStatus = orderStatus;
         this.orderTotalAmount = orderTotalAmount;
@@ -68,6 +70,14 @@ public class OrderDto {
 
     public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
+    }
+
+    public Integer getWeekOfYear() {
+        return weekOfYear;
+    }
+
+    public void setWeekOfYear(Integer weekOfYear) {
+        this.weekOfYear = weekOfYear;
     }
 
     public String getAdditionalInformation() {

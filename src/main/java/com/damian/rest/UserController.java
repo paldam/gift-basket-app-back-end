@@ -16,7 +16,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin
 @RestController
 @RequestMapping(value={"/"}, produces="application/json;charset=UTF-8")
 public class UserController {
@@ -40,7 +40,7 @@ public class UserController {
         List<User> userList = userRepository.findAll();
         return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
     }
-
+    @CrossOrigin
     @PostMapping(value = "/users")
     public ResponseEntity createUser(@RequestBody UserDto userDto) throws URISyntaxException {
 
@@ -60,7 +60,7 @@ public class UserController {
                     .body("Dodano użytownika " +userDto.getLogin());
         }
     }
-
+    @CrossOrigin
     @PutMapping("/users")
     public ResponseEntity updateUser(@RequestBody UserDto userDto) {
 
@@ -78,6 +78,7 @@ public class UserController {
 
 
     }
+    @CrossOrigin
     @PutMapping("/users/reset/{login}")
     public ResponseEntity resetPassword(@PathVariable String login) {
 
@@ -88,7 +89,7 @@ public class UserController {
 
 
     }
-
+    @CrossOrigin
     @PutMapping("/users/reset/")
     public ResponseEntity changePassword(@RequestBody UserPasswordChange userPasswordChange ) {
 
@@ -104,13 +105,15 @@ public class UserController {
 
 
     }
-
+    @CrossOrigin
     @GetMapping("/users/authorities")
 
     public List<Authority> getAuthorities() {
         return authorityRepository.findAll();
     }
 
+
+    @CrossOrigin
     @DeleteMapping("/users/{login}")
 
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {

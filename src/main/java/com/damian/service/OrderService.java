@@ -196,6 +196,7 @@ public class OrderService {
 
 
         orderList.forEach(order -> {
+            logger.error("EEEEEEEE" + order.getWeekOfYear());
             List<DbFile> result = new LinkedList<>();
             //result =  dbFileDtoList.stream().filter(data -> data.getOrderId() == 835).collect(Collectors.toList());
 
@@ -213,7 +214,7 @@ public class OrderService {
                  }
 
               orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
-                    order.getAdditionalInformation(), order.getDeliveryDate(),order.getDeliveryType(),
+                    order.getAdditionalInformation(), order.getDeliveryDate(),order.getWeekOfYear(),order.getDeliveryType(),
                     order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp)) ;
         });
 

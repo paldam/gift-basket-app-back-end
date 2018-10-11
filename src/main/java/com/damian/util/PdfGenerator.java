@@ -1,16 +1,19 @@
 package com.damian.util;
 import com.damian.model.Order;
 import com.damian.model.OrderItem;
+import com.damian.rest.UserJWTController;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
+import org.slf4j.LoggerFactory;
 
 
 import java.text.SimpleDateFormat;
 
 import java.io.*;
-import java.util.Arrays;
+import java.time.LocalDate;
+import java.time.temporal.WeekFields;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +22,8 @@ public class PdfGenerator {
 
     static  Integer orderTypeId ;
     static Order order;
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(PdfGenerator.class);
+
 
     public static ByteArrayInputStream generatePdf(List<Order> orderToPrint) throws IOException {
 
@@ -76,7 +81,7 @@ public class PdfGenerator {
                             table.addCell(cell2);
 
                 //row 2
-                            PdfPCell cell3 = new PdfPCell(new Phrase("Data dostawy",font));
+                            PdfPCell cell3 = new PdfPCell(new Phrase("Planowana data wysyłki",font));
                             cell3.setColspan(3);
                             cell3.setHorizontalAlignment(Element.ALIGN_CENTER);
                             cell3.setBorder(Rectangle.LEFT | Rectangle.TOP| Rectangle.RIGHT);
@@ -88,7 +93,7 @@ public class PdfGenerator {
                             cell4.setBorder(Rectangle.LEFT | Rectangle.TOP| Rectangle.RIGHT);
                             table.addCell(cell4);
 
-                            PdfPCell cell5 = new PdfPCell(new Phrase("Gdzie",font));
+                            PdfPCell cell5 = new PdfPCell(new Phrase("Tydzień dostawy",font));
                             cell5.setColspan(4);
                             cell5.setHorizontalAlignment(Element.ALIGN_CENTER);
                             cell5.setBorder(Rectangle.LEFT | Rectangle.TOP| Rectangle.RIGHT);
@@ -111,7 +116,7 @@ public class PdfGenerator {
                             cell7.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
                             table.addCell(cell7);
 
-                            PdfPCell cell8 = new PdfPCell(new Phrase(" ",font2));
+                            PdfPCell cell8 = new PdfPCell(new Phrase(getDateFromDayWeek(order),font2));
                             cell8.setColspan(4);
                             cell8.setHorizontalAlignment(Element.ALIGN_CENTER);
                             cell8.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
@@ -346,5 +351,40 @@ public class PdfGenerator {
 
         return additionalInformationTmp.toString();
 
+    }
+
+    private static String getDateFromDayWeek(Order order ){
+
+        
+                Calendar c = Calendar.getInstance();
+                c.setTime(order.getOrderDate());
+
+                int orderDateWeek =   c.get(Calendar.WEEK_OF_YEAR);
+                int year = c.get(Calendar.YEAR);
+                 // 41               // 40
+                 if (orderDateWeek > order.getWeekOfYear()){
+
+                     year += 1;
+                 }
+
+        log.error(Integer.toString(year));
+
+        LocalDate monday = LocalDate.now();
+        monday = monday.with(WeekFields.ISO.dayOfWeek(), 1);
+        monday = monday.with(WeekFields.ISO.weekOfWeekBasedYear(), order.getWeekOfYear());
+        monday = monday.with(WeekFields.ISO.weekBasedYear(), year);
+
+        LocalDate sunday =  monday.plusDays(6);
+
+        
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("TYDZIEŃ ");
+        sb.append(order.getWeekOfYear().toString());
+        sb.append("                   ");
+        sb.append(monday.toString());
+        sb.append("  ");
+        sb.append(sunday.toString());
+        return sb.toString();
     }
 }

@@ -49,7 +49,7 @@ public class MultiHttpSecurityCustomConfig {
     @Order(1)
     public static class ApiWebSecurityHttpBasic extends WebSecurityConfigurerAdapter {
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/extbaskets").antMatcher("/basketsextlist").antMatcher("/basket_ext_stock").authorizeRequests().anyRequest().hasRole("admin").and().httpBasic();
+            http.csrf().disable().authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
         }
     }
 

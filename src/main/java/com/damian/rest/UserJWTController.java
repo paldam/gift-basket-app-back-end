@@ -36,7 +36,7 @@ public class UserJWTController {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
     }
-
+    @CrossOrigin
     @PostMapping("/auth")
     public ResponseEntity authorize(@Valid @RequestBody LoginVM loginVM, HttpServletResponse response) {
 

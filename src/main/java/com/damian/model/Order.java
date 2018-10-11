@@ -26,6 +26,7 @@ public class Order implements Serializable {
     private String additionalInformation;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
     private Date deliveryDate;
+    private Integer weekOfYear;
     private DeliveryType deliveryType;
     private OrderStatus orderStatus;
     private Integer orderTotalAmount;
@@ -84,6 +85,15 @@ public class Order implements Serializable {
         this.orderItems = orderItems;
     }
 
+    @Basic
+    @Column(name = "week_of_year", length = 300)
+    public Integer getWeekOfYear() {
+        return weekOfYear;
+    }
+
+    public void setWeekOfYear(Integer weekOfYear) {
+        this.weekOfYear = weekOfYear;
+    }
 
     @Basic
     @Column(name = "order_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
