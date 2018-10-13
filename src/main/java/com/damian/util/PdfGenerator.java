@@ -353,38 +353,44 @@ public class PdfGenerator {
 
     }
 
-    private static String getDateFromDayWeek(Order order ){
+    private static String getDateFromDayWeek(Order order ) {
 
-        
-                Calendar c = Calendar.getInstance();
-                c.setTime(order.getOrderDate());
 
-                int orderDateWeek =   c.get(Calendar.WEEK_OF_YEAR);
-                int year = c.get(Calendar.YEAR);
-                 // 41               // 40
-                 if (orderDateWeek > order.getWeekOfYear()){
+        if (Optional.ofNullable(order.getWeekOfYear()).isPresent()) {
+            Calendar c = Calendar.getInstance();
+            c.setTime(order.getOrderDate());
 
-                     year += 1;
-                 }
+            int orderDateWeek = c.get(Calendar.WEEK_OF_YEAR);
+            int year = c.get(Calendar.YEAR);
+            // 41               // 40
+            if (orderDateWeek > order.getWeekOfYear()) {
 
-        log.error(Integer.toString(year));
+                year += 1;
+            }
 
-        LocalDate monday = LocalDate.now();
-        monday = monday.with(WeekFields.ISO.dayOfWeek(), 1);
-        monday = monday.with(WeekFields.ISO.weekOfWeekBasedYear(), order.getWeekOfYear());
-        monday = monday.with(WeekFields.ISO.weekBasedYear(), year);
+            log.error(Integer.toString(year));
 
-        LocalDate sunday =  monday.plusDays(6);
+            LocalDate monday = LocalDate.now();
+            monday = monday.with(WeekFields.ISO.dayOfWeek(), 1);
+            monday = monday.with(WeekFields.ISO.weekOfWeekBasedYear(), order.getWeekOfYear());
+            monday = monday.with(WeekFields.ISO.weekBasedYear(), year);
 
-        
+            LocalDate sunday = monday.plusDays(6);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("TYDZIEŃ ");
-        sb.append(order.getWeekOfYear().toString());
-        sb.append("                   ");
-        sb.append(monday.toString());
-        sb.append("  ");
-        sb.append(sunday.toString());
-        return sb.toString();
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("TYDZIEŃ ");
+            sb.append(order.getWeekOfYear().toString());
+            sb.append("                   ");
+            sb.append(monday.toString());
+            sb.append("  ");
+            sb.append(sunday.toString());
+            return sb.toString();
+
+
+        } else {
+            return "";
+        }
+
     }
 }
