@@ -1,12 +1,16 @@
 package com.damian.util;
 import com.damian.model.Order;
 import com.damian.model.OrderItem;
+import com.damian.repository.DbFileDao;
 import com.damian.rest.UserJWTController;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
+import javax.annotation.PostConstruct;
 import java.text.SimpleDateFormat;
 
 import java.io.*;
@@ -17,15 +21,25 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+@Component
 public class PdfGenerator {
 
-    static  Integer orderTypeId ;
-    static Order order;
+    private static  Integer orderTypeId ;
+    private static Order order;
+    private  static DbFileDao dbFileDao;
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(PdfGenerator.class);
 
+    @Autowired
+    private DbFileDao dao;
+
+    @PostConstruct
+    private void initStaticDao () {
+        dbFileDao = this.dao;
+    }
 
     public static ByteArrayInputStream generatePdf(List<Order> orderToPrint) throws IOException {
+
+
 
 
         Document document = new Document();
@@ -41,6 +55,7 @@ public class PdfGenerator {
         orderToPrint.forEach(order->{
 
                 try {
+
 
                     float[] columnWidths = {5, 5, 5,5,5,5,5,5,5,5};
                     PdfPTable table = new PdfPTable(columnWidths);
@@ -336,16 +351,25 @@ public class PdfGenerator {
     
     private static String getAdditionalInformtionMassage(Order order){
 
+
+        Long numberOfFile = dbFileDao.countByOrderId(order.getOrderId());
+        String attachmentInformation = "";
+        if (numberOfFile > 0) {
+            attachmentInformation = "Uwaga załącznik w systemie | ";
+        }
+
         StringBuilder additionalInformationTmp = new StringBuilder();
         orderTypeId = order.getDeliveryType().getDeliveryTypeId();
 
         if(Arrays.asList(5,6,7).contains(orderTypeId)) {
             additionalInformationTmp
+                    .append(attachmentInformation)
                     .append("Pobranie ")
                     .append((double)order.getCod()/100)
                     .append(" zł | ")
                     .append((order.getAdditionalInformation()== null) ? "": order.getAdditionalInformation());
         } else{
+            additionalInformationTmp.append(attachmentInformation);
             additionalInformationTmp.append((order.getAdditionalInformation()== null) ? "": order.getAdditionalInformation());
         }
 

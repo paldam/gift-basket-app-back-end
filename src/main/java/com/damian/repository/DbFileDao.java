@@ -16,7 +16,7 @@ public interface DbFileDao extends JpaRepository<DbFile,Long> {
     public List<DbFile> findAll() ;
     public List<DbFile> findByOrderId(Long id)   ;
     public DbFile findByFileId(Long id);
-
+    public long countByOrderId(Long id)   ;
    
 
 
