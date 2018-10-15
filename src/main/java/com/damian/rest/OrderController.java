@@ -1,36 +1,22 @@
 package com.damian.rest;
 
 import com.damian.dto.NumberOfBasketOrderedByDate;
-import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.dto.OrderDto;
 import com.damian.exceptions.OrderStatusException;
 import com.damian.model.*;
 import com.damian.repository.*;
 import com.damian.service.DbFileService;
 import com.damian.service.OrderService;
-import com.damian.util.PdfDeliveryConfirmation;
-import com.damian.util.PdfGenerator;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import javax.servlet.MultipartConfigElement;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 public class OrderController {
@@ -84,13 +70,6 @@ public class OrderController {
 //    }
 
 
-    @CrossOrigin
-    @GetMapping("/order/customer/{id}")
-    ResponseEntity<List<Order>> getOrdersByCustomer( @PathVariable Integer id) {
-
-        List<Order> ordersList = orderDao.findByCustomerId(id);
-        return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
-    }
 
     @CrossOrigin
     @GetMapping("/orders/daterange")
@@ -145,6 +124,14 @@ public class OrderController {
     }
 
     @CrossOrigin
+    @GetMapping("/order/customer/{id}")
+    ResponseEntity<List<OrderDto>> getOrdersByCustomer( @PathVariable Integer id) {
+
+        List<OrderDto> ordersList = orderService.getOrderDaoByCustomer(id);
+        return new ResponseEntity<List<OrderDto>>(ordersList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping("/order/audit/{id}")
     ResponseEntity<List<OrderEditAudit>> getOrderAudit(@PathVariable Long id )
     {
@@ -172,11 +159,31 @@ public class OrderController {
 
 
         try {
-            orderService.createOrder(order);
+            orderService.createOrUpdateOrder(order);
             return new ResponseEntity<Order>(order, HttpStatus.CREATED);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
         }
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "/order/status/{id}/{statusId}",produces = "text/plain;charset=UTF-8")
+    ResponseEntity changeOrderStatus(@PathVariable Long id, @PathVariable Integer statusId)throws URISyntaxException, OrderStatusException {
+
+
+        Order updattingOrder =  orderDao.findByOrderId(id);
+        OrderStatus updattingOrderNewStatus =new OrderStatus();
+        updattingOrderNewStatus.setOrderStatusId(statusId);
+        updattingOrder.setOrderStatus(updattingOrderNewStatus);
+
+        try {
+            orderService.createOrUpdateOrder(updattingOrder);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } catch (OrderStatusException oEx) {
+            return ResponseEntity.badRequest().body(oEx.getMessage());
+        }
+
+
     }
 
     @CrossOrigin

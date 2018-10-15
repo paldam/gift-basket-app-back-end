@@ -40,7 +40,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void createOrder(Order order) throws OrderStatusException {
+    public void createOrUpdateOrder(Order order) throws OrderStatusException {
 
 
 
@@ -219,6 +219,44 @@ public class OrderService {
         });
 
         
+        return orderDtoList;
+
+    }
+
+
+    public List<OrderDto> getOrderDaoByCustomer(Integer id){
+
+        List<Order> orderList = orderDao.findByCustomerId(id);
+        List<OrderDto>   orderDtoList = new ArrayList<>() ;
+        List<DbFile>   dbFileDtoList = dbFileDao.findAll() ;
+
+        List<OrderItem> oredrItemsList = new ArrayList<>();
+
+
+        orderList.forEach(order -> {
+            logger.error("EEEEEEEE" + order.getWeekOfYear());
+            List<DbFile> result = new LinkedList<>();
+            //result =  dbFileDtoList.stream().filter(data -> data.getOrderId() == 835).collect(Collectors.toList());
+
+            result =  dbFileDtoList.stream()
+                    .filter(data -> order.getOrderId().equals(data.getOrderId()))
+                    .collect(Collectors.toList());
+
+            Long fileIdTmp = null;
+
+
+            if(result.size() >0) {
+                fileIdTmp = result.get(0).getFileId();
+            }else{
+                fileIdTmp = 0L;
+            }
+
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
+                    order.getAdditionalInformation(), order.getDeliveryDate(),order.getWeekOfYear(),order.getDeliveryType(),
+                    order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp,oredrItemsList)) ;
+        });
+
+
         return orderDtoList;
 
     }

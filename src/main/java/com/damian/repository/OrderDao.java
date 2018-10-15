@@ -6,8 +6,10 @@ import com.damian.model.Order;
 import com.damian.model.Product;
 import com.damian.model.ProductToOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -27,6 +29,11 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     @Query(value = "SELECT * FROM orders WHERE customer_id = ?1", nativeQuery = true)
     public List<Order> findByCustomerId(Integer id);
 
+
+    @Transactional
+    @Modifying
+    @Query(value = "update orders set stock =  stock + ?2  WHERE id = ?1", nativeQuery = true)
+    void changeStatus(Integer id);
 
 
 
