@@ -24,4 +24,7 @@ public interface BasketDao extends CrudRepository<Basket,Long> {
 
     @Query(value = "SELECT * FROM baskets WHERE basket_type = 100", nativeQuery = true)
     public List<Basket> findALLExportBasket();
+
+    @Query(value = "select * from baskets INNER join basket_items on baskets.basket_id = basket_items.basket_id where basket_items.product_id = ?1 and (baskets.basket_type = 1 Or baskets.basket_type =2) ", nativeQuery = true)
+    public List<Basket> BasketListByProduct(Integer productId);
 }

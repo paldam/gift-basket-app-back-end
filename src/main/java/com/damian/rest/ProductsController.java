@@ -2,14 +2,8 @@ package com.damian.rest;
 
 
 
-import com.damian.model.BasketType;
-import com.damian.model.Product;
-import com.damian.model.ProductType;
-import com.damian.model.Supplier;
-import com.damian.repository.BasketTypeDao;
-import com.damian.repository.ProductTypeDao;
-import com.damian.repository.ProductDao;
-import com.damian.repository.SupplierDao;
+import com.damian.model.*;
+import com.damian.repository.*;
 import com.damian.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,12 +22,14 @@ public class ProductsController {
     private ProductTypeDao productsTypeDao;
    private SupplierDao supplierDao;
     private  ProductService productService;
+    private BasketDao basketDao;
 
-    public ProductsController(ProductService productService, ProductTypeDao productsTypeDao, ProductDao productsDao, SupplierDao supplierDao) {
+    public ProductsController(ProductService productService, BasketDao basketDao, ProductTypeDao productsTypeDao, ProductDao productsDao, SupplierDao supplierDao) {
         this.productsTypeDao = productsTypeDao;
         this.productsDao = productsDao;
         this.supplierDao = supplierDao;
         this.productService = productService;
+        this.basketDao = basketDao;
     }
 
 
@@ -73,6 +70,17 @@ public class ProductsController {
             return new ResponseEntity<Product>(product, HttpStatus.OK);
 
     }
+
+
+    @CrossOrigin
+    @GetMapping(value = "/baskets_by_product/{id}",produces = "application/json; charset=utf-8")
+    ResponseEntity<List<Basket>> getBasketsByProductId(@PathVariable Integer id){
+
+        List<Basket> basketsList = basketDao.BasketListByProduct(id);
+        return new ResponseEntity<List<Basket>>(basketsList, HttpStatus.OK);
+
+    }
+
 
     @CrossOrigin
     @PostMapping("/products/supplier/")
