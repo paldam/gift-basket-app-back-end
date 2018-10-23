@@ -12,15 +12,17 @@ public class ProductToOrder {
     private String product_name;
     private Supplier supplier;
     private Integer stock;
+    private Integer tmpOrdered;
     private Long suma ;
     private String capacity;
 
 
-    public ProductToOrder(Integer id, String product_name,Supplier supplier,Integer stock,Long suma,String capacity) {
+    public ProductToOrder(Integer id, String product_name,Supplier supplier,Integer stock,Integer tmpOrdered, Long suma,String capacity) {
         this.id = id;
         this.product_name = product_name;
         this.supplier = supplier;
         this.stock = stock;
+        this.tmpOrdered = tmpOrdered;
         this.suma = suma;
         this.capacity = capacity;
 
@@ -42,7 +44,13 @@ public class ProductToOrder {
         this.id = id;
     }
 
+    public Integer getTmpOrdered() {
+        return tmpOrdered;
+    }
 
+    public void setTmpOrdered(Integer tmpOrdered) {
+        this.tmpOrdered = tmpOrdered;
+    }
 
     public Integer getStock() {
         return stock;

@@ -15,6 +15,7 @@ public class Product {
     private String productName;
     private Integer stock;
     private Integer tmpStock;
+    private Integer tmpOrdered;
     private String deliver;
     private Integer isArchival;
     private Supplier supplier;
@@ -90,6 +91,16 @@ public class Product {
 
     public void setTmpStock(Integer tmpStock) {
         this.tmpStock = tmpStock;
+    }
+
+    @Basic
+    @Column(name = "tmp_ordered", columnDefinition = "INT DEFAULT 0")
+    public Integer getTmpOrdered() {
+        return tmpOrdered;
+    }
+
+    public void setTmpOrdered(Integer tmpOrdered) {
+        this.tmpOrdered = tmpOrdered;
     }
 
     @Basic

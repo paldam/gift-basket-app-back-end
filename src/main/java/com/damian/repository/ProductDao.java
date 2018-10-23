@@ -31,7 +31,10 @@ public interface ProductDao extends CrudRepository<Product,Long> {
 
     public void deleteById(Integer id);
 
+
+    @Query(value = "SELECT * from products WHERE supplier_id = ?1 AND is_archival = 0;", nativeQuery = true)
     public List<Product> findBySupplier_SupplierId(Integer id);
+
 
     @Query(value = "SELECT * FROM products WHERE is_archival != 1 or is_archival = null", nativeQuery = true)
     public List<Product> findAllWithoutDeleted();
@@ -47,6 +50,15 @@ public interface ProductDao extends CrudRepository<Product,Long> {
     @Query(value = "update products set stock =  stock + ?2, last_stock_edit_date = CURRENT_TIMESTAMP  WHERE id = ?1", nativeQuery = true)
     void updateStock(Integer productId,Integer addValue);
 
+    @Transactional
+    @Modifying
+    @Query(value = "update products set tmp_ordered =  tmp_ordered + ?2  WHERE id = ?1", nativeQuery = true)
+    void addProductToDeliver(Integer productId,Integer addValue);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update products set tmp_ordered =  0  WHERE id = ?1", nativeQuery = true)
+    void resetProductToDeliver(Integer productId);
 
     @Transactional
     @Modifying

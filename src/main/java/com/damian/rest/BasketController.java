@@ -107,7 +107,7 @@ public class BasketController {
 
         basketList.forEach(basket -> {
             BasketExt basketTmp = new BasketExt(basket) ;
-            basketTmp.setBasketTotalPrice(basketTmp.getBasketTotalPrice()/100) ;
+            basketTmp.setBasketTotalPrice(basketTmp.getBasketTotalPrice()) ;
 
             basketExtList.add(basketTmp) ;
         });

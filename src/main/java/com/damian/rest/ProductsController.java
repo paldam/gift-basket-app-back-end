@@ -9,9 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -97,11 +95,31 @@ public class ProductsController {
     @PostMapping(value = "/product/stock",produces = "application/json; charset=utf-8")
     ResponseEntity changeProductsStock(@RequestParam Integer productId, Integer addValue) {
 
-         productService.changeStock(productId,addValue);
+         productService.changeStockEndResetOfProductsToDelivery(productId,addValue);
 
         return new ResponseEntity<Supplier>(HttpStatus.OK);
 
     }
+
+    @CrossOrigin
+    @PostMapping(value = "/product/order",produces = "application/json; charset=utf-8")
+    ResponseEntity addProductsToDelivery(@RequestParam Integer productId, Integer addValue) {
+
+        productService.addNumberOfProductsDelivery(productId,addValue);
+
+        return new ResponseEntity<Supplier>(HttpStatus.OK);
+
+    }
+
+//    @CrossOrigin
+//    @PostMapping(value = "/product/order/reset",produces = "application/json; charset=utf-8")
+//    ResponseEntity resetProductsToDelivery(@RequestParam Integer productId) {
+//
+//        productsDao.resetProductToDeliver(productId);
+//
+//        return new ResponseEntity<Supplier>(HttpStatus.OK);
+//
+//    }
 
     @CrossOrigin
     @DeleteMapping(value = "/products/{id}")
