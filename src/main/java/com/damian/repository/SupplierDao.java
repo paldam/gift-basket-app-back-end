@@ -13,4 +13,5 @@ import java.util.List;
 public interface SupplierDao  extends JpaRepository<Supplier,Long> {
 
     Supplier findBySupplierName(String name) ;
+    List<Supplier> findAllByOrderBySupplierNameAsc();
 }

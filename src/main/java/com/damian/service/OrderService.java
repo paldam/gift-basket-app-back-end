@@ -7,6 +7,7 @@ import com.damian.exceptions.OrderStatusException;
 import com.damian.model.*;
 import com.damian.repository.*;
 import com.damian.rest.OrderController;
+import com.damian.security.SecurityUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.springframework.security.access.method.P;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,7 +44,7 @@ public class OrderService {
     @Transactional
     public void createOrUpdateOrder(Order order) throws OrderStatusException {
 
-
+        logger.error(" W Serwisie użytkownik to " + SecurityUtils.getCurrentUserLogin());
 
         if (Objects.isNull(order.getOrderId()) ){
 
@@ -196,7 +198,6 @@ public class OrderService {
 
 
         orderList.forEach(order -> {
-            logger.error("EEEEEEEE" + order.getWeekOfYear());
             List<DbFile> result = new LinkedList<>();
             //result =  dbFileDtoList.stream().filter(data -> data.getOrderId() == 835).collect(Collectors.toList());
 

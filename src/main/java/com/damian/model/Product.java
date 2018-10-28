@@ -20,6 +20,7 @@ public class Product {
     private Integer isArchival;
     private Supplier supplier;
     private Date lastStockEditDate;
+    private Date lastNumberOfOrderedEditDate;
 
 
     @Basic
@@ -132,5 +133,16 @@ public class Product {
 
     public void setLastStockEditDate(Date lastStockEditDate) {
         this.lastStockEditDate = lastStockEditDate;
+    }
+
+
+    @Basic
+    @Column(name = "last_number_of_ordered_edit_date")
+    public Date getLastNumberOfOrderedEditDate() {
+        return lastNumberOfOrderedEditDate;
+    }
+
+    public void setLastNumberOfOrderedEditDate(Date lastNumberOfOrderedEditDate) {
+        this.lastNumberOfOrderedEditDate = lastNumberOfOrderedEditDate;
     }
 }

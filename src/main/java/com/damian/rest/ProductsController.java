@@ -44,7 +44,7 @@ public class ProductsController {
     @GetMapping(value = "/products/supplier",produces = "application/json; charset=utf-8")
     ResponseEntity<List<Supplier>> listAllSuppliers(){
 
-        List<Supplier> supplierList = supplierDao.findAll();
+        List<Supplier> supplierList = supplierDao.findAllByOrderBySupplierNameAsc();
         return new ResponseEntity<List<Supplier>>(supplierList, HttpStatus.OK);
 
     }
@@ -140,6 +140,8 @@ public class ProductsController {
     @CrossOrigin
     @PostMapping("/products")
     ResponseEntity<Product> createProduct(@RequestBody Product products )throws URISyntaxException {
+
+        products.setTmpOrdered(0);
         productsDao.save(products);
 
         return new ResponseEntity<Product>(products,HttpStatus.CREATED);

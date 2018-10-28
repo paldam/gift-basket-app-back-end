@@ -52,7 +52,7 @@ public interface ProductDao extends CrudRepository<Product,Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "update products set tmp_ordered =  tmp_ordered + ?2  WHERE id = ?1", nativeQuery = true)
+    @Query(value = "update products set tmp_ordered =  tmp_ordered + ?2 , last_number_of_ordered_edit_date = CURRENT_TIMESTAMP WHERE id = ?1", nativeQuery = true)
     void addProductToDeliver(Integer productId,Integer addValue);
 
     @Transactional

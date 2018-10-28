@@ -49,7 +49,29 @@ public class MultiHttpSecurityCustomConfig {
     @Order(1)
     public static class ApiWebSecurityHttpBasic extends WebSecurityConfigurerAdapter {
         protected void configure(HttpSecurity http) throws Exception {
-            http.csrf().disable().authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
+            http.antMatcher("/extbaskets").authorizeRequests().anyRequest().hasRole("admin").and().httpBasic();
+                   //http.csrf().disable().antMatcher("/**").authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
+
+        }
+    }
+
+    @Configuration
+    @Order(2)
+    public static class ApiWebSecurityHttpBasic2 extends WebSecurityConfigurerAdapter {
+        protected void configure(HttpSecurity http) throws Exception {
+            http.antMatcher("/basketsextlist").authorizeRequests().anyRequest().hasRole("admin").and().httpBasic();
+            //http.csrf().disable().antMatcher("/**").authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
+
+        }
+    }
+
+    @Configuration
+    @Order(3)
+    public static class ApiWebSecurityHttpBasic3 extends WebSecurityConfigurerAdapter {
+        protected void configure(HttpSecurity http) throws Exception {
+            http.antMatcher("/basket_ext_stock").authorizeRequests().anyRequest().hasRole("admin").and().httpBasic();
+            //http.csrf().disable().antMatcher("/**").authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
+
         }
     }
 
@@ -96,7 +118,7 @@ public class MultiHttpSecurityCustomConfig {
 
     }
 
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -52,6 +52,7 @@ public class CustomInterceptor extends EmptyInterceptor {
             OrderEditAudit orderEditAudit = new OrderEditAudit(SecurityUtils.getCurrentUserLogin(),((Order) entity).getOrderId());
             orderEditAuditDao.save(orderEditAudit) ;
 
+            logger.error(" W INTERCEPT użytkownik to " + SecurityUtils.getCurrentUserLogin());
 
 
         }
