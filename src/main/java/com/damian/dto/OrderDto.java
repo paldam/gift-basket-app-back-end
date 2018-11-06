@@ -22,10 +22,11 @@ public class OrderDto {
     private Integer orderTotalAmount;
     private Long dbFileId;
     private List<OrderItem> orderItems;
+    private Integer additionalSale;
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
                     String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
-                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems) {
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,Integer additionalSale) {
         this.orderId = orderId;
         this.orderFvNumber = orderFvNumber;
         this.customer = customer;
@@ -38,6 +39,7 @@ public class OrderDto {
         this.orderTotalAmount = orderTotalAmount;
         this.dbFileId = dbFileId;
         this.orderItems = orderItems;
+        this.additionalSale = additionalSale;
     }
 
 
@@ -137,5 +139,13 @@ public class OrderDto {
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public Integer getAdditionalSale() {
+        return additionalSale;
+    }
+
+    public void setAdditionalSale(Integer additionalSale) {
+        this.additionalSale = additionalSale;
     }
 }

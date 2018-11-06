@@ -216,7 +216,7 @@ public class OrderService {
 
               orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
                     order.getAdditionalInformation(), order.getDeliveryDate(),order.getWeekOfYear(),order.getDeliveryType(),
-                    order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp,oredrItemsList)) ;
+                    order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp,oredrItemsList,order.getAdditionalSale())) ;
         });
 
         
@@ -254,7 +254,7 @@ public class OrderService {
 
             orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
                     order.getAdditionalInformation(), order.getDeliveryDate(),order.getWeekOfYear(),order.getDeliveryType(),
-                    order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp,oredrItemsList)) ;
+                    order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp,oredrItemsList,order.getAdditionalSale())) ;
         });
 
 

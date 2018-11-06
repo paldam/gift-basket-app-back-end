@@ -32,6 +32,7 @@ public class Order implements Serializable {
     private Integer orderTotalAmount;
     private Integer cod;
     private Address address;
+    private Integer additionalSale;
 
 
     @Id
@@ -175,6 +176,15 @@ public class Order implements Serializable {
         this.address = address;
     }
 
+    @Basic
+    @Column(name = "additional_sale", length = 10, columnDefinition = "INT DEFAULT 0")
+    public Integer getAdditionalSale() {
+        return additionalSale;
+    }
+
+    public void setAdditionalSale(Integer additionalSale) {
+        this.additionalSale = additionalSale;
+    }
 
     @Override
     public String toString() {
@@ -187,11 +197,13 @@ public class Order implements Serializable {
                 ", orderDate=" + orderDate +
                 ", additionalInformation='" + additionalInformation + '\'' +
                 ", deliveryDate=" + deliveryDate +
+                ", weekOfYear=" + weekOfYear +
                 ", deliveryType=" + deliveryType +
                 ", orderStatus=" + orderStatus +
                 ", orderTotalAmount=" + orderTotalAmount +
                 ", cod=" + cod +
                 ", address=" + address +
+                ", additionalSale=" + additionalSale +
                 '}';
     }
 }

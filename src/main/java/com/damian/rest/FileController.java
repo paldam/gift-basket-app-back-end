@@ -1,6 +1,7 @@
 package com.damian.rest;
 
 import com.damian.dto.FileDto;
+import com.damian.dto.ProductToCollectOrder;
 import com.damian.model.DbFile;
 import com.damian.model.Order;
 import com.damian.model.OrderItem;
@@ -11,6 +12,7 @@ import com.damian.service.OrderService;
 import com.damian.util.PdfDeliveryConfirmation;
 import com.damian.util.PdfGenerator;
 import com.damian.util.PdfMultiDeliveryConfirmation;
+import com.damian.util.PdfProductToCollectOrder;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -126,6 +128,33 @@ public class FileController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(bis));
     }
+
+
+
+
+
+
+    @CrossOrigin
+    @RequestMapping(value = "/order/pdf/product_to_collect/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> getProductsToCollectOrder(@PathVariable Long id) throws IOException {
+
+
+        List<ProductToCollectOrder> productToCollectOrderTmp = orderDao.findProductToCollectOrder(id);
+
+       PdfProductToCollectOrder pdfGenerator = new PdfProductToCollectOrder();
+        ByteArrayInputStream bis = pdfGenerator.generateProductToCollectOrderPdf(productToCollectOrderTmp,id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=order.pdf");
+        new InputStreamResource(bis)  ;
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(bis));
+    }
+
+
 
     @CrossOrigin
     @RequestMapping(value = "/order/multipdf", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
