@@ -59,7 +59,7 @@ public interface OrderDao extends JpaRepository<Order,Long> {
 
 
 
-    @Query(value = "SELECT NEW com.damian.dto.ProductToCollectOrder(p.productName,sum(oi.quantity*bi.quantity)) FROM Order o JOIN o.orderItems oi " +
+    @Query(value = "SELECT NEW com.damian.dto.ProductToCollectOrder(p.productName,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
             "JOIN oi.basket b " +
             "JOIN b.basketItems bi JOIN bi.product p WHERE  o.orderId = ?1  GROUP BY p.productName")
 

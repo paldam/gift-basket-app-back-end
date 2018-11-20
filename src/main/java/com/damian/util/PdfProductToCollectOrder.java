@@ -72,7 +72,7 @@ public class PdfProductToCollectOrder {
             table.addCell(cell);
 
 
-            float[] columnWidths2 = {7,3};
+            float[] columnWidths2 = {6,2,2};
             PdfPTable table2 = new PdfPTable(columnWidths2);
             table2.setWidthPercentage(100);
 
@@ -80,6 +80,7 @@ public class PdfProductToCollectOrder {
             for (ProductToCollectOrder i: productToCollectOrder){
 
                 table2.addCell(new PdfCellExt(new Phrase(i.getProduct_name(),font3)));
+                table2.addCell(new PdfCellExt(new Phrase(i.getCapacity(),font3)));
                 table2.addCell(new PdfCellExt(new Phrase(i.getSuma().toString(),font3)));
             }
 
