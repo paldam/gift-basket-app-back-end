@@ -30,8 +30,15 @@ public class NoteController {
     @CrossOrigin
     @GetMapping(value = "/notes")
     ResponseEntity<List<Note>> getNotes(){
-        List<Note> noteList = noteDao.findAll();
+        List<Note> noteList = noteDao.findAllWithoutDeleted();
         return new ResponseEntity<List<Note>>(noteList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/notes/{id}")
+    ResponseEntity<Note> getNote(@PathVariable Long id){
+        Note note = noteDao.findOne(id);
+        return new ResponseEntity<Note>(note, HttpStatus.OK);
     }
 
     @CrossOrigin

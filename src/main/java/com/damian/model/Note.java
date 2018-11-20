@@ -1,6 +1,8 @@
 package com.damian.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
@@ -20,6 +22,7 @@ private Date creationDate;
 
     @Basic
     @Column(name = "expiration_date", columnDefinition = "DATE")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
 private Date expirationDate;
 
     @Basic
