@@ -1,5 +1,6 @@
 package com.damian.service;
 
+import com.damian.model.Product;
 import com.damian.repository.ProductDao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,19 @@ public class ProductService {
     public void changeStockEndResetOfProductsToDelivery(Integer productId, Integer addValue)  {
 
               productDao.updateStock(productId,addValue);
-              productDao.resetProductToDeliver(productId);
+
+
+             Product productTmp = productDao.findById(productId);
+
+             int valueToSetTmpOrdered = 0;
+
+             if( addValue >= productTmp.getTmpOrdered()){
+                 valueToSetTmpOrdered = 0;
+             }else{
+                 valueToSetTmpOrdered = productTmp.getTmpOrdered() - addValue;
+             }
+
+              productDao.setProductToDeliver(productId,valueToSetTmpOrdered);
 
     }
 
