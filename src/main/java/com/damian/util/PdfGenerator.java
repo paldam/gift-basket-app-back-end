@@ -144,7 +144,7 @@ public class PdfGenerator {
                             cell9.setBorder(Rectangle.LEFT |  Rectangle.RIGHT);
                             table.addCell(cell9);
 
-                            PdfPCell cell10 = new PdfPCell(new Phrase("Adres Dostawy",font));
+                            PdfPCell cell10 = new PdfPCell(new Phrase("Osoba do kontaktu",font));
                             cell10.setColspan(7);
                             cell10.setHorizontalAlignment(Element.ALIGN_CENTER);
                             cell10.setBorder(Rectangle.LEFT |  Rectangle.RIGHT);
@@ -157,11 +157,27 @@ public class PdfGenerator {
                             cell11.setMinimumHeight(30);
                             table.addCell(cell11);
 
-                            PdfPCell cell12 = new PdfPCell(new Phrase(order.getAddress().AddressDesc(),font2));
+                            PdfPCell cell12 = new PdfPCell(new Phrase(order.getContactPerson(),font2));
                             cell12.setColspan(7);
                             cell12.setHorizontalAlignment(Element.ALIGN_CENTER);
                             cell12.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
                             table.addCell(cell12);
+
+
+                    PdfPCell cell111 = new PdfPCell(new Phrase("Adres dostawy",font));
+                    cell111.setColspan(10);
+                    cell111.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell111.setBorder(Rectangle.LEFT |  Rectangle.RIGHT);
+                    table.addCell(cell111);
+//row 5
+
+
+                    PdfPCell cell112 = new PdfPCell(new Phrase(order.getAddress().AddressDesc(),font2));
+                    cell112.setColspan(10);
+                    cell112.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell112.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
+                    cell112.setMinimumHeight(30);
+                    table.addCell(cell112);
 
                 //row 6
 

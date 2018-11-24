@@ -97,8 +97,25 @@ public class PdfDeliveryConfirmation {
             cell12.setColspan(10);
             cell12.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell12.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
-            cell12.setMinimumHeight(80);
+            cell12.setMinimumHeight(60);
             table.addCell(cell12);
+
+
+
+            PdfPCell cell111 = new PdfPCell(new Phrase("Osoba do kontaktu",font));
+            cell111.setColspan(10);
+            cell111.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell111.setBorder(Rectangle.LEFT |  Rectangle.RIGHT);
+            table.addCell(cell111);
+//row 5
+
+
+            PdfPCell cell112 = new PdfPCell(new Phrase(order.getContactPerson(),font2));
+            cell112.setColspan(10);
+            cell112.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell112.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
+            cell112.setMinimumHeight(50);
+            table.addCell(cell112);
 
 //row 6
 

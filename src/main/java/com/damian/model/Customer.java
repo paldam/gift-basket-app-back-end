@@ -14,6 +14,7 @@ public class Customer {
     private List<Address> addresses;
     private String email;
     private String phoneNumber;
+    private String additionalInformation;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,5 +75,15 @@ public class Customer {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    @Basic
+    @Column(name = "additional_information", length = 200, columnDefinition = "varchar(200)")
+    public String getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(String additionalInformation) {
+        this.additionalInformation = additionalInformation;
     }
 }

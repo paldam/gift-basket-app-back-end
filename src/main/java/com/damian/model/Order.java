@@ -33,6 +33,7 @@ public class Order implements Serializable {
     private Integer cod;
     private Address address;
     private Integer additionalSale;
+    private String contactPerson;
 
 
     @Id
@@ -186,6 +187,17 @@ public class Order implements Serializable {
         this.additionalSale = additionalSale;
     }
 
+
+    @Basic
+    @Column(name = "contact_person", length = 500)
+    public String getContactPerson() {
+        return contactPerson;
+    }
+
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -204,6 +216,7 @@ public class Order implements Serializable {
                 ", cod=" + cod +
                 ", address=" + address +
                 ", additionalSale=" + additionalSale +
+                ", contactPerson='" + contactPerson + '\'' +
                 '}';
     }
 }
