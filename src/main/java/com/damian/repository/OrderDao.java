@@ -69,11 +69,13 @@ public interface OrderDao extends JpaRepository<Order,Long> {
 
 
 
-    @Query(value = "select new com.damian.dto.NumberOfBasketOrderedByDate(b.basketName,sum(oi.quantity)) FROM Order o JOIN o.orderItems oi JOIN oi.basket b  where " +
+    @Query(value = "select new com.damian.dto.NumberOfBasketOrderedByDate(b.basketName,sum(oi.quantity),count(o.orderId)) FROM Order o JOIN o.orderItems oi JOIN oi.basket b  where " +
             "o.deliveryDate between ?1 and ?2 and (o.orderStatus =1 Or o.orderStatus =4) group by b.basketName")
     public List<NumberOfBasketOrderedByDate> getNumberOfBasketOrdered (Date startDate, Date endDate);
 
-
+    @Query(value = "select new com.damian.dto.NumberOfBasketOrderedByDate(b.basketName,sum(oi.quantity),count(o.orderId)) FROM Order o JOIN o.orderItems oi JOIN oi.basket b  where " +
+            "o.orderDate between ?1 and ?2 and (o.orderStatus =1 Or o.orderStatus =4) group by b.basketName")
+    public List<NumberOfBasketOrderedByDate> getNumberOfBasketOrderedFilteredByOrderDate (Date startDate, Date endDate);
 
 
     @Query(value = "SELECT NEW com.damian.dto.OrderDto(o.orderId,o.orderFvNumber,o.customer, o.orderDate,o.additionalInformation,o.deliveryDate," +

@@ -29,6 +29,8 @@ public class OrderService {
     private ProductDao productDao;
     private SupplierDao supplierDao;
     private DbFileDao dbFileDao;
+    //public static final int  NOWE = 9;
+    //public static final int  PRZYJETE= 9;
 
     OrderService(OrderDao orderDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao,DbFileDao dbFileDao, SupplierDao supplierDao
                  ) {

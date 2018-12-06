@@ -119,6 +119,24 @@ public class OrderController {
 
 
     @CrossOrigin
+    @GetMapping("/baskets/statistic/orderdaterange")
+    ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrderedFilteredByOrderDate(
+            @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+            @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
+
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(endDate);
+        c.add(Calendar.DATE, 1);
+        Date endDateconvertedToTimeStamp = c.getTime();
+
+
+        List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrderedFilteredByOrderDate(startDate,endDateconvertedToTimeStamp) ;
+        return new ResponseEntity<List<NumberOfBasketOrderedByDate>>(basketList, HttpStatus.OK);
+    }
+
+
+    @CrossOrigin
     @GetMapping("/orderdao")
     ResponseEntity<List<OrderDto>> getOrderDao( )
     {

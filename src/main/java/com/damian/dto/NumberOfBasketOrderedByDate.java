@@ -6,11 +6,13 @@ package com.damian.dto;
 public class NumberOfBasketOrderedByDate {
     private String basketName ;
     private Long quantity;
+    private Long numberOfOrdersWhereBasketOccur;
 
 
-    public NumberOfBasketOrderedByDate(String basketName, Long quantity) {
+    public NumberOfBasketOrderedByDate(String basketName, Long quantity,Long numberOfOrdersWhereBasketOccur) {
         this.basketName = basketName;
         this.quantity = quantity;
+        this.numberOfOrdersWhereBasketOccur =  numberOfOrdersWhereBasketOccur;
     }
 
     public String getBasketName() {
@@ -27,5 +29,13 @@ public class NumberOfBasketOrderedByDate {
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
+    }
+
+    public Long getNumberOfOrdersWhereBasketOccur() {
+        return numberOfOrdersWhereBasketOccur;
+    }
+
+    public void setNumberOfOrdersWhereBasketOccur(Long numberOfOrdersWhereBasketOccur) {
+        this.numberOfOrdersWhereBasketOccur = numberOfOrdersWhereBasketOccur;
     }
 }
