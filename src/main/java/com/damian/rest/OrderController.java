@@ -145,6 +145,14 @@ public class OrderController {
     }
 
     @CrossOrigin
+    @GetMapping("/orderstats")
+    ResponseEntity<List<OrderDto>> getOrderStats( )
+    {
+        List<OrderDto> orderDtoList =  orderService.getOrderStats();
+        return new ResponseEntity<List<OrderDto>>(orderDtoList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping("/order/customer/{id}")
     ResponseEntity<List<OrderDto>> getOrdersByCustomer( @PathVariable Integer id) {
 

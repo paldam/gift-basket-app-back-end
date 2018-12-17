@@ -193,9 +193,9 @@ public class OrderService {
     public List<OrderDto> getOrderDao(){
 
         List<Order> orderList = orderDao.findAllWithoutDeleted();
-         List<OrderDto>   orderDtoList = new ArrayList<>() ;
+        List<OrderDto>   orderDtoList = new ArrayList<>() ;
         List<DbFile>   dbFileDtoList = dbFileDao.findAll() ;
-       
+
         List<OrderItem> oredrItemsList = new ArrayList<>();
 
 
@@ -206,22 +206,47 @@ public class OrderService {
             result =  dbFileDtoList.stream()
                     .filter(data -> order.getOrderId().equals(data.getOrderId()))
                     .collect(Collectors.toList());
-            
+
             Long fileIdTmp = null;
 
 
-                 if(result.size() >0) {
-                     fileIdTmp = result.get(0).getFileId();
-                 }else{
-                     fileIdTmp = 0L;
-                 }
+            if(result.size() >0) {
+                fileIdTmp = result.get(0).getFileId();
+            }else{
+                fileIdTmp = 0L;
+            }
 
-              orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
                     order.getAdditionalInformation(), order.getDeliveryDate(),order.getWeekOfYear(),order.getDeliveryType(),
                     order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp,oredrItemsList,order.getAdditionalSale())) ;
         });
 
-        
+
+        return orderDtoList;
+
+    }
+
+
+    public List<OrderDto> getOrderStats(){
+
+        List<Order> orderList = orderDao.findAllWithoutDeleted();
+        List<OrderDto>   orderDtoList = new ArrayList<>() ;
+        List<DbFile>   dbFileDtoList = dbFileDao.findAll() ;
+
+        List<OrderItem> oredrItemsList = new ArrayList<>();
+
+
+        orderList.forEach(order -> {
+
+            Long fileIdTmp = null;
+
+
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
+                    order.getAdditionalInformation(), order.getDeliveryDate(),order.getWeekOfYear(),order.getDeliveryType(),
+                    order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp,order.getOrderItems(),order.getAdditionalSale())) ;
+        });
+
+
         return orderDtoList;
 
     }
