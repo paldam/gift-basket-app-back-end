@@ -1,7 +1,5 @@
-package com.damian.service;
+package com.damian.note;
 
-import com.damian.model.Note;
-import com.damian.repository.NoteDao;
 import com.damian.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 

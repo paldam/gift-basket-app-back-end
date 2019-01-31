@@ -1,17 +1,9 @@
-package com.damian.rest;
+package com.damian.note;
 
-import com.damian.exceptions.OrderStatusException;
-import com.damian.model.DbFile;
-import com.damian.model.Note;
-import com.damian.model.Order;
-import com.damian.repository.NoteDao;
-import com.damian.service.NotesService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController

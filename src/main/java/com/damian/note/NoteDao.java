@@ -1,6 +1,5 @@
-package com.damian.repository;
+package com.damian.note;
 
-import com.damian.model.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

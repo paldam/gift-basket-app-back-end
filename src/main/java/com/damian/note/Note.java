@@ -1,4 +1,4 @@
-package com.damian.model;
+package com.damian.note;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
