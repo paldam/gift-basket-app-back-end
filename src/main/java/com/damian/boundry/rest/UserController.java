@@ -1,4 +1,4 @@
-package com.damian.rest;
+package com.damian.boundry.rest;
 
 import com.damian.dto.UserDto;
 import com.damian.model.Authority;
@@ -6,7 +6,7 @@ import com.damian.model.User;
 import com.damian.model.UserPasswordChange;
 import com.damian.repository.AuthorityRepository;
 import com.damian.repository.UserRepository;
-import com.damian.rest.util.HeaderUtil;
+import com.damian.boundry.rest.util.HeaderUtil;
 import com.damian.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

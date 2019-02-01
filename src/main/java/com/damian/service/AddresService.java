@@ -4,7 +4,6 @@ import com.damian.model.Address;
 import com.damian.model.Order;
 import com.damian.repository.AddressDao;
 import com.damian.repository.OrderDao;
-import com.damian.rest.OrderController;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by Damian on 23.08.2018.

@@ -1,21 +1,15 @@
 package com.damian.service;
 
-import com.damian.dto.FileDto;
 import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.dto.OrderDto;
 import com.damian.exceptions.OrderStatusException;
 import com.damian.model.*;
 import com.damian.repository.*;
-import com.damian.rest.OrderController;
 import com.damian.security.SecurityUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
-import org.springframework.security.access.method.P;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 

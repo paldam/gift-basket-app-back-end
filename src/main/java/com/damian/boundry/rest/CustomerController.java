@@ -1,10 +1,7 @@
-package com.damian.rest;
+package com.damian.boundry.rest;
 
 import com.damian.dto.CustomerAddressDTO;
-import com.damian.model.Address;
-import com.damian.model.Basket;
 import com.damian.model.Customer;
-import com.damian.model.Order;
 import com.damian.repository.AddressDao;
 import com.damian.repository.CustomerDao;
 import com.damian.repository.OrderDao;
@@ -13,7 +10,6 @@ import com.damian.service.OrderService;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

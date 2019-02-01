@@ -1,4 +1,4 @@
-package com.damian.rest;
+package com.damian.boundry.rest;
 
 import com.damian.model.*;
 import com.damian.repository.DeliveryTypeDao;

@@ -1,4 +1,4 @@
-package com.damian.note;
+package com.damian.domain.note;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,10 +1,9 @@
-package com.damian.note;
+package com.damian.domain.note;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 
 @Entity

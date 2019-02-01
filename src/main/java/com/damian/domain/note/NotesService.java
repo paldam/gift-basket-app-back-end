@@ -1,4 +1,4 @@
-package com.damian.note;
+package com.damian.domain.note;
 
 import com.damian.security.SecurityUtils;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.damian.rest;
+package com.damian.boundry.rest;
 
 import com.damian.dto.NumberOfBasketOrderedByDate;
 import com.damian.dto.OrderDto;
