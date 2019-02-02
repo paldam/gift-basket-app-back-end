@@ -1,16 +1,14 @@
-package com.damian.model;
+package com.damian.domain.order;
 
+import com.damian.model.Address;
+import com.damian.model.Customer;
+import com.damian.model.DeliveryType;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Entity

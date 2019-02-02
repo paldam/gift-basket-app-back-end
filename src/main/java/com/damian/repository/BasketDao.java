@@ -2,7 +2,6 @@ package com.damian.repository;
 
 
 import com.damian.model.Basket;
-import com.damian.model.Order;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

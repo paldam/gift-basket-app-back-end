@@ -1,7 +1,5 @@
-package com.damian.repository;
+package com.damian.domain.order;
 
-import com.damian.model.Order;
-import com.damian.model.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

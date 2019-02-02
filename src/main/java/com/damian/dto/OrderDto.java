@@ -1,5 +1,7 @@
 package com.damian.dto;
 
+import com.damian.domain.order.OrderItem;
+import com.damian.domain.order.OrderStatus;
 import com.damian.model.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 

@@ -1,4 +1,4 @@
-package com.damian.service;
+package com.damian.domain.order;
 
 import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.dto.OrderDto;

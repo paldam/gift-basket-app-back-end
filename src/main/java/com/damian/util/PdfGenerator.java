@@ -1,6 +1,6 @@
 package com.damian.util;
-import com.damian.model.Order;
-import com.damian.model.OrderItem;
+import com.damian.domain.order.Order;
+import com.damian.domain.order.OrderItem;
 import com.damian.repository.DbFileDao;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;

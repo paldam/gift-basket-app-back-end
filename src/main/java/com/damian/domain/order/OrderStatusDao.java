@@ -1,7 +1,5 @@
-package com.damian.repository;
+package com.damian.domain.order;
 
-import com.damian.model.Order;
-import com.damian.model.OrderStatus;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

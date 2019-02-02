@@ -1,15 +1,10 @@
-package com.damian.repository;
+package com.damian.domain.order;
 
 import com.damian.dto.NumberOfBasketOrderedByDate;
-import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.dto.ProductToCollectOrder;
-import com.damian.model.Order;
-import com.damian.model.Product;
-import com.damian.model.ProductToOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;

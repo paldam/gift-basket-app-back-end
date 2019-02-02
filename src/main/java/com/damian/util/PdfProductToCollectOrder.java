@@ -2,19 +2,13 @@
 package com.damian.util;
 
         import com.damian.dto.ProductToCollectOrder;
-        import com.damian.model.Order;
-        import com.damian.model.OrderItem;
+        import com.damian.domain.order.Order;
         import com.itextpdf.text.*;
         import com.itextpdf.text.pdf.*;
 
         import java.io.ByteArrayInputStream;
         import java.io.ByteArrayOutputStream;
-        import java.io.FileOutputStream;
         import java.io.IOException;
-        import java.text.SimpleDateFormat;
-        import java.util.ArrayList;
-        import java.util.Arrays;
-        import java.util.Locale;
         import java.util.logging.Level;
         import java.util.logging.Logger;
 

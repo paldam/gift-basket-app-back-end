@@ -1,9 +1,9 @@
 package com.damian.service;
 
 import com.damian.model.Address;
-import com.damian.model.Order;
+import com.damian.domain.order.Order;
 import com.damian.repository.AddressDao;
-import com.damian.repository.OrderDao;
+import com.damian.domain.order.OrderDao;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

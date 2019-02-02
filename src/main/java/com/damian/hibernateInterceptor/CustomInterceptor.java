@@ -1,33 +1,19 @@
 package com.damian.hibernateInterceptor;
 
-import com.damian.model.Order;
+import com.damian.domain.order.Order;
 import com.damian.model.OrderEditAudit;
-import com.damian.model.OrderStatus;
-import com.damian.repository.OrderDao;
-import com.damian.repository.OrderEditAuditDao;
-import com.damian.repository.ProductDao;
+import com.damian.domain.order.OrderEditAuditDao;
 import com.damian.security.SecurityUtils;
-import com.damian.service.AddresService;
-import com.damian.service.OrderService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.EmptyInterceptor;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.orm.hibernate4.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 @Component
 public class CustomInterceptor extends EmptyInterceptor {
