@@ -1,7 +1,5 @@
-package com.damian.model;
+package com.damian.domain.basket;
 
-import javax.persistence.Column;
-import javax.persistence.Lob;
 import java.util.Arrays;
 import java.util.List;
 

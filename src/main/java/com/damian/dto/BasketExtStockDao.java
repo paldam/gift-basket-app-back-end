@@ -1,12 +1,6 @@
 package com.damian.dto;
 
-import com.damian.model.Basket;
-import com.damian.model.BasketExt;
-import com.damian.model.BasketItems;
-import com.damian.model.BasketType;
-
-import java.util.Arrays;
-import java.util.List;
+import com.damian.domain.basket.Basket;
 
 
 public class BasketExtStockDao {

@@ -1,8 +1,6 @@
 package com.damian.repository;
 
 import com.damian.model.Address;
-import com.damian.model.Basket;
-import com.damian.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

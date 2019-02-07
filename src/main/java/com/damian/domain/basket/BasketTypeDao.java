@@ -1,6 +1,6 @@
-package com.damian.repository;
+package com.damian.domain.basket;
 
-import com.damian.model.BasketType;
+import com.damian.domain.basket.BasketType;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

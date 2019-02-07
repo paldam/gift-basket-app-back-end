@@ -1,7 +1,7 @@
 
 package com.damian.domain.order;
 
-        import com.damian.model.Basket;
+        import com.damian.domain.basket.Basket;
 
         import javax.persistence.*;
 

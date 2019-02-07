@@ -1,8 +1,6 @@
 package com.damian.repository;
 
-import com.damian.model.Basket;
 import com.damian.model.ZipCode;
-import com.damian.model.ZipCodeCompositeKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

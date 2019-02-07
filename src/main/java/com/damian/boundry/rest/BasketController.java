@@ -1,12 +1,12 @@
 package com.damian.boundry.rest;
 
 import com.damian.dto.BasketExtStockDao;
-import com.damian.model.Basket;
-import com.damian.model.BasketExt;
-import com.damian.model.BasketType;
-import com.damian.repository.BasketDao;
-import com.damian.repository.BasketTypeDao;
-import com.damian.service.BasketExtService;
+import com.damian.domain.basket.Basket;
+import com.damian.domain.basket.BasketExt;
+import com.damian.domain.basket.BasketType;
+import com.damian.domain.basket.BasketDao;
+import com.damian.domain.basket.BasketTypeDao;
+import com.damian.domain.basket.BasketExtService;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

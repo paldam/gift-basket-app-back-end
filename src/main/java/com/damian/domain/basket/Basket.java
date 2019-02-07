@@ -1,6 +1,4 @@
-package com.damian.model;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package com.damian.domain.basket;
 
 import javax.persistence.*;
 import java.util.List;
