@@ -1,7 +1,6 @@
-package com.damian.model;
+package com.damian.domain.customer;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 

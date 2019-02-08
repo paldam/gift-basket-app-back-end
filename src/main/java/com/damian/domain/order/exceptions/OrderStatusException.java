@@ -1,4 +1,4 @@
-package com.damian.exceptions;
+package com.damian.domain.order.exceptions;
 
 public class OrderStatusException extends Exception {
 

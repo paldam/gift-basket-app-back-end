@@ -1,11 +1,11 @@
 package com.damian.boundry.rest;
 
 
-import com.damian.model.Address;
-import com.damian.model.ZipCode;
-import com.damian.repository.AddressDao;
-import com.damian.repository.ZipCodeDao;
-import com.damian.service.AddresService;
+import com.damian.domain.customer.Address;
+import com.damian.domain.customer.ZipCode;
+import com.damian.domain.customer.AddressDao;
+import com.damian.domain.customer.ZipCodeDao;
+import com.damian.domain.customer.AddresService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

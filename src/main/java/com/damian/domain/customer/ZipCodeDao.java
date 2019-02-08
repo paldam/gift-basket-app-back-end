@@ -1,6 +1,6 @@
-package com.damian.repository;
+package com.damian.domain.customer;
 
-import com.damian.model.ZipCode;
+import com.damian.domain.customer.ZipCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

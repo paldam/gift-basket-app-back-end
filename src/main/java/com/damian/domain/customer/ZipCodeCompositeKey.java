@@ -1,4 +1,4 @@
-package com.damian.model;
+package com.damian.domain.customer;
 
 import javax.persistence.*;
 import java.io.Serializable;

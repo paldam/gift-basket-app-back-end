@@ -1,8 +1,12 @@
 package com.damian.domain.order;
 
+import com.damian.domain.customer.Address;
+import com.damian.domain.customer.AddressDao;
+import com.damian.domain.customer.Customer;
+import com.damian.domain.customer.CustomerDao;
 import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.dto.OrderDto;
-import com.damian.exceptions.OrderStatusException;
+import com.damian.domain.order.exceptions.OrderStatusException;
 import com.damian.model.*;
 import com.damian.repository.*;
 import com.damian.security.SecurityUtils;

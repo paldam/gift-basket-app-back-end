@@ -1,13 +1,11 @@
-package com.damian.repository;
+package com.damian.domain.customer;
 
-import com.damian.model.Customer;
+import com.damian.domain.customer.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 /**
