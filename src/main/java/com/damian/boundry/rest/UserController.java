@@ -1,13 +1,13 @@
 package com.damian.boundry.rest;
 
 import com.damian.dto.UserDto;
-import com.damian.model.Authority;
-import com.damian.model.User;
-import com.damian.model.UserPasswordChange;
-import com.damian.repository.AuthorityRepository;
-import com.damian.repository.UserRepository;
+import com.damian.domain.user.Authority;
+import com.damian.domain.user.User;
+import com.damian.domain.user.UserPasswordChange;
+import com.damian.domain.user.AuthorityRepository;
+import com.damian.domain.user.UserRepository;
 import com.damian.boundry.rest.util.HeaderUtil;
-import com.damian.service.UserService;
+import com.damian.domain.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

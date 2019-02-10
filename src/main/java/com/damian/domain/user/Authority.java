@@ -1,7 +1,5 @@
-package com.damian.model;
+package com.damian.domain.user;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;

@@ -2,7 +2,6 @@ package com.damian.domain.order;
 
 import com.damian.domain.customer.Address;
 import com.damian.domain.customer.Customer;
-import com.damian.model.DeliveryType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;

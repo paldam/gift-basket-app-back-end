@@ -1,19 +1,15 @@
-package com.damian.service;
+package com.damian.domain.user;
 
 import com.damian.dto.UserDto;
-import com.damian.model.Authority;
-import com.damian.model.User;
-import com.damian.model.UserPasswordChange;
-import com.damian.repository.UserRepository;
-import com.damian.security.AuthoritiesConstants;
-import com.damian.repository.AuthorityRepository;
+import com.damian.domain.user.Authority;
+import com.damian.domain.user.User;
+import com.damian.domain.user.UserPasswordChange;
+import com.damian.domain.user.UserRepository;
+import com.damian.domain.user.AuthorityRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Service

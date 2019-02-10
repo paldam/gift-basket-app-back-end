@@ -1,4 +1,4 @@
-package com.damian.repository;
+package com.damian.domain.user.exceptions;
 
 import org.springframework.security.core.AuthenticationException;
 

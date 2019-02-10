@@ -1,4 +1,4 @@
-package com.damian.model;
+package com.damian.domain.user;
 
 
 public class UserPasswordChange {

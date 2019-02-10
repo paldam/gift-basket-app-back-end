@@ -1,8 +1,7 @@
-package com.damian.model;
+package com.damian.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.persistence.Entity;

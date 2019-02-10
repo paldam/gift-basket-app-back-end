@@ -1,6 +1,8 @@
 package com.damian.repository;
 
-import com.damian.model.User;
+import com.damian.domain.user.User;
+import com.damian.domain.user.UserRepository;
+import com.damian.domain.user.exceptions.UserNotActivatedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,6 +1,5 @@
-package com.damian.repository;
+package com.damian.domain.user;
 
-import com.damian.model.Authority;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
