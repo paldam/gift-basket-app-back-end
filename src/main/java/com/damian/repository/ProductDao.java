@@ -1,9 +1,7 @@
 package com.damian.repository;
 
 import com.damian.dto.NumberProductsToChangeStock;
-import com.damian.model.Basket;
 import com.damian.model.Product;
-import com.damian.model.ProductToOrder;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

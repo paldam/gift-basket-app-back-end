@@ -1,6 +1,9 @@
 package com.damian.dto;
 
-import com.damian.model.*;
+import com.damian.domain.customer.Customer;
+import com.damian.domain.order.DeliveryType;
+import com.damian.domain.order.OrderItem;
+import com.damian.domain.order.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;

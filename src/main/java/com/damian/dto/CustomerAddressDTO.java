@@ -1,9 +1,7 @@
 package com.damian.dto;
 
-import com.damian.model.Address;
-import com.damian.model.Customer;
-
-import java.util.List;
+import com.damian.domain.customer.Address;
+import com.damian.domain.customer.Customer;
 
 /**
  * Created by Damian on 19.08.2018.

@@ -1,7 +1,6 @@
 package com.damian.dto;
 
 import com.damian.model.DbFile;
-import com.damian.model.User;
 
 /**
  * Created by Damian on 29.08.2018.
