@@ -96,9 +96,35 @@ public class OrderController {
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }
 
+    @CrossOrigin
+    @GetMapping("/orders/products_to_order_without_deleted_by_delivery_date/daterange")
+    ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByDeliveryDate(
+        @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+        @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
 
+        Calendar c = Calendar.getInstance();
+        c.setTime(endDate);
+        c.add(Calendar.DATE, 1);
+        Date endDateconvertedToTimeStamp = c.getTime();
 
+        List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByDeliveryDate(startDate,endDateconvertedToTimeStamp);
+        return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
+    }
 
+    @CrossOrigin
+    @GetMapping("/orders/products_to_order_without_deleted_by_order_date/daterange")
+    ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByOrderDate(
+        @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+        @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(endDate);
+        c.add(Calendar.DATE, 1);
+        Date endDateconvertedToTimeStamp = c.getTime();
+
+        List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByOrderDate(startDate,endDateconvertedToTimeStamp);
+        return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
+    }
 
     @CrossOrigin
     @GetMapping("/baskets/statistic/daterange")

@@ -58,6 +58,26 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     public List<Order> findProductToOrder(Date startDate, Date endDate);
 
 
+    @Query(value = "SELECT NEW com.damian.model.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
+        "JOIN oi.basket b " +
+        "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId != 99) AND o.deliveryDate BETWEEN ?1 AND ?2  GROUP BY p.id")
+
+    public List<Order> findProductToOrderWithoutDeletedOrderByDeliveryDate(Date startDate, Date endDate);
+
+
+
+
+
+    @Query(value = "SELECT NEW com.damian.model.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
+        "JOIN oi.basket b " +
+        "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId != 99) AND o.orderDate  BETWEEN ?1 AND ?2  GROUP BY p.id")
+
+    public List<Order> findProductToOrderWithoutDeletedOrderByOrderDate(Date startDate, Date endDate);
+
+
+
+
+
 
     @Query(value = "SELECT NEW com.damian.dto.ProductToCollectOrder(p.productName,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
             "JOIN oi.basket b " +
