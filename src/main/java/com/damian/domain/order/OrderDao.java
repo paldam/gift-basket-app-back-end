@@ -46,14 +46,14 @@ public interface OrderDao extends JpaRepository<Order,Long> {
 
 
 
-    @Query(value = "SELECT NEW com.damian.model.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
+    @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
             "JOIN oi.basket b " +
             "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId=1 OR o.orderStatus.orderStatusId=4) AND o.deliveryDate BETWEEN ?1 AND ?2  GROUP BY p.id")
 
     public List<Order> findProductToOrder(Date startDate, Date endDate);
 
 
-    @Query(value = "SELECT NEW com.damian.model.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
+    @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
         "JOIN oi.basket b " +
         "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId != 99) AND o.deliveryDate BETWEEN ?1 AND ?2  GROUP BY p.id")
 
@@ -63,7 +63,7 @@ public interface OrderDao extends JpaRepository<Order,Long> {
 
 
 
-    @Query(value = "SELECT NEW com.damian.model.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
+    @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
         "JOIN oi.basket b " +
         "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId != 99) AND o.orderDate  BETWEEN ?1 AND ?2  GROUP BY p.id")
 
