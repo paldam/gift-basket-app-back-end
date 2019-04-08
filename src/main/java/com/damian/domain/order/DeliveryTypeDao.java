@@ -1,4 +1,4 @@
-package com.damian.repository;
+package com.damian.domain.order;
 
 
 import com.damian.domain.order.DeliveryType;

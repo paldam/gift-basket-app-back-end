@@ -1,7 +1,7 @@
 package com.damian.boundry.rest;
 
 import com.damian.domain.order.DeliveryType;
-import com.damian.repository.DeliveryTypeDao;
+import com.damian.domain.order.DeliveryTypeDao;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

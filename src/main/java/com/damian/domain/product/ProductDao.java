@@ -1,4 +1,4 @@
-package com.damian.repository;
+package com.damian.domain.product;
 
 import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.domain.product.Product;

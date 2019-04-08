@@ -1,7 +1,5 @@
 package com.damian.domain.product;
 
-import com.damian.domain.product.Product;
-import com.damian.repository.ProductDao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

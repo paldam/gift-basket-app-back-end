@@ -1,4 +1,4 @@
-package com.damian.repository;
+package com.damian.domain.product;
 
 import com.damian.domain.product.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
