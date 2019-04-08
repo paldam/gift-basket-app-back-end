@@ -24,7 +24,7 @@ import java.util.Properties;
 @PropertySource(value = {"classpath:application_${spring.profiles.active}.properties"})
 
 
-@EnableJpaRepositories(basePackages = "com.damian.repository")
+@EnableJpaRepositories(basePackages = "com.damian")
 @EnableTransactionManagement
 public class SpringDataJpaConfig {
 
@@ -62,7 +62,7 @@ public class SpringDataJpaConfig {
         
         factory.setJpaProperties(props);
         factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("com.damian.model");
+        factory.setPackagesToScan("com.damian.domain","com.damian.model");
         factory.setDataSource(dataSource());
         return factory;
     }
