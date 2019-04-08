@@ -1,7 +1,5 @@
 package com.damian.dto;
 
-import com.damian.model.Supplier;
-
 public class ProductToCollectOrder {
 
     private String product_name;

@@ -1,4 +1,4 @@
-package com.damian.model;
+package com.damian.domain.order_file;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;

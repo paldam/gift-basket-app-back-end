@@ -1,6 +1,6 @@
 package com.damian.repository;
 
-import com.damian.model.ProductType;
+import com.damian.domain.product.ProductType;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

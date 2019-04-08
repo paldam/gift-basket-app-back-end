@@ -1,7 +1,6 @@
-package com.damian.service;
+package com.damian.domain.order_file;
 
 import com.damian.dto.FileDto;
-import com.damian.model.DbFile;
 import com.damian.repository.DbFileDao;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;

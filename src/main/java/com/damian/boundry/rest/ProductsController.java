@@ -4,9 +4,10 @@ package com.damian.boundry.rest;
 
 import com.damian.domain.basket.Basket;
 import com.damian.domain.basket.BasketDao;
-import com.damian.model.*;
+import com.damian.domain.product.Product;
+import com.damian.domain.product.Supplier;
 import com.damian.repository.*;
-import com.damian.service.ProductService;
+import com.damian.domain.product.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

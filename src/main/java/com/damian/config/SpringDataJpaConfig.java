@@ -62,7 +62,7 @@ public class SpringDataJpaConfig {
         
         factory.setJpaProperties(props);
         factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("com.damian.domain","com.damian.model");
+        factory.setPackagesToScan("com.damian.domain");
         factory.setDataSource(dataSource());
         return factory;
     }

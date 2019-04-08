@@ -1,6 +1,6 @@
 package com.damian.domain.basket;
 
-import com.damian.model.Product;
+import com.damian.domain.product.Product;
 
 import javax.persistence.*;
 

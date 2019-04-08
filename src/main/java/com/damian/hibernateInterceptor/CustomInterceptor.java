@@ -1,7 +1,7 @@
 package com.damian.hibernateInterceptor;
 
 import com.damian.domain.order.Order;
-import com.damian.model.OrderEditAudit;
+import com.damian.domain.audit.OrderEditAudit;
 import com.damian.domain.order.OrderEditAuditDao;
 import com.damian.security.SecurityUtils;
 import org.apache.commons.lang3.ObjectUtils;

@@ -1,7 +1,4 @@
-package com.damian.model;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.stereotype.Component;
+package com.damian.domain.product;
 
 /**
  * Created by Damian on 03.11.2017.

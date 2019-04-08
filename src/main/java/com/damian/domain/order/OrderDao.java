@@ -39,7 +39,7 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     @Query(value = "SELECT * FROM orders WHERE delivery_date BETWEEN ?1 AND ?2 AND delivery_type =3", nativeQuery = true)
     public List<Order> findOrdersByDateRange(Date startDate, Date endDate);
 
-//    @Query(value = "SELECT NEW com.damian.model.ProductToOrder(p.id,p.productName) FROM Product p")
+//    @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p.id,p.productName) FROM Product p")
 //
 //    public List<ProductToOrder> findProductToOrder();
 

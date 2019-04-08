@@ -1,6 +1,6 @@
 package com.damian.repository;
 
-import com.damian.model.DbFile;
+import com.damian.domain.order_file.DbFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

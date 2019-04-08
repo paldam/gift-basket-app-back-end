@@ -2,12 +2,12 @@ package com.damian.boundry.rest;
 
 import com.damian.dto.FileDto;
 import com.damian.dto.ProductToCollectOrder;
-import com.damian.model.DbFile;
+import com.damian.domain.order_file.DbFile;
 import com.damian.domain.order.Order;
 import com.damian.domain.order.OrderItem;
 import com.damian.repository.DbFileDao;
 import com.damian.domain.order.OrderDao;
-import com.damian.service.DbFileService;
+import com.damian.domain.order_file.DbFileService;
 import com.damian.domain.order.OrderService;
 import com.damian.util.PdfDeliveryConfirmation;
 import com.damian.util.PdfGenerator;

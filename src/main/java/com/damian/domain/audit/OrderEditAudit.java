@@ -1,4 +1,4 @@
-package com.damian.model;
+package com.damian.domain.audit;
 import javax.persistence.*;
 import java.util.Date;
 

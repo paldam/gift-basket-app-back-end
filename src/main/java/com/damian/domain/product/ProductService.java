@@ -1,11 +1,9 @@
-package com.damian.service;
+package com.damian.domain.product;
 
-import com.damian.model.Product;
+import com.damian.domain.product.Product;
 import com.damian.repository.ProductDao;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.beans.Transient;
 
 /**
  * Created by Damian on 30.08.2018.
