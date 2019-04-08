@@ -5,6 +5,8 @@ package com.damian.boundry.rest;
 import com.damian.domain.basket.Basket;
 import com.damian.domain.basket.BasketDao;
 import com.damian.domain.product.*;
+import com.damian.security.UserPermissionDeniedException;
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -149,6 +151,18 @@ public class ProductsController {
 
     }
 
+    @CrossOrigin
+    @PostMapping("/products/resetstates")
+    ResponseEntity<Product> resetStates() {
 
+        try{
+            productService.resetProductsState();
+
+        } catch (UserPermissionDeniedException ex){
+            return new ResponseEntity("Nie masz uprawnień do wykoania tej operacji" , HttpStatus.FORBIDDEN);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

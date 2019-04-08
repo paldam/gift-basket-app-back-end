@@ -83,7 +83,10 @@ public interface ProductDao extends CrudRepository<Product,Long> {
     @Query(value = "update products set tmp_stock = tmp_stock - ?2 WHERE id = ?1", nativeQuery = true)
     void updateStockTmpMinus(Integer productId, Long minusValue);
 
-
+    @Transactional
+    @Modifying
+    @Query(value = "update products set tmp_stock = 0, stock = 0, tmp_ordered = 0", nativeQuery = true)
+    void resetDbPrductsStates();
 
     @Query(value = "SELECT NEW com.damian.dto.NumberProductsToChangeStock(p.id,sum(oi.quantity*bi.quantity)) FROM Order o JOIN o.orderItems oi " +
             "JOIN oi.basket b " +
