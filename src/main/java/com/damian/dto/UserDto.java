@@ -1,11 +1,9 @@
 package com.damian.dto;
 
-import com.damian.model.Authority;
-import com.damian.model.User;
+import com.damian.domain.user.Authority;
+import com.damian.domain.user.User;
 
-import java.time.Instant;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 public class UserDto {

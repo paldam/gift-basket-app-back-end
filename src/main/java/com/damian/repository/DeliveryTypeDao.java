@@ -1,7 +1,7 @@
 package com.damian.repository;
 
 
-import com.damian.model.DeliveryType;
+import com.damian.domain.order.DeliveryType;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
