@@ -13,4 +13,5 @@ public interface SupplierDao  extends JpaRepository<Supplier,Long> {
 
     Supplier findBySupplierName(String name) ;
     List<Supplier> findAllByOrderBySupplierNameAsc();
+    Supplier findBySupplierId(Integer id);
 }

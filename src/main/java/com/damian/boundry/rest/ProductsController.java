@@ -94,6 +94,21 @@ public class ProductsController {
 
 
     @CrossOrigin
+    @DeleteMapping(value = "/products/supplier/{id}")
+    ResponseEntity deleteSupplier(@PathVariable Integer id){
+
+        Supplier selectedSupplier = supplierDao.findBySupplierId(id);
+
+        if (Objects.isNull(selectedSupplier)) {
+            return new ResponseEntity("Nie znaleziono Dostawcy o id " + id, HttpStatus.NOT_FOUND);
+        }else{
+            supplierDao.delete(selectedSupplier);
+            return new ResponseEntity(id, HttpStatus.OK);
+        }
+    }
+
+
+    @CrossOrigin
     @PostMapping(value = "/product/stock",produces = "application/json; charset=utf-8")
     ResponseEntity changeProductsStock(@RequestParam Integer productId, Integer addValue) {
 
