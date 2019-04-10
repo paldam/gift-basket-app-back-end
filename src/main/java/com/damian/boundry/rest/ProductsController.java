@@ -52,6 +52,16 @@ public class ProductsController {
     }
 
     @CrossOrigin
+    @GetMapping(value = "/products/types",produces = "application/json; charset=utf-8")
+    ResponseEntity<List<ProductType>> listAllProductTypes(){
+
+        List<ProductType> typeList = productsTypeDao.findAll();
+        return new ResponseEntity<List<ProductType>>(typeList, HttpStatus.OK);
+
+    }
+
+
+    @CrossOrigin
     @GetMapping(value = "/productsbysupplier/{id}",produces = "application/json; charset=utf-8")
     ResponseEntity<List<Product>> listAllSuppliers(@PathVariable Integer id){
 
@@ -59,6 +69,12 @@ public class ProductsController {
         return new ResponseEntity<List<Product>>(productList, HttpStatus.OK);
 
     }
+
+
+
+
+
+
 
     @CrossOrigin
     @GetMapping(value = "/products/{id}",produces = "application/json; charset=utf-8")
@@ -91,6 +107,10 @@ public class ProductsController {
 
 
     }
+
+
+
+
 
 
     @CrossOrigin

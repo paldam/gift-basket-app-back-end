@@ -19,6 +19,7 @@ public class Product {
     private String deliver;
     private Integer isArchival;
     private Supplier supplier;
+    private ProductType productType;
     private Date lastStockEditDate;
     private Date lastNumberOfOrderedEditDate;
 
@@ -124,6 +125,15 @@ public class Product {
         this.supplier = supplier;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "product_type_id")
+    public ProductType getProductType() {
+        return productType;
+    }
+
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
+    }
 
     @Basic
     @Column(name = "last_stock_edit_date")
