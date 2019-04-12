@@ -19,7 +19,7 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     public Order findByOrderId(Long id);
     public List<Order> findByAddress_AddressId(Long id);
     public List<Order> findByCustomer_CustomerId(Integer id);
-    //public Order (Integer id);
+
 
 
     @Query(value = "SELECT * FROM orders WHERE customer_id = ?1", nativeQuery = true)
@@ -30,6 +30,12 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     @Modifying
     @Query(value = "update orders set stock =  stock + ?2  WHERE id = ?1", nativeQuery = true)
     void changeStatus(Integer id);
+
+
+
+    @Query(value = "SELECT * FROM orders Join order_items ON orders.order_id = order_items.order_id JOIN baskets " +
+        "On order_items.basket_id = baskets.basket_id where baskets.basket_id = ?1 AND orders.order_date BETWEEN ?2 AND ?3",nativeQuery = true)
+    public List<Order> findAllOrderByBasketIdAndOrderDate(Long basketId,Date startDate, Date endDate );
 
 
 

@@ -131,7 +131,7 @@ public class OrderController {
     @GetMapping("/baskets/statistic/daterange")
     ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrdered(
             @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-            @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
+            @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
 
 
                         Calendar c = Calendar.getInstance();
@@ -143,6 +143,27 @@ public class OrderController {
         List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrdered(startDate,endDateconvertedToTimeStamp) ;
         return new ResponseEntity<List<NumberOfBasketOrderedByDate>>(basketList, HttpStatus.OK);
     }
+
+
+    @CrossOrigin
+    @GetMapping("/order/statistic/orderdaterange")
+    ResponseEntity<List<Order>> getOrdersByBasket(
+        @RequestParam(value="basketId", required=true) Long basketId,
+        @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+        @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
+
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(endDate);
+        c.add(Calendar.DATE, 1);
+        Date endDateconvertedToTimeStamp = c.getTime();
+
+
+        List<Order> orderList = orderDao.findAllOrderByBasketIdAndOrderDate(basketId,startDate,endDateconvertedToTimeStamp) ;
+        return new ResponseEntity<List<Order>>(orderList, HttpStatus.OK);
+    }
+
+
 
 
     @CrossOrigin
