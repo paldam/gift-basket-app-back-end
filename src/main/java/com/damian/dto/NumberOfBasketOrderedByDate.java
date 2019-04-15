@@ -4,15 +4,25 @@ package com.damian.dto;
  * Created by Damian on 31.08.2018.
  */
 public class NumberOfBasketOrderedByDate {
+    private Long basketId;
     private String basketName ;
     private Long quantity;
     private Long numberOfOrdersWhereBasketOccur;
 
-
-    public NumberOfBasketOrderedByDate(String basketName, Long quantity,Long numberOfOrdersWhereBasketOccur) {
+    public NumberOfBasketOrderedByDate(Long basketId, String basketName, Long quantity, Long numberOfOrdersWhereBasketOccur) {
+        this.basketId = basketId;
         this.basketName = basketName;
         this.quantity = quantity;
-        this.numberOfOrdersWhereBasketOccur =  numberOfOrdersWhereBasketOccur;
+        this.numberOfOrdersWhereBasketOccur = numberOfOrdersWhereBasketOccur;
+    }
+
+
+    public Long getBasketId() {
+        return basketId;
+    }
+
+    public void setBasketId(Long basketId) {
+        this.basketId = basketId;
     }
 
     public String getBasketName() {
