@@ -6,19 +6,20 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
 @Entity
-@Table(name = "orders")
-public class Order implements Serializable {
+@Table(name = "orders_history2")
+public class OrderHistory implements Serializable {
     private Long orderId;
     private String orderFvNumber;
     private String userName;
     // private User user;
     private Customer customer;
-    private List<OrderItem> orderItems;
+    private List<OrderItemHistory> orderItemHistories;
     private Date orderDate;
     private String additionalInformation;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
@@ -33,15 +34,45 @@ public class Order implements Serializable {
     private String contactPerson;
 
 
+    public OrderHistory() {
+    }
+
+    public OrderHistory(Order order) {
+        this.orderFvNumber = order.getOrderFvNumber();
+        this.userName = order.getUserName();
+        this.customer = order.getCustomer();
+        this.orderDate = order.getOrderDate();
+        this.additionalInformation = order.getAdditionalInformation();
+        this.deliveryDate = order.getDeliveryDate();
+        this.weekOfYear = order.getWeekOfYear();
+        this.deliveryType = order.getDeliveryType();
+        this.orderStatus = order.getOrderStatus();
+        this.orderTotalAmount = order.getOrderTotalAmount();
+        this.cod = order.getCod();
+        this.address = order.getAddress();
+        this.additionalSale = order.getAdditionalSale();
+        this.contactPerson = order.getContactPerson();
+
+         List<OrderItemHistory> orderItemHistoryTmp = new ArrayList<>();
+
+         order.getOrderItems().forEach(orderItem -> {
+             orderItemHistoryTmp.add(new OrderItemHistory(orderItem.getBasket(),orderItem.getQuantity()));
+         });
+
+         this.orderItemHistories = orderItemHistoryTmp;
+    }
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id", nullable = false)
-    public Long getOrderId() {
+    public Long getOrderHistoryId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setOrderHistoryId(Long orderHistoryId) {
+        this.orderId = orderHistoryId;
     }
 
     @Basic
@@ -76,12 +107,12 @@ public class Order implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
+    public List<OrderItemHistory> getOrderItemsHistory() {
+        return orderItemHistories;
     }
 
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
+    public void setOrderItemsHistory(List<OrderItemHistory> orderItemsHistory) {
+        this.orderItemHistories = orderItemsHistory;
     }
 
     @Basic
@@ -185,7 +216,6 @@ public class Order implements Serializable {
     }
 
 
-
     @Basic
     @Column(name = "contact_person", length = 500)
     public String getContactPerson() {
@@ -196,28 +226,25 @@ public class Order implements Serializable {
         this.contactPerson = contactPerson;
     }
 
-
-
-
     @Override
     public String toString() {
         return "Order{" +
-                "orderId=" + orderId +
-                ", orderFvNumber='" + orderFvNumber + '\'' +
-                ", userName='" + userName + '\'' +
-                ", customer=" + customer +
-                ", orderItems=" + orderItems +
-                ", orderDate=" + orderDate +
-                ", additionalInformation='" + additionalInformation + '\'' +
-                ", deliveryDate=" + deliveryDate +
-                ", weekOfYear=" + weekOfYear +
-                ", deliveryType=" + deliveryType +
-                ", orderStatus=" + orderStatus +
-                ", orderTotalAmount=" + orderTotalAmount +
-                ", cod=" + cod +
-                ", address=" + address +
-                ", additionalSale=" + additionalSale +
-                ", contactPerson='" + contactPerson + '\'' +
-                '}';
+            "orderHistoryId=" + orderId +
+            ", orderFvNumber='" + orderFvNumber + '\'' +
+            ", userName='" + userName + '\'' +
+            ", customer=" + customer +
+            ", orderItems="  +
+            ", orderDate=" + orderDate +
+            ", additionalInformation='" + additionalInformation + '\'' +
+            ", deliveryDate=" + deliveryDate +
+            ", weekOfYear=" + weekOfYear +
+            ", deliveryType=" + deliveryType +
+            ", orderStatus=" + orderStatus +
+            ", orderTotalAmount=" + orderTotalAmount +
+            ", cod=" + cod +
+            ", address=" + address +
+            ", additionalSale=" + additionalSale +
+            ", contactPerson='" + contactPerson + '\'' +
+            '}';
     }
 }

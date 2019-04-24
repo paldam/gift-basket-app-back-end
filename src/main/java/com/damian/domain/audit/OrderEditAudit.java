@@ -1,4 +1,7 @@
 package com.damian.domain.audit;
+import com.damian.domain.order.Order;
+import com.damian.domain.order.OrderHistory;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -10,14 +13,16 @@ public class OrderEditAudit {
     private String userName;
     private Date changeDate;
     private Long orderId;
+    private OrderHistory orderHistory;
 
 
     public OrderEditAudit() {
     }
 
-    public OrderEditAudit(String userName, Long orderId) {
+    public OrderEditAudit(String userName, Long orderId, OrderHistory orderHistory) {
         this.userName = userName;
         this.orderId = orderId;
+        this.orderHistory = orderHistory;
     }
 
     @Id
@@ -58,6 +63,16 @@ public class OrderEditAudit {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_history_id")
+    public OrderHistory getOrderHistory() {
+        return orderHistory;
+    }
+
+    public void setOrderHistory(OrderHistory orderHistory) {
+        this.orderHistory = orderHistory;
     }
 }
 

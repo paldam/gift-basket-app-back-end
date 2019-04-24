@@ -3,6 +3,8 @@ package com.damian.hibernateInterceptor;
 import com.damian.domain.order.Order;
 import com.damian.domain.audit.OrderEditAudit;
 import com.damian.domain.order.OrderEditAuditDao;
+import com.damian.domain.order.OrderHistory;
+import com.damian.domain.order.OrderHistoryDao;
 import com.damian.security.SecurityUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
@@ -33,12 +35,12 @@ public class CustomInterceptor extends EmptyInterceptor {
         if (entity instanceof Order) {
 
 
-
             OrderEditAuditDao  orderEditAuditDao = (OrderEditAuditDao )  appContext.getBean("orderEditAuditDao") ;
-            OrderEditAudit orderEditAudit = new OrderEditAudit(SecurityUtils.getCurrentUserLogin(),((Order) entity).getOrderId());
+
+            OrderEditAudit orderEditAudit = new OrderEditAudit(SecurityUtils.getCurrentUserLogin(),((Order) entity).getOrderId(),new OrderHistory((Order) entity));
             orderEditAuditDao.save(orderEditAudit) ;
 
-            logger.error(" W INTERCEPT użytkownik to " + SecurityUtils.getCurrentUserLogin());
+
 
 
         }

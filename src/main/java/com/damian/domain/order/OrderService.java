@@ -201,7 +201,7 @@ public class OrderService {
 
         orderList.forEach(order -> {
             List<DbFile> result = new LinkedList<>();
-            //result =  dbFileDtoList.stream().filter(data -> data.getOrderId() == 835).collect(Collectors.toList());
+            //result =  dbFileDtoList.stream().filter(data -> data.getOrderHistoryId() == 835).collect(Collectors.toList());
 
             result =  dbFileDtoList.stream()
                     .filter(data -> order.getOrderId().equals(data.getOrderId()))
@@ -264,7 +264,7 @@ public class OrderService {
         orderList.forEach(order -> {
             logger.error("EEEEEEEE" + order.getWeekOfYear());
             List<DbFile> result = new LinkedList<>();
-            //result =  dbFileDtoList.stream().filter(data -> data.getOrderId() == 835).collect(Collectors.toList());
+            //result =  dbFileDtoList.stream().filter(data -> data.getOrderHistoryId() == 835).collect(Collectors.toList());
 
             result =  dbFileDtoList.stream()
                     .filter(data -> order.getOrderId().equals(data.getOrderId()))
