@@ -3,13 +3,20 @@ package com.damian.domain.order;
 import com.damian.domain.customer.Address;
 import com.damian.domain.customer.Customer;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Audited
 @Entity
 @Table(name = "orders")
 public class Order implements Serializable {
@@ -17,6 +24,7 @@ public class Order implements Serializable {
     private String orderFvNumber;
     private String userName;
     // private User user;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Customer customer;
     private List<OrderItem> orderItems;
     private Date orderDate;
@@ -24,10 +32,13 @@ public class Order implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
     private Date deliveryDate;
     private Integer weekOfYear;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private DeliveryType deliveryType;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private OrderStatus orderStatus;
     private Integer orderTotalAmount;
     private Integer cod;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Address address;
     private Integer additionalSale;
     private String contactPerson;
@@ -63,8 +74,8 @@ public class Order implements Serializable {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
     @ManyToOne(fetch = FetchType.EAGER)
+    @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "customer_id")
     public Customer getCustomer() {
         return customer;
@@ -73,6 +84,8 @@ public class Order implements Serializable {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
+
+
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
@@ -83,6 +96,9 @@ public class Order implements Serializable {
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
+
+
+
 
     @Basic
     @Column(name = "week_of_year", length = 300)
@@ -125,6 +141,7 @@ public class Order implements Serializable {
     }
 
     @ManyToOne
+    @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "delivery_type")
     public DeliveryType getDeliveryType() {
         return deliveryType;
@@ -135,6 +152,7 @@ public class Order implements Serializable {
     }
 
     @ManyToOne
+    @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "order_status_id")
     public OrderStatus getOrderStatus() {
         return orderStatus;
@@ -165,6 +183,7 @@ public class Order implements Serializable {
     }
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "address_id")
     public Address getAddress() {
         return address;
@@ -195,7 +214,6 @@ public class Order implements Serializable {
     public void setContactPerson(String contactPerson) {
         this.contactPerson = contactPerson;
     }
-
 
 
 

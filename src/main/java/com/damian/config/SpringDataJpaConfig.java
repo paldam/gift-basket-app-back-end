@@ -59,7 +59,8 @@ public class SpringDataJpaConfig {
         Properties props = new Properties();
         props.put("hibernate.ejb.interceptor", customInterceptor);
         props.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-        
+        props.setProperty("org.hibernate.envers.audit_table_suffix", "_AUDIT");
+
         factory.setJpaProperties(props);
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("com.damian.domain");

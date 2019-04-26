@@ -2,13 +2,19 @@
 package com.damian.domain.order;
 
         import com.damian.domain.basket.Basket;
+        import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+        import org.hibernate.envers.Audited;
 
         import javax.persistence.*;
 
+        import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
+
 @Entity
+@Audited
 @Table(name = "order_items")
 public class OrderItem {
     private Integer orderItemId;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Basket basket;
     private Integer quantity;
     //private Order order;
@@ -29,6 +35,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "basket_id")
+    @Audited(targetAuditMode = NOT_AUDITED)
     public Basket getBasket() {
         return basket;
     }

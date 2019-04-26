@@ -1,5 +1,6 @@
 package com.damian.domain.order;
 
+import com.damian.domain.audit.OrderAuditedRevisionEntity;
 import com.damian.dto.NumberOfBasketOrderedByDate;
 import com.damian.dto.ProductToCollectOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,6 +26,10 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     @Query(value = "SELECT * FROM orders WHERE customer_id = ?1", nativeQuery = true)
     public List<Order> findByCustomerId(Integer id);
 
+
+
+    @Query(value = "select audit_info.revId, audit_info.changeTime, audit_info.user, orders_audit.order_id  from audit_info join orders_audit on audit_info.revId = orders_audit.REV where orders_audit.order_id = ?1 Order By audit_info.changeTime DESC ", nativeQuery = true)
+    public List<Object[]> getOrderHistoryById(Integer id);
 
     @Transactional
     @Modifying

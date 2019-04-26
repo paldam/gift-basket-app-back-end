@@ -1,12 +1,14 @@
 package com.damian.domain.customer;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.List;
-
 @Entity
 @Table(name = "customers")
+
 public class Customer {
     private Integer customerId;
     private String organizationName;
