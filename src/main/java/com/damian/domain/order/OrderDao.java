@@ -3,13 +3,17 @@ package com.damian.domain.order;
 import com.damian.domain.audit.OrderAuditedRevisionEntity;
 import com.damian.dto.NumberOfBasketOrderedByDate;
 import com.damian.dto.ProductToCollectOrder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface OrderDao extends JpaRepository<Order,Long> {
@@ -26,6 +30,9 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     @Query(value = "SELECT * FROM orders WHERE customer_id = ?1", nativeQuery = true)
     public List<Order> findByCustomerId(Integer id);
 
+
+@Query(value = "Select REV from orders_audit where (order_id = (SELECT order_id FROM `orders_audit` WHERE REV = ?1)) AND  REV < ?1 ORDER BY REV DESC Limit 1;", nativeQuery = true)
+    public Optional<BigInteger> getRevisionNumberOFfPreviousOrderState(Long id);
 
 
     @Query(value = "select audit_info.revId, audit_info.changeTime, audit_info.user, orders_audit.order_id  from audit_info join orders_audit on audit_info.revId = orders_audit.REV where orders_audit.order_id = ?1 Order By audit_info.changeTime DESC ", nativeQuery = true)
@@ -46,6 +53,12 @@ public interface OrderDao extends JpaRepository<Order,Long> {
 
     @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ORDER BY order_date DESC ", nativeQuery = true)
     public List<Order> findAllWithoutDeleted();
+
+
+    @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ORDER BY order_date DESC ", nativeQuery = true)
+    public Page<Order> findAllWithoutDeletedPage(Pageable pageable);
+
+
 
     @Query(value = "SELECT * FROM orders WHERE delivery_date BETWEEN ?1 AND ?2 AND delivery_type =3", nativeQuery = true)
     public List<Order> findOrdersByDateRange(Date startDate, Date endDate);

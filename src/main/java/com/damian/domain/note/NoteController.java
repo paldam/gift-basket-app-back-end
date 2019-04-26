@@ -29,7 +29,7 @@ public class NoteController {
     @CrossOrigin
     @GetMapping(value = "/notes/{id}")
     ResponseEntity<Note> getNote(@PathVariable Long id){
-        Note note = noteDao.findOne(id);
+        Note note = noteDao.getOne(id);
         return new ResponseEntity<Note>(note, HttpStatus.OK);
     }
 

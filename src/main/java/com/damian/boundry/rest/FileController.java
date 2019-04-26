@@ -79,7 +79,7 @@ public class FileController {
     public ResponseEntity<Resource> downloadFile(@PathVariable Long fileId) {
 
 
-        DbFile dbFile = dbFileDao.findOne(fileId);
+        DbFile dbFile = dbFileDao.findByFileId(fileId);
 
         HttpHeaders header  = new HttpHeaders();
         header.setAccessControlExposeHeaders(Collections.singletonList("Content-Disposition"));;
@@ -102,7 +102,7 @@ public class FileController {
         if (Objects.isNull(selectedFile)) {
             return new ResponseEntity("Nie znaleziono pliku o id " + fileId, HttpStatus.NOT_FOUND);
         }else{
-            dbFileDao.delete(fileId);
+            dbFileDao.deleteById(fileId);
             return new ResponseEntity(fileId, HttpStatus.OK);
         }
     }
@@ -113,7 +113,7 @@ public class FileController {
     public ResponseEntity<InputStreamResource> getPdf(@PathVariable Long id) throws IOException {
 
 
-        Order orderToGenerate = orderDao.findOne(id);
+        Order orderToGenerate = orderDao.findByOrderId(id);
         List<Order> orderList = new ArrayList<>();
         orderList.add(orderToGenerate);
         PdfGenerator pdfGenerator = new PdfGenerator();
@@ -205,7 +205,7 @@ public class FileController {
     public ResponseEntity<InputStreamResource> getDeliveryPdf(@PathVariable Long id) throws IOException {
 
 
-        Order orderToGenerate = orderDao.findOne(id);
+        Order orderToGenerate = orderDao.findByOrderId(id);
         PdfDeliveryConfirmation pdfDeliveryConfirmation  = new PdfDeliveryConfirmation();
         ByteArrayInputStream bis = pdfDeliveryConfirmation.generatePdf(orderToGenerate);
 
@@ -227,7 +227,7 @@ public class FileController {
     public ResponseEntity<InputStreamResource> getDeliveryPdfwithModyfications(@PathVariable Long id, @RequestBody List<OrderItem> orderItems) throws IOException {
 
 
-        Order orderToGenerate = orderDao.findOne(id);
+        Order orderToGenerate = orderDao.findByOrderId(id);
         orderToGenerate.setOrderItems(orderItems);
         PdfDeliveryConfirmation pdfDeliveryConfirmation  = new PdfDeliveryConfirmation();
         ByteArrayInputStream bis = pdfDeliveryConfirmation.generatePdf(orderToGenerate);

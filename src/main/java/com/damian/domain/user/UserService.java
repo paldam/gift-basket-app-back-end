@@ -43,7 +43,7 @@ public class UserService {
     }
 
     public User updateUser(UserDto userDto) {
-        User user = userRepository.findOne(userDto.getId());
+        User user = userRepository.getOne(userDto.getId());
 
         user.setLogin(userDto.getLogin());
         user.setActivated(userDto.isActivated());

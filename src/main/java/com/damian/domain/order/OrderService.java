@@ -13,6 +13,9 @@ import com.damian.dto.OrderDto;
 import com.damian.domain.order.exceptions.OrderStatusException;
 import com.damian.security.SecurityUtils;
 import org.apache.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -190,9 +193,12 @@ public class OrderService {
 
     }
 
-    public List<OrderDto> getOrderDao(){
 
-        List<Order> orderList = orderDao.findAllWithoutDeleted();
+    public List<OrderDto> getOrderDao(){
+        Pageable pageable = PageRequest.of(0,10);
+       // List<Order> orderList = orderDao.findAllWithoutDeleted();
+         Page<Order> orderList = orderDao.findAllWithoutDeletedPage(pageable);
+
         List<OrderDto>   orderDtoList = new ArrayList<>() ;
         List<DbFile>   dbFileDtoList = dbFileDao.findAll() ;
 
@@ -296,7 +302,7 @@ public class OrderService {
         List<Order> ordersList = new ArrayList<>();
 
         orederIdList.forEach(orderId -> {
-            Order orderToAdd = orderDao.findOne(orderId);
+            Order orderToAdd = orderDao.findByOrderId(orderId);
             ordersList.add(orderToAdd);
 
         });

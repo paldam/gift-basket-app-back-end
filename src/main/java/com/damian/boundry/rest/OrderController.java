@@ -9,7 +9,6 @@ import com.damian.dto.OrderDto;
 import com.damian.domain.order.exceptions.OrderStatusException;
 import com.damian.domain.order_file.DbFileService;
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
@@ -18,7 +17,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -31,7 +29,10 @@ import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
+
 @Transactional
 @RestController
 public class OrderController {
@@ -63,7 +64,7 @@ public class OrderController {
     @CrossOrigin
     @GetMapping(value = "/order/{id}")
     ResponseEntity<Order> getOrder(@PathVariable Long id){
-        Order order = orderDao.findOne(id);
+        Order order = orderDao.findByOrderId(id);
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
@@ -73,8 +74,24 @@ public class OrderController {
 
         AuditReader auditReader = AuditReaderFactory.get(factory.createEntityManager());
 //
+
+        Optional<BigInteger> revNumber = orderDao.getRevisionNumberOFfPreviousOrderState(id);
+
+        BigInteger orderRevisionToGet ;
+
+
+
+        if(revNumber.isPresent()){
+            orderRevisionToGet = revNumber.get();
+        }else{
+            orderRevisionToGet = BigInteger.valueOf(id);
+        }
+
+
+
+
         AuditQuery query = auditReader.createQuery()
-            .forEntitiesAtRevision(Order.class,id);
+            .forEntitiesAtRevision(Order.class,orderRevisionToGet.longValue());
        // Order order = auditReader.find(Order.class, 1L,1L);
         //ArrayList<Object[]> list = (ArrayList) query.getResultList();
       List<Order> orderTmp= (List<Order> )query.getResultList();
@@ -88,21 +105,67 @@ public class OrderController {
     @GetMapping(value = "/orderitemshistory/{id}")
     ResponseEntity <List<OrderItem>> getOrderItemsHistory(@PathVariable Long id){
 
+
+
+
+
+
         AuditReader auditReader = AuditReaderFactory.get(factory.createEntityManager());
 //
+        Optional<BigInteger> revNumber = orderDao.getRevisionNumberOFfPreviousOrderState(id);
+
+        BigInteger orderRevisionToGet ;
+
+
+        if(revNumber.isPresent()){
+            orderRevisionToGet = revNumber.get();
+
+        }else{
+            orderRevisionToGet = BigInteger.valueOf(id);
+        }
+
+
+
+
         AuditQuery query = auditReader.createQuery()
-            .forEntitiesAtRevision(OrderItem.class,id);
+        .forEntitiesAtRevision(OrderItem.class,orderRevisionToGet.longValue());
+
+
 
         // Order order = auditReader.find(Order.class, 1L,1L);
         //ArrayList<Object[]> list = (ArrayList) query.getResultList();
         List<OrderItem> orderTmp= (List<OrderItem> )query.getResultList();
 
-        logger.error("TTTTTTTTT" + orderTmp.toString());
+
+
 
         return new ResponseEntity<List<OrderItem>>(orderTmp, HttpStatus.OK);
 
     }
 
+    @CrossOrigin
+    @GetMapping("/order/audit/{id}")
+    ResponseEntity <List<OrderAuditedRevisionEntity>> getOrderAudit(@PathVariable Integer id )
+    {
+
+
+
+
+        List<Object[]> orderHistoryListTmp = orderDao.getOrderHistoryById(id);
+
+        List<OrderAuditedRevisionEntity> orderAuditedRevisionEntitiesList = new ArrayList<>();
+
+        orderHistoryListTmp.forEach(objects -> {
+            orderAuditedRevisionEntitiesList.add(new OrderAuditedRevisionEntity(
+                ((BigInteger) objects[0]).longValue(),
+                ((BigInteger) objects[1]).longValue(),
+                ((BigInteger) objects[3]).longValue(),
+                (String)      objects[2]));
+        });
+
+
+        return new ResponseEntity<List<OrderAuditedRevisionEntity>>(orderAuditedRevisionEntitiesList, HttpStatus.OK);
+    }
 
     @CrossOrigin
     @GetMapping("/orders")
@@ -264,39 +327,7 @@ public class OrderController {
         return new ResponseEntity<List<OrderDto>>(ordersList, HttpStatus.OK);
     }
 
-    @CrossOrigin
-    @GetMapping("/order/audit/{id}")
-    ResponseEntity <List<OrderAuditedRevisionEntity>> getOrderAudit(@PathVariable Integer id )
-    {
 
-
-
-
-        List<Object[]> orderHistoryListTmp = orderDao.getOrderHistoryById(id);
-
-        List<OrderAuditedRevisionEntity> orderAuditedRevisionEntitiesList = new ArrayList<>();
-
-        orderHistoryListTmp.forEach(objects -> {
-            orderAuditedRevisionEntitiesList.add(new OrderAuditedRevisionEntity(
-                ((BigInteger) objects[0]).longValue(),
-                ((BigInteger) objects[1]).longValue(),
-                ((BigInteger) objects[3]).longValue(),
-                (String)      objects[2]));
-        });
-
-
-        return new ResponseEntity<List<OrderAuditedRevisionEntity>>(orderAuditedRevisionEntitiesList, HttpStatus.OK);
-    }
-
-
-
-//    @CrossOrigin
-//    @GetMapping("/aaa")
-//    ResponseEntity<List<NumberProductsToChangeStock>> getOrderAudit( )
-//    {
-//        List<NumberProductsToChangeStock> list = productDao.numberProductsToChangeStock(859L) ;
-//        return new ResponseEntity<List<NumberProductsToChangeStock>>(list, HttpStatus.OK);
-//    }
 
 
 
@@ -339,7 +370,7 @@ public class OrderController {
     @DeleteMapping ("/order/{id}")
     ResponseEntity deleteOrderPermanent(@PathVariable Long id) {
         
-        orderDao.delete(id);
+        orderDao.deleteById(id);
 
 
         return new ResponseEntity(HttpStatus.OK)  ;

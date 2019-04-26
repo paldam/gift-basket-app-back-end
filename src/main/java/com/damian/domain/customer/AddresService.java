@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Damian on 23.08.2018.
@@ -32,7 +33,7 @@ public class AddresService {
     public ResponseEntity deleteAddr(Long id, Integer customerId){
 
         List<Address> customerAddresList = addressDao.findAllAddrByCustomerId(customerId);
-        Address customerAddresById = addressDao.findOne(id) ;
+        Optional<Address> customerAddresById = addressDao.findById(id);
 
         logger.info(customerId);
         logger.info(customerAddresList.size());
@@ -41,7 +42,7 @@ public class AddresService {
             return new ResponseEntity("Nie można usunąć adresu, Podany adres jest jedynym adresem" , HttpStatus.FORBIDDEN);
         }
 
-        if(customerAddresById.getIsPrimaryAddress()==1){
+        if(customerAddresById.get().getIsPrimaryAddress()==1){
             return new ResponseEntity("Nie można usunąć adresu, Podany adres jest adresem głównym" , HttpStatus.FORBIDDEN);
         }
         if (existsAtLeastOneOrder(id)) {

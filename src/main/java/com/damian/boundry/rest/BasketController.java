@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class BasketController {
@@ -59,8 +60,8 @@ public class BasketController {
     @CrossOrigin
     @GetMapping("/basket/{id}")
     ResponseEntity<Basket> getBaskets(@PathVariable Long id){
-        Basket basket = basketDao.findOne(id);
-        return new ResponseEntity<Basket>(basket, HttpStatus.OK);
+        Optional<Basket> basket = basketDao.findById(id);
+        return new ResponseEntity<Basket>(basket.get(), HttpStatus.OK);
     }
 
     @CrossOrigin
