@@ -17,6 +17,7 @@ import java.util.Optional;
 
 
 public interface OrderDao extends JpaRepository<Order,Long> {
+
     public List<Order> findAllBy();
     public List<Order> findAllByOrderByOrderIdDesc();
     public List<Order> findAllByOrderStatus_OrderStatusId(Integer i);
@@ -24,6 +25,8 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     public Order findByOrderId(Long id);
     public List<Order> findByAddress_AddressId(Long id);
     public List<Order> findByCustomer_CustomerId(Integer id);
+
+
 
 
 
@@ -54,11 +57,15 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ORDER BY order_date DESC ", nativeQuery = true)
     public List<Order> findAllWithoutDeleted();
 
+    @Query(value = "SELECT count(*) FROM orders WHERE order_status_id != 99", nativeQuery = true)
+    public long getCountOfAllOrdersWithoutDeleted();
+
 
     @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ORDER BY order_date DESC ", nativeQuery = true)
     public Page<Order> findAllWithoutDeletedPage(Pageable pageable);
 
-
+    @Query(value = "SELECT * FROM orders JOIN customers ON orders.customer_id = customers.customer_id WHERE orders.order_status_id != 99 AND (orders.fv_number LIKE %?1% OR orders.additional_information LIKE %?1% OR customers.organizationName LIKE %?1% OR customers.name LIKE %?1%)ORDER BY orders.order_date DESC ", nativeQuery = true)
+    public Page<Order> findAllWithoutDeletedWithSearchFilter(String text,Pageable pageable);
 
     @Query(value = "SELECT * FROM orders WHERE delivery_date BETWEEN ?1 AND ?2 AND delivery_type =3", nativeQuery = true)
     public List<Order> findOrdersByDateRange(Date startDate, Date endDate);

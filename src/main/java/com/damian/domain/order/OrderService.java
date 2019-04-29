@@ -194,10 +194,17 @@ public class OrderService {
     }
 
 
-    public List<OrderDto> getOrderDao(){
-        Pageable pageable = PageRequest.of(0,10);
+    public OrderPageRequest getOrderDao(int page, int size,String text){
+        Pageable pageable = PageRequest.of(page,size);
        // List<Order> orderList = orderDao.findAllWithoutDeleted();
-         Page<Order> orderList = orderDao.findAllWithoutDeletedPage(pageable);
+        Page<Order> orderList;
+        if  (text.isEmpty()){
+             orderList = orderDao.findAllWithoutDeletedPage(pageable);
+        }else{
+             orderList = orderDao.findAllWithoutDeletedWithSearchFilter(text,pageable);
+        }
+
+
 
         List<OrderDto>   orderDtoList = new ArrayList<>() ;
         List<DbFile>   dbFileDtoList = dbFileDao.findAll() ;
@@ -228,7 +235,7 @@ public class OrderService {
         });
 
 
-        return orderDtoList;
+        return  new OrderPageRequest(orderDtoList,orderList.getTotalElements());
 
     }
 

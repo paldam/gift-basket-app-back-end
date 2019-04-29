@@ -312,11 +312,27 @@ public class OrderController {
 
     @CrossOrigin
     @GetMapping("/orderdao")
-    ResponseEntity<List<OrderDto>> getOrderDao( )
+    ResponseEntity<OrderPageRequest> getOrderDao(
+        @RequestParam(value="page", required=true) int page,
+        @RequestParam(value="size", required=true) int size,
+        @RequestParam(value="searchtext", required=false) String text)
     {
-        List<OrderDto> orderDtoList =  orderService.getOrderDao();
-        return new ResponseEntity<List<OrderDto>>(orderDtoList, HttpStatus.OK);
+
+
+
+        OrderPageRequest orderDtoList =  orderService.getOrderDao(page,size,text);
+        return new ResponseEntity<OrderPageRequest>(orderDtoList, HttpStatus.OK);
     }
+
+    @CrossOrigin
+    @GetMapping("/ordercount")
+    ResponseEntity<Long> getOrderCount( )
+    {
+        long numberOfRows = orderDao.getCountOfAllOrdersWithoutDeleted();
+        return new ResponseEntity<Long>(numberOfRows, HttpStatus.OK);
+    }
+
+
 
     @CrossOrigin
     @GetMapping("/orderstats")
