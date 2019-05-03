@@ -5,7 +5,9 @@ import com.damian.dto.NumberOfBasketOrderedByDate;
 import com.damian.dto.ProductToCollectOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface OrderDao extends JpaRepository<Order,Long> {
+public interface OrderDao extends JpaRepository<Order,Long>, JpaSpecificationExecutor<Order> {
 
     public List<Order> findAllBy();
     public List<Order> findAllByOrderByOrderIdDesc();
@@ -25,7 +27,6 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     public Order findByOrderId(Long id);
     public List<Order> findByAddress_AddressId(Long id);
     public List<Order> findByCustomer_CustomerId(Integer id);
-
 
 
 
@@ -53,6 +54,10 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     public List<Order> findAllOrderByBasketIdAndOrderDate(Long basketId,Date startDate, Date endDate );
 
 
+    @Query(value = "SELECT YEAR(order_date) FROM `orders` WHERE 1 GROUP BY YEAR(order_date)",nativeQuery = true)
+    public int[] getOrdersYears();
+
+
 
     @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ORDER BY order_date DESC ", nativeQuery = true)
     public List<Order> findAllWithoutDeleted();
@@ -61,10 +66,17 @@ public interface OrderDao extends JpaRepository<Order,Long> {
     public long getCountOfAllOrdersWithoutDeleted();
 
 
-    @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ORDER BY order_date DESC ", nativeQuery = true)
+    @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ", nativeQuery = true)
     public Page<Order> findAllWithoutDeletedPage(Pageable pageable);
 
-    @Query(value = "SELECT * FROM orders JOIN customers ON orders.customer_id = customers.customer_id WHERE orders.order_status_id != 99 AND (orders.fv_number LIKE %?1% OR orders.additional_information LIKE %?1% OR customers.organizationName LIKE %?1% OR customers.name LIKE %?1%)ORDER BY orders.order_date DESC ", nativeQuery = true)
+
+    @Query(value = "SELECT * FROM orders WHERE order_status_id != 99 ", nativeQuery = true)
+    public Page<Order> findAllWithoutDeletedSortByOrderDate(Pageable pageable);
+
+
+    @Query(value = "SELECT * FROM orders as orders JOIN customers as customers ON orders.customer_id = customers.customer_id " +
+        "WHERE orders.order_status_id != 99 " +
+        "AND (orders.fv_number LIKE %?1% OR orders.additional_information LIKE %?1% OR customers.organizationName LIKE %?1% OR customers.name LIKE %?1%)", nativeQuery = true)
     public Page<Order> findAllWithoutDeletedWithSearchFilter(String text,Pageable pageable);
 
     @Query(value = "SELECT * FROM orders WHERE delivery_date BETWEEN ?1 AND ?2 AND delivery_type =3", nativeQuery = true)

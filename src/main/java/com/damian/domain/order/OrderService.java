@@ -16,17 +16,25 @@ import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
 
 @Service
 public class OrderService {
 
     private static final Logger logger = Logger.getLogger(OrderService.class);
     private OrderDao orderDao;
+
     private CustomerDao customerDao;
     private AddressDao addressDao;
     private ProductDao productDao;
@@ -194,13 +202,37 @@ public class OrderService {
     }
 
 
-    public OrderPageRequest getOrderDao(int page, int size,String text){
-        Pageable pageable = PageRequest.of(page,size);
-       // List<Order> orderList = orderDao.findAllWithoutDeleted();
+    public OrderPageRequest getOrderDao(int page, int size,String text,String orderBy,int sortingDirection,List<Integer> orderStatusFilterArray,List<Integer> orderYearsFilterList){
+
+ System.out.println(ANSI_YELLOW + "ordestatus = " + orderStatusFilterArray.toString() + ANSI_RESET);
+        System.out.println(ANSI_YELLOW + "orderYers = " + orderYearsFilterList.toString() + ANSI_RESET);
+
+
+        Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+
         Page<Order> orderList;
-        if  (text.isEmpty()){
-             orderList = orderDao.findAllWithoutDeletedPage(pageable);
-        }else{
+        Pageable pageable = PageRequest.of(page,size, Sort.by(sortDirection, orderBy));
+
+        if  (text.isEmpty()) {
+
+            if (orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
+                orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted(), pageable);
+            }else{
+
+                if(!orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()){
+                    orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray)), pageable);
+                }else if(orderStatusFilterArray.isEmpty() && !orderYearsFilterList.isEmpty()) {
+                    orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)), pageable);
+                }else{
+                    orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
+                        .and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray))), pageable);
+
+                }
+
+            }
+        }
+        else {
              orderList = orderDao.findAllWithoutDeletedWithSearchFilter(text,pageable);
         }
 

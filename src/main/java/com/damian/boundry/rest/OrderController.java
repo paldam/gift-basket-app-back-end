@@ -313,14 +313,26 @@ public class OrderController {
     @CrossOrigin
     @GetMapping("/orderdao")
     ResponseEntity<OrderPageRequest> getOrderDao(
-        @RequestParam(value="page", required=true) int page,
+        @RequestParam(value="page", required=true, defaultValue = "0") int page,
         @RequestParam(value="size", required=true) int size,
-        @RequestParam(value="searchtext", required=false) String text)
+        @RequestParam(value="searchtext", required=false) String text,
+        @RequestParam(value="orderBy", required=false) String orderBy,
+        @RequestParam(value="sortingDirection", required=false,defaultValue = "1") int sortingDirection,
+        @RequestParam(value="orderStatusFilterList", required=false) List<Integer> orderStatusFilterList,
+        @RequestParam(value="orderYearsFilterList", required=false) List<Integer> orderYearsFilterList)
     {
 
 
 
-        OrderPageRequest orderDtoList =  orderService.getOrderDao(page,size,text);
+        if(orderStatusFilterList==null){
+            orderStatusFilterList = new ArrayList<>();
+        }
+        if(orderYearsFilterList==null){
+            orderYearsFilterList = new ArrayList<>();
+        }
+
+
+        OrderPageRequest orderDtoList =  orderService.getOrderDao(page,size,text,orderBy,sortingDirection,orderStatusFilterList,orderYearsFilterList);
         return new ResponseEntity<OrderPageRequest>(orderDtoList, HttpStatus.OK);
     }
 
@@ -330,6 +342,14 @@ public class OrderController {
     {
         long numberOfRows = orderDao.getCountOfAllOrdersWithoutDeleted();
         return new ResponseEntity<Long>(numberOfRows, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/ordersyears")
+    ResponseEntity <int[]> getOrderYears( )
+    {
+        int[] years = orderDao.getOrdersYears();
+        return new ResponseEntity<int[]>(years, HttpStatus.OK);
     }
 
 
