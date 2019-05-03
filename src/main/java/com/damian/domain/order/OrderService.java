@@ -214,27 +214,30 @@ public class OrderService {
         Page<Order> orderList;
         Pageable pageable = PageRequest.of(page,size, Sort.by(sortDirection, orderBy));
 
-        if  (text.isEmpty()) {
 
-            if (orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
-                orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted(), pageable);
+        if (orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
+                orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
+        }else{
+
+            if(!orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()){
+                    orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
+                            .and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray)
+                            .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
+
+            }else if(orderStatusFilterArray.isEmpty() && !orderYearsFilterList.isEmpty()) {
+
+                    orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
+                            .and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
+                            .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
             }else{
-
-                if(!orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()){
-                    orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray)), pageable);
-                }else if(orderStatusFilterArray.isEmpty() && !orderYearsFilterList.isEmpty()) {
-                    orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)), pageable);
-                }else{
-                    orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
-                        .and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray))), pageable);
-
-                }
-
+                    orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
+                            .and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
+                            .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))
+                            .and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray))), pageable);
             }
         }
-        else {
-             orderList = orderDao.findAllWithoutDeletedWithSearchFilter(text,pageable);
-        }
+
+
 
 
 

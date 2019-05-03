@@ -1,5 +1,7 @@
 package com.damian.domain.order;
 
+import com.damian.domain.customer.Customer;
+import com.damian.domain.customer.Customer_;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.*;
@@ -47,6 +49,26 @@ public class OrderSpecyficationJPA {
                 Join<Order, OrderStatus> orderStatusJoin = root.join(Order_.orderStatus);
                 Predicate equalPredicate = criteriaBuilder.notEqual(orderStatusJoin.get(OrderStatus_.orderStatusId), 99);
                 return equalPredicate;
+            }
+        };
+    }
+
+    public static Specification<Order> getOrderWithSearchFilter(String likeText){
+        return new Specification<Order>() {
+            @Override
+            public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+
+
+                Join<Order, Customer> orderCustomerJoin = root.join(Order_.customer);
+
+                Predicate orderFvLike = criteriaBuilder.like((root.get(Order_.orderFvNumber)), "%"+ likeText +"%");
+                Predicate orderAditionalInformationLike = criteriaBuilder.like((root.get(Order_.additionalInformation)), "%"+ likeText +"%");
+                Predicate orderCustomerOrganizationNameLike = criteriaBuilder.like((orderCustomerJoin.get(Customer_.organizationName)), "%"+ likeText +"%");
+                Predicate orderCustomerNameLike = criteriaBuilder.like((orderCustomerJoin.get(Customer_.name)), "%"+ likeText +"%");
+                Predicate likePredicate = criteriaBuilder.or(orderFvLike,orderAditionalInformationLike,orderCustomerOrganizationNameLike,orderCustomerNameLike);
+
+                return likePredicate;
+
             }
         };
     }
