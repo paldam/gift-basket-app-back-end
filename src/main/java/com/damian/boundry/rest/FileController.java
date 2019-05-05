@@ -1,6 +1,7 @@
 package com.damian.boundry.rest;
 
 import com.damian.dto.FileDto;
+import com.damian.dto.OrderItemsDto;
 import com.damian.dto.ProductToCollectOrder;
 import com.damian.domain.order_file.DbFile;
 import com.damian.domain.order.Order;
@@ -9,10 +10,7 @@ import com.damian.domain.order_file.DbFileDao;
 import com.damian.domain.order.OrderDao;
 import com.damian.domain.order_file.DbFileService;
 import com.damian.domain.order.OrderService;
-import com.damian.util.PdfDeliveryConfirmation;
-import com.damian.util.PdfGenerator;
-import com.damian.util.PdfMultiDeliveryConfirmation;
-import com.damian.util.PdfProductToCollectOrder;
+import com.damian.util.*;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -154,6 +152,9 @@ public class FileController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(bis));
     }
+
+
+
 
 
 

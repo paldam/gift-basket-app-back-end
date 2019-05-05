@@ -8,14 +8,19 @@ import com.damian.dto.NumberOfBasketOrderedByDate;
 import com.damian.dto.OrderDto;
 import com.damian.domain.order.exceptions.OrderStatusException;
 import com.damian.domain.order_file.DbFileService;
+import com.damian.dto.OrderItemsDto;
+import com.damian.util.PdfOrderProductCustom;
 import org.apache.log4j.Logger;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +31,8 @@ import org.hibernate.envers.AuditReader;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -418,6 +425,27 @@ public class OrderController {
 
         return new ResponseEntity(HttpStatus.OK)  ;
 
+    }
+
+
+
+    @CrossOrigin
+    @RequestMapping(value = "/order/pdf/aaa", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> getBasketProductsPdf(@RequestBody List<OrderItemsDto> orderItemsDto) throws IOException {
+
+
+
+        PdfOrderProductCustom pdfGenerator = new PdfOrderProductCustom();
+        ByteArrayInputStream bis = pdfGenerator.generateBasketsProductsCustomListPdf(orderItemsDto);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=produkty_zamowienia.pdf");
+        new InputStreamResource(bis)  ;
+        return ResponseEntity
+            .ok()
+            .headers(headers)
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(new InputStreamResource(bis));
     }
     
 
