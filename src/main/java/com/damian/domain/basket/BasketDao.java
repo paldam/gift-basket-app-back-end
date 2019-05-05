@@ -6,10 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BasketDao extends CrudRepository<Basket,Long> {
     public List<Basket> findAllBy();
     public List<Basket> findAllByOrderByBasketIdDesc();
+
+
+    @Query(value = "SELECT data FROM baskets WHERE basket_id=?1", nativeQuery = true)
+    public byte[] getBasketImageByBasketId(Long basketId);
 
 
     @Query(value = "SELECT * FROM baskets WHERE basket_type != 99 AND basket_type != 999", nativeQuery = true)

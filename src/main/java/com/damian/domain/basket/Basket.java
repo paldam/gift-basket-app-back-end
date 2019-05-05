@@ -1,6 +1,9 @@
 package com.damian.domain.basket;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -15,6 +18,8 @@ public class Basket {
     private String season;
     private Integer isAlcoholic;
     private Integer isAvailable;
+    private byte[] basketImageData;
+    private Integer isBasketImg;
 
 
 
@@ -116,6 +121,44 @@ public class Basket {
 
     public void setIsAvailable(Integer isAvailable) {
         this.isAvailable = isAvailable;
+    }
+
+
+    @JsonIgnore
+    @Basic
+    @Column(name = "data", columnDefinition = "LONGBLOB")
+    public byte[] getBasketImageData() {
+        return basketImageData;
+    }
+
+    public void setBasketImageData(byte[] basketImageData) {
+        this.basketImageData = basketImageData;
+    }
+
+    @Basic
+    @Column(name = "is_basket_img", length = 40, columnDefinition = "INT DEFAULT 0")
+    public Integer getIsBasketImg() {
+        return isBasketImg;
+    }
+
+    public void setIsBasketImg(Integer isBasketImg) {
+        this.isBasketImg = isBasketImg;
+    }
+
+    @Override
+    public String toString() {
+        return "Basket{" +
+            "basketId=" + basketId +
+            ", basketName='" + basketName + '\'' +
+            ", basketType=" + basketType +
+            ", basketItems=" + basketItems +
+            ", basketTotalPrice=" + basketTotalPrice +
+            ", season='" + season + '\'' +
+            ", isAlcoholic=" + isAlcoholic +
+            ", isAvailable=" + isAvailable +
+            ", basketImageData=" + Arrays.toString(basketImageData) +
+            ", isBasketImg=" + isBasketImg +
+            '}';
     }
 }
         
