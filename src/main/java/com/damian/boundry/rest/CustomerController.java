@@ -1,7 +1,8 @@
 package com.damian.boundry.rest;
 
 import com.damian.domain.customer.*;
-import com.damian.domain.order.Order_;
+import com.damian.domain.customer.OLD.CustomerOLD;
+import com.damian.domain.customer.OLD.CustomerOLDDao;
 import com.damian.dto.CustomerAddressDTO;
 import com.damian.domain.order.OrderDao;
 import com.damian.domain.order.OrderService;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,20 +21,23 @@ import java.util.List;
 public class CustomerController {
     private static final Logger logger = Logger.getLogger(OrderController.class);
     private CustomerDao customerDao;
-    private Customer_2Dao customer_2Dao;
+    private CustomerOLDDao customerOLDDao;
+    private CompanyDao companyDao;
     private AddressDao addressDao;
     private OrderDao orderDao;
     private OrderService orderService;
     private CustomerService customerService;
 
-    public CustomerController(CustomerDao customerDao , Customer_2Dao customer_2Dao, AddressDao addressDao, OrderDao orderDao, OrderService orderService, CustomerService customerService){
+    public CustomerController(CustomerDao customerDao , CustomerOLDDao customerOLDDao, CompanyDao companyDao, AddressDao addressDao, OrderDao orderDao, OrderService orderService, CustomerService customerService){
         this.customerDao=customerDao;
-        this.customer_2Dao = customer_2Dao;
+        this.customerOLDDao = customerOLDDao;
+        this.companyDao = companyDao;
         this.addressDao=addressDao;
         this.orderDao = orderDao;
         this.orderService= orderService;
         this.customerService= customerService;
     }
+
 
     @Transactional
     @CrossOrigin
@@ -40,7 +46,7 @@ public class CustomerController {
 
 
 
-        List<Customer> customerList = customerDao.findAllBy();
+        List<CustomerOLD> customerList = customerOLDDao.findAll();
 
 
         customerList.forEach(customer -> {
@@ -53,26 +59,32 @@ public class CustomerController {
 
 
 
-            List<Address2> addressList = new ArrayList<>();
+            List<Address> addressList = new ArrayList<>();
 
             customer.getAddresses().forEach(address -> {
 
-                addressList.add(new Address2(address.getAddress(),address.getZipCode(),address.getCityName(),customer.getName()));
+                addressList.add(new Address(address.getAddressId(),address.getAddress(),address.getZipCode(),address.getCityName(),customer.getName()));
             });
 
-            Customer_2 custTmp = new Customer_2(customer.getName(),customer.getEmail(),customer.getPhoneNumber(),customer.getAdditionalInformation(),company,addressList);
+            Customer custTmp = new Customer(customer.getCustomerId(),customer.getName(),customer.getEmail(),customer.getPhoneNumber(),customer.getAdditionalInformation(),company,addressList);
 
 
-            customer_2Dao.save(custTmp);
+
+            customerDao.save(custTmp);
 
         });
 
 
 
+        return null;
+    }
 
 
-
-        return new ResponseEntity<List<Customer>>(customerList, HttpStatus.OK);
+    @CrossOrigin
+    @GetMapping("/company")
+    ResponseEntity<List<Company>> getCompany(){
+        List<Company> companyList = companyDao.findAll();
+        return new ResponseEntity<List<Company>>(companyList, HttpStatus.OK);
     }
 
 

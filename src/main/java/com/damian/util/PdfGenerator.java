@@ -87,7 +87,7 @@ public class PdfGenerator {
 
                             table.addCell(cell);
 
-                            PdfPCell cell2 = new PdfPCell(new Phrase(order.getCustomer().getOrganizationName(),font5));
+                            PdfPCell cell2 = new PdfPCell(new Phrase(order.getCustomer().getCompany().getCompanyName(),font5));
                             cell2.setColspan(10);
                             cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
                             cell2.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);
@@ -171,7 +171,7 @@ public class PdfGenerator {
 //row 5
 
 
-                    PdfPCell cell112 = new PdfPCell(new Phrase(order.getAddress().AddressDesc(),font2));
+                    PdfPCell cell112 = new PdfPCell(new Phrase(order.getAddress().addressDesc(),font2));
                     cell112.setColspan(10);
                     cell112.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cell112.setBorder(Rectangle.LEFT | Rectangle.BOTTOM| Rectangle.RIGHT);

@@ -25,7 +25,7 @@ public class CustomerAddressDTO {
 
     public CustomerAddressDTO(Customer cust, Address addr) {
         this.customerId = cust.getCustomerId() ;
-        this.organizationName = cust.getOrganizationName();
+        this.organizationName = cust.getCompany().getCompanyName(); //TODO
         this.name = cust.getName();
         this.email = cust.getEmail();
         this.phoneNumber = cust.getPhoneNumber();

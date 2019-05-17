@@ -40,13 +40,15 @@ public class AddressController {
         return new ResponseEntity<List<ZipCode>>(cityListBycode, HttpStatus.OK);
     }
 
-    @CrossOrigin
-    @DeleteMapping(value = "/address/",produces = "application/json; charset=utf-8")
-    ResponseEntity deleteAddress(@RequestParam Long id, Integer customerId) {
 
-        return addresService.deleteAddr(id,customerId);
-
-    }
+    //TODO
+//    @CrossOrigin
+//    @DeleteMapping(value = "/address/",produces = "application/json; charset=utf-8")
+//    ResponseEntity deleteAddress(@RequestParam Long id, Integer customerId) {
+//
+//        return addresService.deleteAddr(id,customerId);
+//
+//    }
 
     @CrossOrigin
     @DeleteMapping ("/primaryaddress/")

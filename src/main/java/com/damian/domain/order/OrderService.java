@@ -165,7 +165,7 @@ public class OrderService {
             }
 
 
-        }   //
+        }   //TODO
 //            1 -nowe
 //            4-przyjete
 //            3-skompletowane
@@ -180,32 +180,29 @@ public class OrderService {
 
 
 
-        Customer customer = order.getCustomer();
-        logger.info("Id customera "+ customer.getCustomerId());
-        if (customer.getCustomerId() != null) {
-            logger.info("zamówienie z klientem z bazy");
-            Customer customerToSave = order.getCustomer();
-            //order.setCustomer(null);
-            customer.setAddresses(null);
-            customerDao.saveAndFlush(customer);
-            orderDao.saveAndFlush(order);
-
-        } else {
-            logger.info("zamówienie z nowym klientem");
-            Customer savedCustomer = customerDao.saveAndFlush(customer);
-            Address tmpAddres = savedCustomer.getAddresses().get(0);
-            order.setAddress(tmpAddres);
-            order.setCustomer(savedCustomer);
-            orderDao.save(order);
-        }
-
+//        Customer customer = order.getCustomer();
+//        logger.info("Id customera "+ customer.getCustomerId());
+//        if (customer.getCustomerId() != null) {
+//            logger.info("zamówienie z klientem z bazy");
+//            Customer customerToSave = order.getCustomer();
+//            //order.setCustomer(null);
+//            customer.setAddresses(null);
+//            customerDao.saveAndFlush(customer);
+//            orderDao.saveAndFlush(order);
+//
+//        } else {
+//            logger.info("zamówienie z nowym klientem");
+//            Customer savedCustomer = customerDao.saveAndFlush(customer);
+//            Address tmpAddres = savedCustomer.getAddresses().get(0);
+//            order.setAddress(tmpAddres);
+//            order.setCustomer(savedCustomer);
+//            orderDao.save(order);
+//        }
+//
     }
 
 
     public OrderPageRequest getOrderDao(int page, int size,String text,String orderBy,int sortingDirection,List<Integer> orderStatusFilterArray,List<Integer> orderYearsFilterList){
-
- System.out.println(ANSI_YELLOW + "ordestatus = " + orderStatusFilterArray.toString() + ANSI_RESET);
-        System.out.println(ANSI_YELLOW + "orderYers = " + orderYearsFilterList.toString() + ANSI_RESET);
 
 
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -216,7 +213,7 @@ public class OrderService {
 
 
         if (orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
-                orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
+               orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
         }else{
 
             if(!orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()){

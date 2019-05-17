@@ -1,6 +1,5 @@
 package com.damian.domain.customer;
 
-import com.damian.domain.customer.Address;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,10 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Created by Damian on 15.08.2018.
- */
 public interface AddressDao extends JpaRepository<Address,Long> {
+
     @Override
     List<Address> findAll();
 
@@ -41,5 +38,6 @@ public interface AddressDao extends JpaRepository<Address,Long> {
     @Modifying
     @Query(value = "UPDATE addresses SET is_primary_address = 1 WHERE address_id = ?1", nativeQuery = true)
     public void setAddreesAsPrimary(Long id);
+
 
 }

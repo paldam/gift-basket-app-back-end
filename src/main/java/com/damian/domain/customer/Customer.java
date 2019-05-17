@@ -1,26 +1,38 @@
 package com.damian.domain.customer;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
+
 @Entity
 @Table(name = "customers")
-
 public class Customer {
     private Integer customerId;
-    private String organizationName;
     private String name;
-    private List<Address> addresses;
     private String email;
     private String phoneNumber;
     private String additionalInformation;
+    private Company company;
+    private List<Address> address;
+
+    public Customer() {
+    }
+
+    public Customer(Integer customerId,String name, String email, String phoneNumber, String additionalInformation, Company company, List<Address> address) {
+        this.customerId = customerId;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.additionalInformation = additionalInformation;
+        this.company = company;
+        this.address = address;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id",nullable = false)
+    @Column(name = "customer_id",insertable=true, updatable=true, unique=true, nullable=false)
+
     public Integer getCustomerId() {
         return customerId;
     }
@@ -29,15 +41,7 @@ public class Customer {
         this.customerId = customerId;
     }
 
-    @Basic
-    @Column(name = "organizationName", length = 300)
-    public String getOrganizationName() {
-        return organizationName;
-    }
 
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-    }
 
     @Basic
     @Column(name = "name", length = 300)
@@ -49,15 +53,7 @@ public class Customer {
         this.name = name;
     }
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,fetch =FetchType.EAGER)
-    public List<Address> getAddresses() {
-        return addresses;
-    }
 
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
-    }
 
     @Basic
     @Column(name = "email", length = 300)
@@ -87,5 +83,26 @@ public class Customer {
 
     public void setAdditionalInformation(String additionalInformation) {
         this.additionalInformation = additionalInformation;
+    }
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "company_id")
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    public List<Address> getAddress() {
+        return address;
+    }
+
+    public void setAddress(List<Address> address) {
+        this.address = address;
     }
 }

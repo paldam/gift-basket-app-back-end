@@ -46,8 +46,7 @@ public class OrderController {
 
     private static final Logger logger = Logger.getLogger(OrderController.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
+
     @Autowired
     private EntityManagerFactory factory;
     private OrderDao orderDao;

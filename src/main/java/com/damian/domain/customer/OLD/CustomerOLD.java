@@ -1,34 +1,23 @@
-package com.damian.domain.customer;
+package com.damian.domain.customer.OLD;
 
+import com.damian.domain.customer.Address;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.List;
-
 @Entity
-@Table(name = "customers_2")
-public class Customer_2 {
+@Table(name = "customers_old")
+
+public class CustomerOLD {
     private Integer customerId;
+    private String organizationName;
     private String name;
+    private List<AddressOLD> addresses;
     private String email;
     private String phoneNumber;
     private String additionalInformation;
-    private Company company;
-    private List<Address2> address;
-
-    public Customer_2() {
-    }
-
-    public Customer_2( String name, String email, String phoneNumber, String additionalInformation, Company company, List<Address2> address) {
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.additionalInformation = additionalInformation;
-        this.company = company;
-        this.address = address;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +30,15 @@ public class Customer_2 {
         this.customerId = customerId;
     }
 
+    @Basic
+    @Column(name = "organizationName", length = 300)
+    public String getOrganizationName() {
+        return organizationName;
+    }
 
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
 
     @Basic
     @Column(name = "name", length = 300)
@@ -53,7 +50,15 @@ public class Customer_2 {
         this.name = name;
     }
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL,fetch =FetchType.EAGER)
+    public List<AddressOLD> getAddresses() {
+        return addresses;
+    }
 
+    public void setAddresses(List<AddressOLD> addresses) {
+        this.addresses = addresses;
+    }
 
     @Basic
     @Column(name = "email", length = 300)
@@ -83,26 +88,5 @@ public class Customer_2 {
 
     public void setAdditionalInformation(String additionalInformation) {
         this.additionalInformation = additionalInformation;
-    }
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "company_id")
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id")
-    public List<Address2> getAddress() {
-        return address;
-    }
-
-    public void setAddress(List<Address2> address) {
-        this.address = address;
     }
 }

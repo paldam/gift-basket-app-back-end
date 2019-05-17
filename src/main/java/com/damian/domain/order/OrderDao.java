@@ -54,7 +54,7 @@ public interface OrderDao extends JpaRepository<Order,Long>, JpaSpecificationExe
     public List<Order> findAllOrderByBasketIdAndOrderDate(Long basketId,Date startDate, Date endDate );
 
 
-    @Query(value = "SELECT YEAR(order_date) FROM `orders` WHERE 1 GROUP BY YEAR(order_date)",nativeQuery = true)
+    @Query(value = "SELECT YEAR(order_date) FROM `orders` WHERE 1 GROUP BY YEAR(order_date) ORDER BY order_date DESC",nativeQuery = true)
     public int[] getOrdersYears();
 
 

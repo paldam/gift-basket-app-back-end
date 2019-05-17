@@ -29,29 +29,29 @@ public class AddresService {
 
 
 
-
-    public ResponseEntity deleteAddr(Long id, Integer customerId){
-
-        List<Address> customerAddresList = addressDao.findAllAddrByCustomerId(customerId);
-        Optional<Address> customerAddresById = addressDao.findById(id);
-
-        logger.info(customerId);
-        logger.info(customerAddresList.size());
-
-        if (customerAddresList.size() == 1) {
-            return new ResponseEntity("Nie można usunąć adresu, Podany adres jest jedynym adresem" , HttpStatus.FORBIDDEN);
-        }
-
-        if(customerAddresById.get().getIsPrimaryAddress()==1){
-            return new ResponseEntity("Nie można usunąć adresu, Podany adres jest adresem głównym" , HttpStatus.FORBIDDEN);
-        }
-        if (existsAtLeastOneOrder(id)) {
-            return new ResponseEntity("Nie można usunąć adresu, Podany adres jest powiązany z conajmniej jednym zamówieniem" , HttpStatus.FORBIDDEN);
-        } else {
-            addressDao.deleteByAddressId(id);
-            return new ResponseEntity(HttpStatus.OK);        }
-
-    }
+//TODO
+//    public ResponseEntity deleteAddr(Long id, Integer customerId){
+////
+////        List<Address> customerAddresList = addressDao.findAllAddrByCustomerId(customerId);
+////        Optional<Address> customerAddresById = addressDao.findById(id);
+////
+////        logger.info(customerId);
+////        logger.info(customerAddresList.size());
+////
+////        if (customerAddresList.size() == 1) {
+////            return new ResponseEntity("Nie można usunąć adresu, Podany adres jest jedynym adresem" , HttpStatus.FORBIDDEN);
+////        }
+////
+////        if(customerAddresById.get().getIsPrimaryAddress()==1){
+////            return new ResponseEntity("Nie można usunąć adresu, Podany adres jest adresem głównym" , HttpStatus.FORBIDDEN);
+////        }
+////        if (existsAtLeastOneOrder(id)) {
+////            return new ResponseEntity("Nie można usunąć adresu, Podany adres jest powiązany z conajmniej jednym zamówieniem" , HttpStatus.FORBIDDEN);
+////        } else {
+////            addressDao.deleteByAddressId(id);
+////            return new ResponseEntity(HttpStatus.OK);        }
+////
+////    }
 
     @Transactional
     public void changePrimaryAddr(Long id, Integer customerId){

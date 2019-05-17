@@ -1,5 +1,7 @@
 package com.damian.domain.order;
 
+import com.damian.domain.customer.Company;
+import com.damian.domain.customer.Company_;
 import com.damian.domain.customer.Customer;
 import com.damian.domain.customer.Customer_;
 import org.springframework.data.jpa.domain.Specification;
@@ -60,10 +62,11 @@ public class OrderSpecyficationJPA {
 
 
                 Join<Order, Customer> orderCustomerJoin = root.join(Order_.customer);
+                Join<Customer, Company> orderCustomerCompanyJoin = orderCustomerJoin.join(Customer_.company);
 
                 Predicate orderFvLike = criteriaBuilder.like((root.get(Order_.orderFvNumber)), "%"+ likeText +"%");
                 Predicate orderAditionalInformationLike = criteriaBuilder.like((root.get(Order_.additionalInformation)), "%"+ likeText +"%");
-                Predicate orderCustomerOrganizationNameLike = criteriaBuilder.like((orderCustomerJoin.get(Customer_.organizationName)), "%"+ likeText +"%");
+                Predicate orderCustomerOrganizationNameLike = criteriaBuilder.like(( orderCustomerCompanyJoin.get(Company_.companyName)), "%"+ likeText +"%");
                 Predicate orderCustomerNameLike = criteriaBuilder.like((orderCustomerJoin.get(Customer_.name)), "%"+ likeText +"%");
                 Predicate likePredicate = criteriaBuilder.or(orderFvLike,orderAditionalInformationLike,orderCustomerOrganizationNameLike,orderCustomerNameLike);
 

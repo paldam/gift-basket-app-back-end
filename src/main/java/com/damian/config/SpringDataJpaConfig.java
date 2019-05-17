@@ -22,10 +22,8 @@ import java.util.Properties;
 @Configuration
 @ComponentScan(basePackages = "com.damian.config")
 @PropertySource(value = {"classpath:application_${spring.profiles.active}.properties"})
-
-
-@EnableJpaRepositories(basePackages = "com.damian")
 @EnableTransactionManagement
+@EnableJpaRepositories(basePackages = "com.damian")
 public class SpringDataJpaConfig {
 
     @Autowired

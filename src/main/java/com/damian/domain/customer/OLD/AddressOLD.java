@@ -1,28 +1,29 @@
-package com.damian.domain.customer;
+package com.damian.domain.customer.OLD;
 
+import com.damian.domain.customer.Customer;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "addresses2")
-public class Address2 {
 
+@Entity
+@Table(name = "addresses_old")
+public class AddressOLD {
     private Long addressId;
     private String address;
     private String zipCode;
     private String cityName;
-    private String contackPerson;
+    private CustomerOLD customer;
+    private byte isPrimaryAddress;
 
 
-    public Address2() {
+    public AddressOLD() {
     }
 
-    public Address2(String address, String zipCode, String cityName, String contackPerson) {
+    public AddressOLD(Integer  customerId, String address, String zipCode, String cityName) {
         this.address = address;
         this.zipCode = zipCode;
         this.cityName = cityName;
-        this.contackPerson = contackPerson;
     }
 
     @Id
@@ -37,6 +38,16 @@ public class Address2 {
     }
 
 
+    @JsonBackReference
+    @ManyToOne (cascade = CascadeType.MERGE,fetch =FetchType.EAGER)
+    @JoinColumn(name = "customer_id")
+    public CustomerOLD getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerOLD customer) {
+        this.customer = customer;
+    }
 
     @Basic
     @Column(name = "address", length = 350)
@@ -47,7 +58,6 @@ public class Address2 {
     public void setAddress(String address) {
         this.address = address;
     }
-
     @Basic
     @Column(name = "zip_code", length = 300)
     public String getZipCode() {
@@ -57,7 +67,6 @@ public class Address2 {
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
-
     @Basic
     @Column(name = "city_name", length = 300)
     public String getCityName() {
@@ -68,13 +77,19 @@ public class Address2 {
         this.cityName = cityName;
     }
 
+
     @Basic
-    @Column(name = "contact_person", length = 300)
-    public String getContackPerson() {
-        return contackPerson;
+    @Column(name = "is_primary_address",nullable = false)
+    public byte getIsPrimaryAddress() {
+        return isPrimaryAddress;
     }
 
-    public void setContackPerson(String contackPerson) {
-        this.contackPerson = contackPerson;
+    public void setIsPrimaryAddress(byte isPrimaryAddress) {
+        this.isPrimaryAddress = isPrimaryAddress;
+    }
+
+    public String AddressDesc(){
+        return
+            address + " " + zipCode +   " " + cityName ;
     }
 }
