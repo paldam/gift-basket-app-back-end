@@ -1,6 +1,7 @@
 package com.damian.domain.customer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,24 +15,26 @@ public class Customer {
     private String phoneNumber;
     private String additionalInformation;
     private Company company;
-    private List<Address> address;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) //only deserialization
+    private List<Address> addresses;
 
     public Customer() {
     }
 
-    public Customer(Integer customerId,String name, String email, String phoneNumber, String additionalInformation, Company company, List<Address> address) {
+    public Customer(Integer customerId,String name, String email, String phoneNumber, String additionalInformation, Company company, List<Address> addresses) {
         this.customerId = customerId;
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.additionalInformation = additionalInformation;
         this.company = company;
-        this.address = address;
+        this.addresses = addresses;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id",insertable=true, updatable=true, unique=true, nullable=false)
+    @Column(name = "customer_id",nullable=false)
 
     public Integer getCustomerId() {
         return customerId;
@@ -91,18 +94,34 @@ public class Customer {
         return company;
     }
 
+
+
+
     public void setCompany(Company company) {
         this.company = company;
     }
 
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
-    public List<Address> getAddress() {
-        return address;
+    @JoinColumn(name = "customer_id",nullable=true)
+    public List<Address> getAddresses() {
+        return addresses;
     }
 
-    public void setAddress(List<Address> address) {
-        this.address = address;
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+            "customerId=" + customerId +
+            ", name='" + name + '\'' +
+            ", email='" + email + '\'' +
+            ", phoneNumber='" + phoneNumber + '\'' +
+            ", additionalInformation='" + additionalInformation + '\'' +
+            ", company=" + company +
+            ", addresses=" + addresses +
+            '}';
     }
 }

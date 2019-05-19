@@ -81,4 +81,15 @@ public class Address {
         return
             address + " " + zipCode +   " " + cityName ;
     }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+            "addressId=" + addressId +
+            ", address='" + address + '\'' +
+            ", zipCode='" + zipCode + '\'' +
+            ", cityName='" + cityName + '\'' +
+            ", contactPerson='" + contactPerson + '\'' +
+            '}';
+    }
 }

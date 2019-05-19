@@ -12,18 +12,16 @@ import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.dto.OrderDto;
 import com.damian.domain.order.exceptions.OrderStatusException;
 import com.damian.security.SecurityUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.damian.config.Constants.ANSI_RESET;
@@ -57,7 +55,7 @@ public class OrderService {
     @Transactional
     public void createOrUpdateOrder(Order order) throws OrderStatusException {
 
-        logger.error(" W Serwisie użytkownik to " + SecurityUtils.getCurrentUserLogin());
+
 
         if (Objects.isNull(order.getOrderId()) ){
 
@@ -180,25 +178,28 @@ public class OrderService {
 
 
 
-//        Customer customer = order.getCustomer();
-//        logger.info("Id customera "+ customer.getCustomerId());
-//        if (customer.getCustomerId() != null) {
-//            logger.info("zamówienie z klientem z bazy");
-//            Customer customerToSave = order.getCustomer();
-//            //order.setCustomer(null);
-//            customer.setAddresses(null);
-//            customerDao.saveAndFlush(customer);
-//            orderDao.saveAndFlush(order);
-//
-//        } else {
-//            logger.info("zamówienie z nowym klientem");
-//            Customer savedCustomer = customerDao.saveAndFlush(customer);
-//            Address tmpAddres = savedCustomer.getAddresses().get(0);
-//            order.setAddress(tmpAddres);
-//            order.setCustomer(savedCustomer);
-//            orderDao.save(order);
-//        }
-//
+        Customer customer = order.getCustomer();
+        if (customer.getCustomerId() != null) {
+            logger.info("zamówienie z klientem z bazy");
+            Customer customerToSave = order.getCustomer();
+            //order.setCustomer(null);
+            customer.setAddresses(null);
+            customerDao.saveAndFlush(customer);
+            orderDao.saveAndFlush(order);
+
+        } else {
+            logger.info("zamówienie z nowym klientem");
+            System.out.println(ANSI_YELLOW + customer.toString() + ANSI_RESET);
+
+
+
+            Customer savedCustomer = customerDao.saveAndFlush(customer);
+            Address tmpAddres = savedCustomer.getAddresses().get(0);
+            order.setAddress(tmpAddres);
+            order.setCustomer(savedCustomer);
+            orderDao.save(order);
+        }
+
     }
 
 
@@ -213,7 +214,10 @@ public class OrderService {
 
 
         if (orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
-               orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
+
+                orderList = orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
+
+
         }else{
 
             if(!orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()){
