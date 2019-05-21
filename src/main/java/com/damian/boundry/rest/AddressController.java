@@ -40,6 +40,13 @@ public class AddressController {
         return new ResponseEntity<List<ZipCode>>(cityListBycode, HttpStatus.OK);
     }
 
+    @CrossOrigin
+    @GetMapping("/address/{companyId}")
+    ResponseEntity<List<Address>> getAddressByComapny(@PathVariable Long companyId) {
+        List<Address> addressList = addressDao.findAddressByCompanyId(companyId);
+        return new ResponseEntity<List<Address>>(addressList, HttpStatus.OK);
+    }
+
 
     //TODO
 //    @CrossOrigin

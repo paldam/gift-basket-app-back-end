@@ -15,6 +15,13 @@ public interface AddressDao extends JpaRepository<Address,Long> {
     @Query(value = "SELECT * FROM addresses WHERE customer_id = ?1 AND is_primary_address = 1 LIMIT 1 ", nativeQuery = true)
     public Address findCustomerPrimaryAddrById(Integer id);
 
+    @Query(value = "SELECT addresses.*  FROM customers join company on customers.company_id = company.company_id JOIN addresses on customers.customer_id = addresses.customer_id where customers.company_id = ?1", nativeQuery = true)
+    public List<Address> findAddressByCompanyId(Long id);
+
+
+
+
+
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM addresses WHERE address_id = ?1", nativeQuery = true)

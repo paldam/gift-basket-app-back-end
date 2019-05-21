@@ -39,45 +39,45 @@ public class CustomerController {
     }
 
 
-    @Transactional
-    @CrossOrigin
-    @GetMapping("/convert")
-    ResponseEntity<List<Customer>> convert(){
-
-
-
-        List<CustomerOLD> customerList = customerOLDDao.findAll();
-
-
-        customerList.forEach(customer -> {
-
-            Company company = new Company(customer.getOrganizationName());
-
-            if( customer.getOrganizationName() == null){
-                company = null;
-            }
-
-
-
-            List<Address> addressList = new ArrayList<>();
-
-            customer.getAddresses().forEach(address -> {
-
-                addressList.add(new Address(address.getAddressId(),address.getAddress(),address.getZipCode(),address.getCityName(),customer.getName()));
-            });
-
-            Customer custTmp = new Customer(customer.getCustomerId(),customer.getName(),customer.getEmail(),customer.getPhoneNumber(),customer.getAdditionalInformation(),company,addressList);
-
-
-
-            customerDao.save(custTmp);
-
-        });
-
-
-
-        return null;
-    }
+//    @Transactional
+//    @CrossOrigin
+//    @GetMapping("/convert")
+//    ResponseEntity<List<Customer>> convert(){
+//
+//
+//
+//        List<CustomerOLD> customerList = customerOLDDao.findAll();
+//
+//
+//        customerList.forEach(customer -> {
+//
+//            Company company = new Company(customer.getOrganizationName());
+//
+//            if( customer.getOrganizationName() == null){
+//                company = null;
+//            }
+//
+//
+//
+//            List<Address> addressList = new ArrayList<>();
+//
+//            customer.getAddresses().forEach(address -> {
+//
+//                addressList.add(new Address(address.getAddressId(),address.getAddress(),address.getZipCode(),address.getCityName(),customer.getName()));
+//            });
+//
+//            Customer custTmp = new Customer(customer.getCustomerId(),customer.getName(),customer.getEmail(),customer.getPhoneNumber(),customer.getAdditionalInformation(),company,addressList);
+//
+//
+//
+//            customerDao.save(custTmp);
+//
+//        });
+//
+//
+//
+//        return null;
+//    }
 
 
     @CrossOrigin

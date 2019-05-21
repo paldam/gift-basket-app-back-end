@@ -11,18 +11,23 @@ public class Address {
     private String zipCode;
     private String cityName;
     private String contactPerson;
+    private String phoneNumber;
+    private String additionalInformation;
 
 
     public Address() {
     }
 
-    public Address(Long addressId, String address, String zipCode, String cityName, String contactPerson) {
+    public Address(Long addressId, String address, String zipCode, String cityName, String contactPerson, String phoneNumber, String additionalInformation) {
         this.addressId = addressId;
         this.address = address;
         this.zipCode = zipCode;
         this.cityName = cityName;
         this.contactPerson = contactPerson;
+        this.phoneNumber = phoneNumber;
+        this.additionalInformation = additionalInformation;
     }
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,6 +80,26 @@ public class Address {
 
     public void setContactPerson(String contactPerson) {
         this.contactPerson = contactPerson;
+    }
+
+    @Basic
+    @Column(name = "phone_number", length = 300)
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    @Basic
+    @Column(name = "additional_information", length = 300)
+    public String getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(String additionalInformation) {
+        this.additionalInformation = additionalInformation;
     }
 
     public String addressDesc(){
