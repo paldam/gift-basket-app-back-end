@@ -74,6 +74,8 @@ public class Order implements Serializable {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
+
     @ManyToOne(fetch = FetchType.EAGER)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "customer_id")

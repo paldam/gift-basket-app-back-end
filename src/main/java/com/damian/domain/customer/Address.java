@@ -29,9 +29,11 @@ public class Address {
     }
 
 
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_id",insertable=true, updatable=true, unique=true, nullable=false)
+    @Column(name = "address_id",nullable=false)
     public Long getAddressId() {
         return addressId;
     }

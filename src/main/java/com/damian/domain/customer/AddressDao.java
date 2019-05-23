@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 public interface AddressDao extends JpaRepository<Address,Long> {
 
@@ -15,8 +16,10 @@ public interface AddressDao extends JpaRepository<Address,Long> {
     @Query(value = "SELECT * FROM addresses WHERE customer_id = ?1 AND is_primary_address = 1 LIMIT 1 ", nativeQuery = true)
     public Address findCustomerPrimaryAddrById(Integer id);
 
-    @Query(value = "SELECT addresses.*  FROM customers join company on customers.company_id = company.company_id JOIN addresses on customers.customer_id = addresses.customer_id where customers.company_id = ?1", nativeQuery = true)
-    public List<Address> findAddressByCompanyId(Long id);
+
+
+    @Query(value = "SELECT addresses.* FROM customers join company on customers.company_id = company.company_id JOIN orders on customers.customer_id = orders.customer_id join addresses on orders.address_id = addresses.address_id where customers.company_id =  ?1", nativeQuery = true)
+    public Set<Address> findAddressByCompanyId(Long id);
 
 
 

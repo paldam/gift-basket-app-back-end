@@ -16,20 +16,20 @@ public class Customer {
     private String additionalInformation;
     private Company company;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) //only deserialization
-    private List<Address> addresses;
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) //only deserialization
+//    private List<Address> addresses;
 
     public Customer() {
     }
 
-    public Customer(Integer customerId,String name, String email, String phoneNumber, String additionalInformation, Company company, List<Address> addresses) {
+    public Customer(Integer customerId,String name, String email, String phoneNumber, String additionalInformation, Company company) {
         this.customerId = customerId;
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.additionalInformation = additionalInformation;
         this.company = company;
-        this.addresses = addresses;
+       // this.addresses = addresses;
     }
 
     @Id
@@ -88,7 +88,7 @@ public class Customer {
         this.additionalInformation = additionalInformation;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "company_id")
     public Company getCompany() {
         return company;
@@ -101,15 +101,15 @@ public class Customer {
         this.company = company;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id",nullable=true)
-    public List<Address> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
-    }
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "customer_id",nullable=true)
+//    public List<Address> getAddresses() {
+//        return addresses;
+//    }
+//
+//    public void setAddresses(List<Address> addresses) {
+//        this.addresses = addresses;
+//    }
 
 
     @Override
@@ -121,7 +121,6 @@ public class Customer {
             ", phoneNumber='" + phoneNumber + '\'' +
             ", additionalInformation='" + additionalInformation + '\'' +
             ", company=" + company +
-            ", addresses=" + addresses +
             '}';
     }
 }

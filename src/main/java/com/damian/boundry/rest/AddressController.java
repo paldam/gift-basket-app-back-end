@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class AddressController {
@@ -42,9 +43,9 @@ public class AddressController {
 
     @CrossOrigin
     @GetMapping("/address/{companyId}")
-    ResponseEntity<List<Address>> getAddressByComapny(@PathVariable Long companyId) {
-        List<Address> addressList = addressDao.findAddressByCompanyId(companyId);
-        return new ResponseEntity<List<Address>>(addressList, HttpStatus.OK);
+    ResponseEntity<Set<Address>> getAddressByComapny(@PathVariable Long companyId) {
+        Set<Address> addressList = addressDao.findAddressByCompanyId(companyId);
+        return new ResponseEntity<Set<Address>>(addressList, HttpStatus.OK);
     }
 
 

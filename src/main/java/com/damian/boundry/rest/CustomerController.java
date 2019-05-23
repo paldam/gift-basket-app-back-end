@@ -1,6 +1,8 @@
 package com.damian.boundry.rest;
 
 import com.damian.domain.customer.*;
+import com.damian.domain.customer.OLD.AddressOLD;
+import com.damian.domain.customer.OLD.AddressOLDDao;
 import com.damian.domain.customer.OLD.CustomerOLD;
 import com.damian.domain.customer.OLD.CustomerOLDDao;
 import com.damian.dto.CustomerAddressDTO;
@@ -24,14 +26,16 @@ public class CustomerController {
     private CustomerOLDDao customerOLDDao;
     private CompanyDao companyDao;
     private AddressDao addressDao;
+    private AddressOLDDao addressOLDDao;
     private OrderDao orderDao;
     private OrderService orderService;
     private CustomerService customerService;
 
-    public CustomerController(CustomerDao customerDao , CustomerOLDDao customerOLDDao, CompanyDao companyDao, AddressDao addressDao, OrderDao orderDao, OrderService orderService, CustomerService customerService){
+    public CustomerController(CustomerDao customerDao ,AddressOLDDao addressOLDDao, CustomerOLDDao customerOLDDao, CompanyDao companyDao, AddressDao addressDao, OrderDao orderDao, OrderService orderService, CustomerService customerService){
         this.customerDao=customerDao;
         this.customerOLDDao = customerOLDDao;
         this.companyDao = companyDao;
+        this.addressOLDDao = addressOLDDao;
         this.addressDao=addressDao;
         this.orderDao = orderDao;
         this.orderService= orderService;
@@ -39,45 +43,59 @@ public class CustomerController {
     }
 
 
-//    @Transactional
-//    @CrossOrigin
-//    @GetMapping("/convert")
-//    ResponseEntity<List<Customer>> convert(){
-//
-//
-//
-//        List<CustomerOLD> customerList = customerOLDDao.findAll();
-//
-//
-//        customerList.forEach(customer -> {
-//
-//            Company company = new Company(customer.getOrganizationName());
-//
-//            if( customer.getOrganizationName() == null){
-//                company = null;
-//            }
-//
-//
-//
-//            List<Address> addressList = new ArrayList<>();
-//
-//            customer.getAddresses().forEach(address -> {
-//
-//                addressList.add(new Address(address.getAddressId(),address.getAddress(),address.getZipCode(),address.getCityName(),customer.getName()));
-//            });
-//
-//            Customer custTmp = new Customer(customer.getCustomerId(),customer.getName(),customer.getEmail(),customer.getPhoneNumber(),customer.getAdditionalInformation(),company,addressList);
-//
-//
-//
-//            customerDao.save(custTmp);
-//
-//        });
-//
-//
-//
-//        return null;
-//    }
+    @Transactional
+    @CrossOrigin
+    @GetMapping("/convert")
+    ResponseEntity<List<Customer>> convert(){
+
+
+
+        List<CustomerOLD> customerList = customerOLDDao.findAll();
+
+
+        customerList.forEach(customer -> {
+
+            Company company = new Company(customer.getOrganizationName());
+
+            if( customer.getOrganizationName() == null){
+                company = null;
+            }
+
+
+            Customer custTmp = new Customer(customer.getCustomerId(),customer.getName(),customer.getEmail(),customer.getPhoneNumber(),customer.getAdditionalInformation(),company);
+
+            customerDao.save(custTmp);
+
+        });
+
+
+        return null;
+    }
+
+    @Transactional
+    @CrossOrigin
+    @GetMapping("/convert2")
+    ResponseEntity<List<Address>> convert2(){
+
+
+
+        List<AddressOLD> adresList = addressOLDDao.findAll();
+
+
+        adresList.forEach(adres -> {
+
+
+
+                Address adrestTmp = new Address(adres.getAddressId(),adres.getAddress(),adres.getZipCode(),adres.getCityName(),adres.getCustomer().getName(),adres.getCustomer().getPhoneNumber(),null);
+                addressDao.save(adrestTmp);
+            });
+
+
+
+
+
+        return null;
+    }
 
 
     @CrossOrigin

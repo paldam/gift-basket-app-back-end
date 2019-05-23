@@ -1,9 +1,6 @@
 package com.damian.domain.order;
 
-import com.damian.domain.customer.Address;
-import com.damian.domain.customer.AddressDao;
-import com.damian.domain.customer.Customer;
-import com.damian.domain.customer.CustomerDao;
+import com.damian.domain.customer.*;
 import com.damian.domain.order_file.DbFile;
 import com.damian.domain.order_file.DbFileDao;
 import com.damian.domain.product.ProductDao;
@@ -14,10 +11,7 @@ import com.damian.domain.order.exceptions.OrderStatusException;
 import com.damian.security.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,10 +32,11 @@ public class OrderService {
     private ProductDao productDao;
     private SupplierDao supplierDao;
     private DbFileDao dbFileDao;
+    private CustomCustomerDao customCustomerDao;
     //public static final int  NOWE = 9;
     //public static final int  PRZYJETE= 9;
 
-    OrderService(OrderDao orderDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao,DbFileDao dbFileDao, SupplierDao supplierDao
+    OrderService(OrderDao orderDao,CustomCustomerDao customCustomerDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao,DbFileDao dbFileDao, SupplierDao supplierDao
                  ) {
         this.orderDao = orderDao;
         this.customerDao = customerDao;
@@ -49,165 +44,169 @@ public class OrderService {
         this.productDao = productDao ;
         this.supplierDao = supplierDao;
         this.dbFileDao = dbFileDao;
+        this.customCustomerDao = customCustomerDao;
 
     }
 
     @Transactional
     public void createOrUpdateOrder(Order order) throws OrderStatusException {
 
+        if (!Objects.isNull(order.getOrderId())) {  // update order
+         performChangeOrderStatusOperation(order);
+        }
 
 
-        if (Objects.isNull(order.getOrderId()) ){
-
-
-           } else {
-
-            Order orderPrevState = orderDao.findByOrderId(order.getOrderId());
-            Integer prevOrderStatus = orderPrevState.getOrderStatus().getOrderStatusId();
-            Integer newOrderStatus = order.getOrderStatus().getOrderStatusId();
-
-
-
-
-            if (prevOrderStatus == 1 && (newOrderStatus == 2 || newOrderStatus == 5)) {
-                logger.info("brak możliwości zmiany ");
-
-                throw new OrderStatusException("brak możliwości zmiany statusu z 'nowy' na 'wyslany' lub 'zrealizowny'");
-
-            }
-
-
-            if (prevOrderStatus == 99 && newOrderStatus != 99) {
-                logger.info("brak możliwości zmiany statusu, zamówienie archiwalne");
-
-                throw new OrderStatusException("brak możliwości zmiany statusu, zamówienie archiwalne");
-
-            }
-
-
-            if (prevOrderStatus == 1 && newOrderStatus == 4) {
-                logger.info("AAA Stan 1- nowe   4-przyjete");
-                changeStockStatusNoweToPrzyjete(order);
-
-            }
-            if (prevOrderStatus == 1 && newOrderStatus == 3) {
-                logger.info("AAA Stan 1- nowe   3-skompletowane");
-                changeStockStatusNoweSkompletowane(order);
-            }
-
-
-            if (prevOrderStatus == 4 && newOrderStatus == 4) {
-                logger.info("AAA Stan 4- przyjete   4-przyjete");
-                changeStockStatusPrzyjteToPrzyjete(order);
-
-            }
-
-
-            if (prevOrderStatus == 4 && newOrderStatus == 1|| prevOrderStatus == 4 && newOrderStatus == 99) {
-                logger.info("AAA Stan 4- przyjete   1-nowe lub 99 usuniete");
-                changeStockStatusPrzyjeteToNoweUsuniete(order.getOrderId());
-
-            }
-            if (prevOrderStatus == 4 && newOrderStatus == 3) {
-                logger.info("AAA Stan 4- przyjete   3-skmpletowane");
-                changeStockStatusPrzyjeteSkompletowane(order);
-
-            }
-            if (prevOrderStatus == 4 && newOrderStatus == 2|| prevOrderStatus == 4 && newOrderStatus == 5) {
-                logger.info("AAA Stan 4- przyjete   2-wysłane lub 5 zrealizwane;");
-                changeStockStatusPrzyjeteToWyslaneZrealizowane(order);
-
-            }
-
-            if (prevOrderStatus == 3 && newOrderStatus == 4) {
-                logger.info("AAA Stan 3-skmpletowane    4- przyjete ");
-                changeStockStatusSkompletowanePrzyjete(order);
-
-            }
-
-            if (prevOrderStatus == 3 && newOrderStatus == 2|| prevOrderStatus == 3 && newOrderStatus == 5) {
-                logger.info("AAA Stan 3- skompletowane   2-wysłane lub 5 zrealizwane;");
-                changeStockStatusSkompletowaneToWyslaneZrealizowane(order);
-
-            }
-
-            if (prevOrderStatus == 3 && newOrderStatus == 3) {
-                logger.info("AAA Stan 3-skmpletowane    3- skompletowane ");
-                changeStockStatusSkompletowaneToSkompletowane(order);
-
-            }
-
-            if (prevOrderStatus == 3 && newOrderStatus == 1 || prevOrderStatus == 3 && newOrderStatus == 99) {
-                logger.info("AAA Stan 3- skompletowane   1-nowe lub 99 usuniete");
-                changeStockStatusSkompletowaneToNoweUsuniete(order.getOrderId());
-
-            }
-
-            if ((prevOrderStatus == 2 || prevOrderStatus == 5) && ( newOrderStatus == 3)) {
-                logger.info("AAA Stan 2- wysłane lub zrealizowne 5  ->  3 - skompletowane");
-                changeStockStatuswyslaneOrZrezalizowaneToSkompletowane(order);
-
-            }
-
-            if ((prevOrderStatus == 2 || prevOrderStatus == 5) && ( newOrderStatus == 4)) {
-                logger.info("AAA Stan 2- wysłane lub zrealizowne 5  ->  4 - przyjete");
-                changeStockStatuswyslaneOrZrezalizowaneToPrzyjete(order);
-
-            }
-
-
-            if ((prevOrderStatus == 2 || prevOrderStatus == 5) && ( newOrderStatus == 1)) {
-                logger.info("AAA Stan 2- wysłane lub zrealizowne 5  ->  1- nowe");
-                changeStockStatuswyslaneOrZrezalizowaneToNowe(order);
-
-            }
-
-
-        }   //TODO
-//            1 -nowe
-//            4-przyjete
-//            3-skompletowane
-
-
-//            2-wyslane
-//            5-zrealizwane;
-
-
-
-//            6 - usuniete
-
-
-
-        Customer customer = order.getCustomer();
-        if (customer.getCustomerId() != null) {
-            logger.info("zamówienie z klientem z bazy");
-            Customer customerToSave = order.getCustomer();
-            //order.setCustomer(null);
-            customer.setAddresses(null);
-            customerDao.saveAndFlush(customer);
-            orderDao.saveAndFlush(order);
-
-        } else {
-            logger.info("zamówienie z nowym klientem");
-            System.out.println(ANSI_YELLOW + customer.toString() + ANSI_RESET);
-
-
-
-            Customer savedCustomer = customerDao.saveAndFlush(customer);
-            Address tmpAddres = savedCustomer.getAddresses().get(0);
-            order.setAddress(tmpAddres);
-            order.setCustomer(savedCustomer);
-            orderDao.save(order);
+        if (order.getCustomer().getCustomerId() != null) {
+             performOrderCustomerFromDB(order);
+        }else{
+             performOrderWithNewCustomer(order);
         }
 
     }
 
+    private void performChangeOrderStatusOperation(Order order) throws OrderStatusException {
+
+        Order orderPrevState = orderDao.findByOrderId(order.getOrderId());
+        Integer prevOrderStatus = orderPrevState.getOrderStatus().getOrderStatusId();
+        Integer newOrderStatus = order.getOrderStatus().getOrderStatusId();
+
+        if (prevOrderStatus == 1 && (newOrderStatus == 2 || newOrderStatus == 5)) {
+            logger.info("brak możliwości zmiany ");
+
+            throw new OrderStatusException("brak możliwości zmiany statusu z 'nowy' na 'wyslany' lub 'zrealizowny'");
+        }
+
+        if (prevOrderStatus == 99 && newOrderStatus != 99) {
+            logger.info("brak możliwości zmiany statusu, zamówienie archiwalne");
+
+            throw new OrderStatusException("brak możliwości zmiany statusu, zamówienie archiwalne");
+        }
+
+        if (prevOrderStatus == 1 && newOrderStatus == 4) {
+            logger.info("AAA Stan 1- nowe   4-przyjete");
+            changeStockStatusNoweToPrzyjete(order);
+        }
+
+        if (prevOrderStatus == 1 && newOrderStatus == 3) {
+            logger.info("AAA Stan 1- nowe   3-skompletowane");
+            changeStockStatusNoweSkompletowane(order);
+        }
+
+        if (prevOrderStatus == 4 && newOrderStatus == 4) {
+            logger.info("AAA Stan 4- przyjete   4-przyjete");
+            changeStockStatusPrzyjteToPrzyjete(order);
+        }
+
+        if (prevOrderStatus == 4 && newOrderStatus == 1 || prevOrderStatus == 4 && newOrderStatus == 99) {
+            logger.info("AAA Stan 4- przyjete   1-nowe lub 99 usuniete");
+            changeStockStatusPrzyjeteToNoweUsuniete(order.getOrderId());
+        }
+
+        if (prevOrderStatus == 4 && newOrderStatus == 3) {
+            logger.info("AAA Stan 4- przyjete   3-skmpletowane");
+            changeStockStatusPrzyjeteSkompletowane(order);
+        }
+
+        if (prevOrderStatus == 4 && newOrderStatus == 2 || prevOrderStatus == 4 && newOrderStatus == 5) {
+            logger.info("AAA Stan 4- przyjete   2-wysłane lub 5 zrealizwane;");
+            changeStockStatusPrzyjeteToWyslaneZrealizowane(order);
+        }
+
+        if (prevOrderStatus == 3 && newOrderStatus == 4) {
+            logger.info("AAA Stan 3-skmpletowane    4- przyjete ");
+            changeStockStatusSkompletowanePrzyjete(order);
+        }
+
+        if (prevOrderStatus == 3 && newOrderStatus == 2 || prevOrderStatus == 3 && newOrderStatus == 5) {
+            logger.info("AAA Stan 3- skompletowane   2-wysłane lub 5 zrealizwane;");
+            changeStockStatusSkompletowaneToWyslaneZrealizowane(order);
+        }
+
+        if (prevOrderStatus == 3 && newOrderStatus == 3) {
+            logger.info("AAA Stan 3-skmpletowane    3- skompletowane ");
+            changeStockStatusSkompletowaneToSkompletowane(order);
+        }
+
+        if (prevOrderStatus == 3 && newOrderStatus == 1 || prevOrderStatus == 3 && newOrderStatus == 99) {
+            logger.info("AAA Stan 3- skompletowane   1-nowe lub 99 usuniete");
+            changeStockStatusSkompletowaneToNoweUsuniete(order.getOrderId());
+        }
+
+        if ((prevOrderStatus == 2 || prevOrderStatus == 5) && (newOrderStatus == 3)) {
+            logger.info("AAA Stan 2- wysłane lub zrealizowne 5  ->  3 - skompletowane");
+            changeStockStatuswyslaneOrZrezalizowaneToSkompletowane(order);
+        }
+
+        if ((prevOrderStatus == 2 || prevOrderStatus == 5) && (newOrderStatus == 4)) {
+            logger.info("AAA Stan 2- wysłane lub zrealizowne 5  ->  4 - przyjete");
+            changeStockStatuswyslaneOrZrezalizowaneToPrzyjete(order);
+        }
+
+        if ((prevOrderStatus == 2 || prevOrderStatus == 5) && (newOrderStatus == 1)) {
+            logger.info("AAA Stan 2- wysłane lub zrealizowne 5  ->  1- nowe");
+            changeStockStatuswyslaneOrZrezalizowaneToNowe(order);
+        }
+    }
+
+
+
+    private void performOrderCustomerFromDB(Order order) {
+
+
+            Customer customerToSave = order.getCustomer();
+            Company company = order.getCustomer().getCompany();
+
+
+            if(order.getAddress().getAddressId() == null){
+
+               Address savedAddress=  addressDao.save(order.getAddress());
+               order.setAddress(savedAddress);
+            }else{
+
+
+            }
+
+            Optional<Customer> findCustomer = customCustomerDao.findExacCustomerByEntity(customerToSave); // sprawdza czy klient z ta firma jest w bazie
+
+                if (findCustomer.isPresent()) {
+                    order.setCustomer(customerToSave);
+                    orderDao.saveAndFlush(order);
+                }else{
+
+                    List<Customer> cust = customCustomerDao.findCustomerByCriteria(customerToSave); // sprawdza czy klient z tymi danymi poza (id) jest juz w bazie,(zapobieganie dupliaktą)
+
+                    if (cust.size() > 0) {
+                        customerToSave = cust.get(0);
+                    } else {    // jesli nie ma tworzy nowego pracownika i zapisuje w bazie
+                        customerToSave.setCustomerId(null);
+                    }
+
+                    Customer savedCustomer = customerDao.saveAndFlush(customerToSave);
+                    order.setCustomer(savedCustomer);
+                    orderDao.saveAndFlush(order);
+
+
+                }
+
+
+
+
+            }
+
+
+
+
+    private void performOrderWithNewCustomer(Order order){
+                Customer savedCustomer = customerDao.saveAndFlush(order.getCustomer());
+                order.setCustomer(savedCustomer);
+                orderDao.save(order);
+            }
+
+
 
     public OrderPageRequest getOrderDao(int page, int size,String text,String orderBy,int sortingDirection,List<Integer> orderStatusFilterArray,List<Integer> orderYearsFilterList){
 
-
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
-
 
         Page<Order> orderList;
         Pageable pageable = PageRequest.of(page,size, Sort.by(sortDirection, orderBy));
