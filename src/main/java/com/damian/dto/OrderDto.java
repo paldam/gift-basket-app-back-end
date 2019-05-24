@@ -1,5 +1,6 @@
 package com.damian.dto;
 
+import com.damian.domain.customer.Address;
 import com.damian.domain.customer.Customer;
 import com.damian.domain.order.DeliveryType;
 import com.damian.domain.order.OrderItem;
@@ -26,6 +27,7 @@ public class OrderDto {
     private Long dbFileId;
     private List<OrderItem> orderItems;
     private Integer additionalSale;
+    private Address address;
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
                     String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
@@ -44,6 +46,28 @@ public class OrderDto {
         this.orderItems = orderItems;
         this.additionalSale = additionalSale;
     }
+
+    public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
+                    String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,Integer additionalSale,Address address) {
+        this.orderId = orderId;
+        this.orderFvNumber = orderFvNumber;
+        this.customer = customer;
+        this.orderDate = orderDate;
+        this.additionalInformation = additionalInformation;
+        this.deliveryDate = deliveryDate;
+        this.weekOfYear =weekOfYear;
+        this.deliveryType = deliveryType;
+        this.orderStatus = orderStatus;
+        this.orderTotalAmount = orderTotalAmount;
+        this.dbFileId = dbFileId;
+        this.orderItems = orderItems;
+        this.additionalSale = additionalSale;
+        this.address = address;
+    }
+
+
+
 
 
 
@@ -150,5 +174,13 @@ public class OrderDto {
 
     public void setAdditionalSale(Integer additionalSale) {
         this.additionalSale = additionalSale;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }

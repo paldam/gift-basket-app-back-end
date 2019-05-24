@@ -33,11 +33,11 @@ public class OrderService {
     private SupplierDao supplierDao;
     private DbFileDao dbFileDao;
     private CustomCustomerDao customCustomerDao;
-    //public static final int  NOWE = 9;
-    //public static final int  PRZYJETE= 9;
+    private CompanyDao companyDao;
 
-    OrderService(OrderDao orderDao,CustomCustomerDao customCustomerDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao,DbFileDao dbFileDao, SupplierDao supplierDao
+    OrderService(OrderDao orderDao,CompanyDao companyDao, CustomCustomerDao customCustomerDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao,DbFileDao dbFileDao, SupplierDao supplierDao
                  ) {
+        this.companyDao= companyDao;
         this.orderDao = orderDao;
         this.customerDao = customerDao;
         this.addressDao = addressDao;
@@ -168,8 +168,11 @@ public class OrderService {
 
             Optional<Customer> findCustomer = customCustomerDao.findExacCustomerByEntity(customerToSave); // sprawdza czy klient z ta firma jest w bazie
 
+
+
                 if (findCustomer.isPresent()) {
-                    order.setCustomer(customerToSave);
+                    Customer savedCustomer = customerDao.save(customerToSave); //robi tylko za ewentualny update //  potrzebne tylko do zaktualizowania getAdditionalIforamtion
+                    order.setCustomer(savedCustomer);
                     orderDao.saveAndFlush(order);
                 }else{
 
@@ -177,6 +180,7 @@ public class OrderService {
 
                     if (cust.size() > 0) {
                         customerToSave = cust.get(0);
+                        customerToSave.setAdditionalInformation(order.getCustomer().getAdditionalInformation()); // tylko to pole mozna zmienic
                     } else {    // jesli nie ma tworzy nowego pracownika i zapisuje w bazie
                         customerToSave.setCustomerId(null);
                     }
@@ -197,6 +201,15 @@ public class OrderService {
 
 
     private void performOrderWithNewCustomer(Order order){
+
+        if(order.getAddress().getAddressId() == null){
+
+            Address savedAddress=  addressDao.save(order.getAddress());
+            order.setAddress(savedAddress);
+        }else{
+
+
+        }
                 Customer savedCustomer = customerDao.saveAndFlush(order.getCustomer());
                 order.setCustomer(savedCustomer);
                 orderDao.save(order);
@@ -291,7 +304,7 @@ public class OrderService {
 
             orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
                     order.getAdditionalInformation(), order.getDeliveryDate(),order.getWeekOfYear(),order.getDeliveryType(),
-                    order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp,order.getOrderItems(),order.getAdditionalSale())) ;
+                    order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp,order.getOrderItems(),order.getAdditionalSale(),order.getAddress())) ;
         });
 
 

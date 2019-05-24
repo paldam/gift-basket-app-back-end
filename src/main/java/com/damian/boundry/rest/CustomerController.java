@@ -5,6 +5,7 @@ import com.damian.domain.customer.OLD.AddressOLD;
 import com.damian.domain.customer.OLD.AddressOLDDao;
 import com.damian.domain.customer.OLD.CustomerOLD;
 import com.damian.domain.customer.OLD.CustomerOLDDao;
+import com.damian.domain.product.Supplier;
 import com.damian.dto.CustomerAddressDTO;
 import com.damian.domain.order.OrderDao;
 import com.damian.domain.order.OrderService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +99,16 @@ public class CustomerController {
         return null;
     }
 
+
+
+    @CrossOrigin
+    @PostMapping("/company")
+    ResponseEntity<Company> createCompany(@RequestBody Company company ) {
+        Company savedCompany = companyDao.save(company);
+
+
+        return new ResponseEntity<Company>(savedCompany,HttpStatus.CREATED);
+    }
 
     @CrossOrigin
     @GetMapping("/company")

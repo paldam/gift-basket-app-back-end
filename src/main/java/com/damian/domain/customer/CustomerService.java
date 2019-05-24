@@ -52,7 +52,7 @@ public class CustomerService {
               return new ResponseEntity("Nie można usunąć klienta, Podany klient jest powiązany z conajmniej jednym zamówieniem", HttpStatus.FORBIDDEN);
         }  else{
 
-             addressDao.deleteByCustomerId(customerId);
+             //addressDao.deleteByCustomerId(customerId);
              customerDao.deleteByCustomerId(customerId);
             return new ResponseEntity(HttpStatus.OK);
         }
