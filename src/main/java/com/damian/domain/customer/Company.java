@@ -16,6 +16,11 @@ public class Company {
         this.companyName = companyName;
     }
 
+    public Company(Long companyId, String companyName) {
+        this.companyId = companyId;
+        this.companyName = companyName;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "company_id",nullable = false)

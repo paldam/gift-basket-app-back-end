@@ -21,6 +21,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
+
 @RestController
 public class CustomerController {
     private static final Logger logger = Logger.getLogger(OrderController.class);
@@ -32,8 +35,9 @@ public class CustomerController {
     private OrderDao orderDao;
     private OrderService orderService;
     private CustomerService customerService;
+    private CompanyService companyService;
 
-    public CustomerController(CustomerDao customerDao ,AddressOLDDao addressOLDDao, CustomerOLDDao customerOLDDao, CompanyDao companyDao, AddressDao addressDao, OrderDao orderDao, OrderService orderService, CustomerService customerService){
+    public CustomerController(CompanyService companyService, CustomerDao customerDao ,AddressOLDDao addressOLDDao, CustomerOLDDao customerOLDDao, CompanyDao companyDao, AddressDao addressDao, OrderDao orderDao, OrderService orderService, CustomerService customerService){
         this.customerDao=customerDao;
         this.customerOLDDao = customerOLDDao;
         this.companyDao = companyDao;
@@ -42,6 +46,7 @@ public class CustomerController {
         this.orderDao = orderDao;
         this.orderService= orderService;
         this.customerService= customerService;
+        this.companyService = companyService;
     }
 
 
@@ -106,9 +111,24 @@ public class CustomerController {
     ResponseEntity<Company> createCompany(@RequestBody Company company ) {
         Company savedCompany = companyDao.save(company);
 
-
         return new ResponseEntity<Company>(savedCompany,HttpStatus.CREATED);
     }
+
+
+    @CrossOrigin
+    @PostMapping("/company/merge")
+    ResponseEntity<Company> mergeCompanies(
+        @RequestPart(value = "companies",required = true) List<Company> companies,
+        @RequestPart(value = "newcompanyname" ,required = true ) String newCompanyName){
+
+
+        Company margedCompany = companyService.mergeCompany(companies,newCompanyName);
+        return new ResponseEntity<>(margedCompany, HttpStatus.OK);
+    }
+
+
+
+
 
     @CrossOrigin
     @GetMapping("/company")
@@ -116,8 +136,6 @@ public class CustomerController {
         List<Company> companyList = companyDao.findAll();
         return new ResponseEntity<List<Company>>(companyList, HttpStatus.OK);
     }
-
-
 
     @CrossOrigin
     @GetMapping("/customers")
