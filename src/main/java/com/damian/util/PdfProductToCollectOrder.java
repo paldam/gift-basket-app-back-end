@@ -14,10 +14,9 @@ package com.damian.util;
 
 
 public class PdfProductToCollectOrder {
-    static Integer orderTypeId;
-    static Order order;
 
-    public static ByteArrayInputStream generateProductToCollectOrderPdf(java.util.List<ProductToCollectOrder> productToCollectOrder,Long orderId) throws IOException {
+
+    public static ByteArrayInputStream generateProductToCollectOrderPdf(java.util.List<ProductToCollectOrder> productToCollectOrder,Long orderId,Order order) throws IOException {
 
 
         Document document = new Document();
@@ -51,11 +50,27 @@ public class PdfProductToCollectOrder {
             Font font4 = new Font(helvetica4, 10, Font.NORMAL, GrayColor.BLACK);
 
 
-            PdfPCell cell0 = new PdfPCell(new Phrase("Zamówienie nr " + orderId, font2));
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder
+                .append("Zamówienie ")
+                .append(order.getOrderFvNumber())
+                .append(" ")
+                .append(order.getCustomer().getCompany().getCompanyName())
+                .append(" | ")
+                .append(order.getCustomer().getName());
+
+            String headline = stringBuilder.toString();
+
+
+
+
+
+            PdfPCell cell0 = new PdfPCell(new Phrase(headline, font2));
             cell0.setColspan(10);
             cell0.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell0.setBorder(Rectangle.BOTTOM);
             cell0.setMinimumHeight(30);
+            cell0.setPaddingBottom(10);
             table.addCell(cell0);
 
 

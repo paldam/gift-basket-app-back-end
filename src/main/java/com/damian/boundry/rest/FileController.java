@@ -140,8 +140,10 @@ public class FileController {
 
         List<ProductToCollectOrder> productToCollectOrderTmp = orderDao.findProductToCollectOrder(id);
 
+        Order order = orderDao.findByOrderId(id);
+
        PdfProductToCollectOrder pdfGenerator = new PdfProductToCollectOrder();
-        ByteArrayInputStream bis = pdfGenerator.generateProductToCollectOrderPdf(productToCollectOrderTmp,id);
+        ByteArrayInputStream bis = pdfGenerator.generateProductToCollectOrderPdf(productToCollectOrderTmp,id,order);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=order.pdf");

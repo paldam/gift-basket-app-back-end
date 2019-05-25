@@ -87,6 +87,18 @@ public class BasketController {
         return new ResponseEntity<List<BasketType>>(basketTypesList, HttpStatus.OK);
     }
 
+
+    @CrossOrigin
+    @PostMapping("/basket/add")
+    ResponseEntity<Basket> addBasket(@RequestBody Basket basket)throws URISyntaxException {
+        basketDao.save(basket);
+
+        return new ResponseEntity<Basket>(basket,HttpStatus.CREATED);
+
+
+    }
+
+
     @CrossOrigin
     @PostMapping("/basketswithoutimage")
     ResponseEntity<Basket> createBasket(@RequestBody Basket basket)throws URISyntaxException {

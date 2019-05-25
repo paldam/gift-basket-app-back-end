@@ -52,7 +52,6 @@ public class PdfOrderProductCustom {
 
 
 
-
             PdfWriter.getInstance(document, out);
             document.open();
 

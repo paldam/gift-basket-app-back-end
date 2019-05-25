@@ -16,38 +16,26 @@ public class CompanyService {
         this.companyDao = companyDao;
     }
 
+    @Transactional
+    public Company mergeCompany(List<Company> companyList, String newCompaniesName) {
 
-@Transactional
-
-    public Company mergeCompany(List<Company> companyList, String newCompaniesName ){
-
-       newCompaniesName = newCompaniesName.replace("\"", "");
+        newCompaniesName = newCompaniesName.replace("\"", "");
 
         List<Long> companyToChangeIdList = new ArrayList<>();
 
         companyList.forEach(company -> {
-
             companyToChangeIdList.add(company.getCompanyId());
         });
 
         Long idRootCompany = companyList.get(0).getCompanyId();
 
-
-        companyDao.updateCompanyName(newCompaniesName,idRootCompany);
-        companyDao.updateCompany(idRootCompany,companyToChangeIdList);
-
+        companyDao.updateCompanyName(newCompaniesName, idRootCompany);
+        companyDao.updateCompany(idRootCompany, companyToChangeIdList);
 
         companyToChangeIdList.remove(0);
 
         companyDao.deleteCompanies(companyToChangeIdList);
 
-
-
-      return  new Company(idRootCompany,newCompaniesName);
-
-
+        return new Company(idRootCompany, newCompaniesName);
     }
-
-
-
 }
