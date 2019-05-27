@@ -2,6 +2,7 @@ package com.damian.domain.order;
 
 import com.damian.domain.customer.Address;
 import com.damian.domain.customer.Customer;
+import com.damian.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.envers.Audited;
@@ -42,6 +43,7 @@ public class Order implements Serializable {
     private Address address;
     private Integer additionalSale;
     private String contactPerson;
+    private User productionUser;
 
 
     @Id
@@ -74,7 +76,6 @@ public class Order implements Serializable {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
 
     @ManyToOne(fetch = FetchType.EAGER)
     @Audited(targetAuditMode = NOT_AUDITED)
@@ -219,25 +220,19 @@ public class Order implements Serializable {
 
 
 
+    @ManyToOne
+    @Audited(targetAuditMode = NOT_AUDITED)
+    @JoinColumn(name = "production_user")
+    public User getProductionUser() {
+        return productionUser;
+    }
+
+    public void setProductionUser(User productionUser) {
+        this.productionUser = productionUser;
+    }
+
     @Override
     public String toString() {
-        return "Order{" +
-                "orderId=" + orderId +
-                ", orderFvNumber='" + orderFvNumber + '\'' +
-                ", userName='" + userName + '\'' +
-                ", customer=" + customer +
-                ", orderItems=" + orderItems +
-                ", orderDate=" + orderDate +
-                ", additionalInformation='" + additionalInformation + '\'' +
-                ", deliveryDate=" + deliveryDate +
-                ", weekOfYear=" + weekOfYear +
-                ", deliveryType=" + deliveryType +
-                ", orderStatus=" + orderStatus +
-                ", orderTotalAmount=" + orderTotalAmount +
-                ", cod=" + cod +
-                ", address=" + address +
-                ", additionalSale=" + additionalSale +
-                ", contactPerson='" + contactPerson + '\'' +
-                '}';
+        return "Order{" + "orderId=" + orderId + ", orderFvNumber='" + orderFvNumber + '\'' + ", userName='" + userName + '\'' + ", customer=" + customer + ", orderItems=" + orderItems + ", orderDate=" + orderDate + ", additionalInformation='" + additionalInformation + '\'' + ", deliveryDate=" + deliveryDate + ", weekOfYear=" + weekOfYear + ", deliveryType=" + deliveryType + ", orderStatus=" + orderStatus + ", orderTotalAmount=" + orderTotalAmount + ", cod=" + cod + ", address=" + address + ", additionalSale=" + additionalSale + ", contactPerson='" + contactPerson + '\'' + ", productionUser=" + productionUser + '}';
     }
 }

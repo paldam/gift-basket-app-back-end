@@ -68,16 +68,12 @@ public class OrderService {
         Order orderPrevState = orderDao.findByOrderId(order.getOrderId());
         Integer prevOrderStatus = orderPrevState.getOrderStatus().getOrderStatusId();
         Integer newOrderStatus = order.getOrderStatus().getOrderStatusId();
-
         if (prevOrderStatus == 1 && (newOrderStatus == 2 || newOrderStatus == 5)) {
             logger.info("brak możliwości zmiany ");
-
             throw new OrderStatusException("brak możliwości zmiany statusu z 'nowy' na 'wyslany' lub 'zrealizowny'");
         }
-
         if (prevOrderStatus == 99 && newOrderStatus != 99) {
             logger.info("brak możliwości zmiany statusu, zamówienie archiwalne");
-
             throw new OrderStatusException("brak możliwości zmiany statusu, zamówienie archiwalne");
         }
 
@@ -148,18 +144,13 @@ public class OrderService {
     }
 
     private void performOrderCustomerFromDB(Order order) {
-
         Customer customerToSave = order.getCustomer();
         Company company = order.getCustomer().getCompany();
-
         if (order.getAddress().getAddressId() == null) {
-
             Address savedAddress = addressDao.save(order.getAddress());
             order.setAddress(savedAddress);
         } else {
-
         }
-
         Optional<Customer> findCustomer = customCustomerDao.findExacCustomerByEntity(customerToSave); // sprawdza czy klient z ta firma jest w bazie
 
         if (findCustomer.isPresent()) {
