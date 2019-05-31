@@ -43,6 +43,7 @@ public class Order implements Serializable {
     private Address address;
     private Integer additionalSale;
     private String contactPerson;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User productionUser;
 
 

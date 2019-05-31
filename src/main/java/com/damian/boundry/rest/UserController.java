@@ -1,5 +1,6 @@
 package com.damian.boundry.rest;
 
+import com.damian.dto.ProductionUserDto;
 import com.damian.dto.UserDto;
 import com.damian.domain.user.Authority;
 import com.damian.domain.user.User;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @CrossOrigin
@@ -40,6 +42,16 @@ public class UserController {
         List<User> userList = userRepository.findAll();
         return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
     }
+
+    @CrossOrigin
+    @GetMapping("/production_users")
+    ResponseEntity<List<ProductionUserDto>> getAllProductionUsers(){
+//
+        List<ProductionUserDto> userList = userRepository.getAllProductionUser();
+        return new ResponseEntity<List<ProductionUserDto>>(userList, HttpStatus.OK);
+    }
+
+
     @CrossOrigin
     @PostMapping(value = "/users")
     public ResponseEntity createUser(@RequestBody UserDto userDto) throws URISyntaxException {

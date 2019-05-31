@@ -376,8 +376,12 @@ public class OrderController {
         return new ResponseEntity<List<OrderDto>>(ordersList, HttpStatus.OK);
     }
 
-
-
+    @CrossOrigin
+    @PostMapping("/order/assign_production")
+    ResponseEntity assignOrdersToSpecifiedProduction(@RequestParam(value = "ordersIds", required = true) List<Integer> ordersIds, @RequestParam(value = "productionId", required = true) Long productionId) {
+        orderDao.assignOrdersToSpecifiedProduction(ordersIds, productionId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 
 

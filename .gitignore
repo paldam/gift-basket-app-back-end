@@ -142,3 +142,4 @@ Desktop.ini
 ######################
 .eslintcache
 /src/main/resources/application_demo.properties
+/sql_scripts/

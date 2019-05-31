@@ -5,6 +5,7 @@ import com.damian.domain.customer.Customer;
 import com.damian.domain.order.DeliveryType;
 import com.damian.domain.order.OrderItem;
 import com.damian.domain.order.OrderStatus;
+import com.damian.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
@@ -28,10 +29,11 @@ public class OrderDto {
     private List<OrderItem> orderItems;
     private Integer additionalSale;
     private Address address;
+    private User productionUser;
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
                     String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
-                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,Integer additionalSale) {
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,Integer additionalSale, User user) {
         this.orderId = orderId;
         this.orderFvNumber = orderFvNumber;
         this.customer = customer;
@@ -45,6 +47,7 @@ public class OrderDto {
         this.dbFileId = dbFileId;
         this.orderItems = orderItems;
         this.additionalSale = additionalSale;
+        this.productionUser = user;
     }
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
@@ -182,5 +185,13 @@ public class OrderDto {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public User getProductionUser() {
+        return productionUser;
+    }
+
+    public void setProductionUser(User productionUser) {
+        this.productionUser = productionUser;
     }
 }
