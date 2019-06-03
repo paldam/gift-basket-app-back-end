@@ -223,7 +223,7 @@ public class OrderService {
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<DbFile> dbFileDtoList = dbFileDao.findAll();
 
-        List<OrderItem> oredrItemsList = new ArrayList<>();
+        //List<OrderItem> oredrItemsList = new ArrayList<>();
 
         orderList.forEach(order -> {
             List<DbFile> result = new LinkedList<>();
@@ -243,7 +243,7 @@ public class OrderService {
 
             orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
                 order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(),
-                order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, oredrItemsList, order.getAdditionalSale(),order.getProductionUser()));
+                order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(),order.getProductionUser()));
         });
 
         return new OrderPageRequest(orderDtoList, orderList.getTotalElements());

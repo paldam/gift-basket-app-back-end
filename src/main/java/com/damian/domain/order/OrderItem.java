@@ -17,7 +17,9 @@ public class OrderItem {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Basket basket;
     private Integer quantity;
-    //private Order order;
+    private Integer stateOnProduction;
+    private Integer stateOnWarehouse;
+    private Integer stateOnLogistics;
 
 
 
@@ -54,12 +56,34 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-//    @ManyToOne
-//    public Order getOrder() {
-//        return order;
-//    }
-//
-//    public void setOrder(Order order) {
-//        this.order = order;
-//    }
+    @Basic
+    @Column(name = "production_state", nullable = false,columnDefinition = "INT DEFAULT 0")
+    public Integer getStateOnProduction() {
+        return stateOnProduction;
+    }
+
+    public void setStateOnProduction(Integer stateOnProduction) {
+        this.stateOnProduction = stateOnProduction;
+    }
+
+
+    @Basic
+    @Column(name = "warehouse_state", nullable = false,columnDefinition = "INT DEFAULT 0")
+    public Integer getStateOnWarehouse() {
+        return stateOnWarehouse;
+    }
+
+    public void setStateOnWarehouse(Integer stateOnWarehouse) {
+        this.stateOnWarehouse = stateOnWarehouse;
+    }
+
+    @Basic
+    @Column(name = "logistics_state", nullable = false,columnDefinition = "INT DEFAULT 0")
+    public Integer getStateOnLogistics() {
+        return stateOnLogistics;
+    }
+
+    public void setStateOnLogistics(Integer stateOnLogistics) {
+        this.stateOnLogistics = stateOnLogistics;
+    }
 }
