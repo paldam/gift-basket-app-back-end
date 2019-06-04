@@ -86,4 +86,9 @@ public class OrderItem {
     public void setStateOnLogistics(Integer stateOnLogistics) {
         this.stateOnLogistics = stateOnLogistics;
     }
+
+    @Override
+    public String toString() {
+        return "OrderItem{" + "orderItemId=" + orderItemId + ", basket=" + basket + ", quantity=" + quantity + ", stateOnProduction=" + stateOnProduction + ", stateOnWarehouse=" + stateOnWarehouse + ", stateOnLogistics=" + stateOnLogistics + '}';
+    }
 }

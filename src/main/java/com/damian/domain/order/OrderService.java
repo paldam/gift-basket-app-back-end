@@ -250,6 +250,24 @@ public class OrderService {
 
     }
 
+    @Transactional
+    public void changeOrderProgress(Long id,List<OrderItem> orderItemsList) throws OrderStatusException {
+
+        Order updatingOrder = orderDao.findByOrderId(id);
+        for (OrderItem oi : orderItemsList) {
+            if (oi.getStateOnLogistics() > oi.getQuantity() || oi.getStateOnProduction() > oi.getQuantity() || oi.getStateOnWarehouse() > oi.getQuantity()) {
+                throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
+            }
+            if (oi.getStateOnLogistics() < 0 || oi.getStateOnProduction() < 0  || oi.getStateOnWarehouse() < 0 ) {
+                throw new OrderStatusException("Wartość nie może być mniejsza od zera ");
+            }
+        }
+        updatingOrder.setOrderItems(orderItemsList);
+        orderDao.save(updatingOrder);
+    }
+
+
+
     public List<OrderDto> getOrderStats() {
 
         List<Order> orderList = orderDao.findAllWithoutDeleted();

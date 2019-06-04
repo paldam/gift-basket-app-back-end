@@ -301,18 +301,17 @@ public class OrderController {
         }
     }
 
-
-
     @CrossOrigin
     @PostMapping(value = "/order/progress/{id}", produces = "text/plain;charset=UTF-8")
-    ResponseEntity changeOrderProgress(@PathVariable Long id, @RequestBody List<OrderItem> orderItems)  {
+    ResponseEntity changeOrderProgress(@PathVariable Long id, @RequestBody List<OrderItem> orderItems) {
         Order updatingOrder = orderDao.findByOrderId(id);
-        updatingOrder.setOrderItems(orderItems);
-
-        orderDao.save(updatingOrder);
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        try {
+            orderService.changeOrderProgress(id, orderItems);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } catch (OrderStatusException oEx) {
+            return ResponseEntity.badRequest().body(oEx.getMessage());
         }
-
+    }
 
     @CrossOrigin
     @DeleteMapping("/order/{id}")

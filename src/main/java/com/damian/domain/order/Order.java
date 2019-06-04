@@ -20,7 +20,7 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 @Audited
 @Entity
 @Table(name = "orders")
-public class Order implements Serializable {
+public class Order extends Object implements Serializable {
     private Long orderId;
     private String orderFvNumber;
     private String userName;
