@@ -49,58 +49,33 @@ public class CustomerController {
         this.companyService = companyService;
     }
 
-
     @Transactional
     @CrossOrigin
     @GetMapping("/convert")
-    ResponseEntity<List<Customer>> convert(){
-
-
-
+    ResponseEntity<List<Customer>> convert() {
         List<CustomerOLD> customerList = customerOLDDao.findAll();
 
 
         customerList.forEach(customer -> {
-
             Company company = new Company(customer.getOrganizationName());
-
-            if( customer.getOrganizationName() == null){
+            if (customer.getOrganizationName() == null) {
                 company = null;
             }
-
-
-            Customer custTmp = new Customer(customer.getCustomerId(),customer.getName(),customer.getEmail(),customer.getPhoneNumber(),customer.getAdditionalInformation(),company);
-
+            Customer custTmp = new Customer(customer.getCustomerId(), customer.getName(), customer.getEmail(), customer.getPhoneNumber(), customer.getAdditionalInformation(), company);
             customerDao.save(custTmp);
-
         });
-
-
         return null;
     }
 
     @Transactional
     @CrossOrigin
     @GetMapping("/convert2")
-    ResponseEntity<List<Address>> convert2(){
-
-
-
+    ResponseEntity<List<Address>> convert2() {
         List<AddressOLD> adresList = addressOLDDao.findAll();
-
-
         adresList.forEach(adres -> {
-
-
-
-                Address adrestTmp = new Address(adres.getAddressId(),adres.getAddress(),adres.getZipCode(),adres.getCityName(),adres.getCustomer().getName(),adres.getCustomer().getPhoneNumber(),null);
-                addressDao.save(adrestTmp);
-            });
-
-
-
-
-
+            Address adrestTmp = new Address(adres.getAddressId(), adres.getAddress(), adres.getZipCode(), adres.getCityName(), adres.getCustomer().getName(), adres.getCustomer().getPhoneNumber(), null);
+            addressDao.save(adrestTmp);
+        });
         return null;
     }
 

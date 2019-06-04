@@ -259,7 +259,7 @@ public class OrderService {
                 throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
             }
             if (oi.getStateOnLogistics() < 0 || oi.getStateOnProduction() < 0  || oi.getStateOnWarehouse() < 0 ) {
-                throw new OrderStatusException("Wartość nie może być mniejsza od zera ");
+                throw new OrderStatusException("Wartość nie może być mniejsza od zera");
             }
         }
         updatingOrder.setOrderItems(orderItemsList);
