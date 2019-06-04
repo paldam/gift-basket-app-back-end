@@ -5,13 +5,19 @@ import com.damian.domain.order_file.DbFile;
 import com.damian.domain.order_file.DbFileDao;
 import com.damian.domain.product.ProductDao;
 import com.damian.domain.product.SupplierDao;
+import com.damian.domain.user.User;
+import com.damian.domain.user.UserRepository;
 import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.dto.OrderDto;
 import com.damian.domain.order.exceptions.OrderStatusException;
 import com.damian.security.SecurityUtils;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +29,8 @@ import static com.damian.config.Constants.ANSI_YELLOW;
 
 @Service
 public class OrderService {
-
+    public static final int ORDER_STATUS_ID_NOWE = 1;
+    public static final int ORDER_STATUS_ID_ZREALIZOWANE = 5;
     private static final Logger logger = Logger.getLogger(OrderService.class);
     private OrderDao orderDao;
     private CustomerDao customerDao;
@@ -33,8 +40,9 @@ public class OrderService {
     private DbFileDao dbFileDao;
     private CustomCustomerDao customCustomerDao;
     private CompanyDao companyDao;
+    private UserRepository userRepository;
 
-    OrderService(OrderDao orderDao, CompanyDao companyDao, CustomCustomerDao customCustomerDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao, DbFileDao dbFileDao, SupplierDao supplierDao
+    OrderService(UserRepository userRepository,OrderDao orderDao, CompanyDao companyDao, CustomCustomerDao customCustomerDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao, DbFileDao dbFileDao, SupplierDao supplierDao
     ) {
 
         this.companyDao = companyDao;
@@ -45,6 +53,8 @@ public class OrderService {
         this.supplierDao = supplierDao;
         this.dbFileDao = dbFileDao;
         this.customCustomerDao = customCustomerDao;
+        this.userRepository = userRepository;
+
 
     }
 
@@ -68,6 +78,9 @@ public class OrderService {
         Order orderPrevState = orderDao.findByOrderId(order.getOrderId());
         Integer prevOrderStatus = orderPrevState.getOrderStatus().getOrderStatusId();
         Integer newOrderStatus = order.getOrderStatus().getOrderStatusId();
+
+        //TODO
+
         if (prevOrderStatus == 1 && (newOrderStatus == 2 || newOrderStatus == 5)) {
             logger.info("brak możliwości zmiany ");
             throw new OrderStatusException("brak możliwości zmiany statusu z 'nowy' na 'wyslany' lub 'zrealizowny'");
@@ -254,6 +267,8 @@ public class OrderService {
     public void changeOrderProgress(Long id,List<OrderItem> orderItemsList) throws OrderStatusException {
 
         Order updatingOrder = orderDao.findByOrderId(id);
+        Boolean completeOrderWatch = true;
+
         for (OrderItem oi : orderItemsList) {
             if (oi.getStateOnLogistics() > oi.getQuantity() || oi.getStateOnProduction() > oi.getQuantity() || oi.getStateOnWarehouse() > oi.getQuantity()) {
                 throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
@@ -261,9 +276,30 @@ public class OrderService {
             if (oi.getStateOnLogistics() < 0 || oi.getStateOnProduction() < 0  || oi.getStateOnWarehouse() < 0 ) {
                 throw new OrderStatusException("Wartość nie może być mniejsza od zera");
             }
+
+            if(!oi.getQuantity().equals(oi.getStateOnLogistics())){
+                completeOrderWatch = false;
+            }
+
         }
+
+        if(completeOrderWatch) updatingOrder.setOrderStatus(new OrderStatus(ORDER_STATUS_ID_ZREALIZOWANE)) ;
+
         updatingOrder.setOrderItems(orderItemsList);
         orderDao.save(updatingOrder);
+    }
+
+
+    public void assignOrdersToSpecifiedProduction(List<Integer> ordersIds,Long productionId) throws OrderStatusException{
+
+        List <Order> orderListByIds = orderDao.findByOrderIds(ordersIds);
+
+        for(Order order : orderListByIds ){
+            if (order.getOrderStatus().getOrderStatusId() != ORDER_STATUS_ID_NOWE){
+                throw new OrderStatusException("Nie można zmienić  lub przydzielić produkcji do zamówienia o statusie innym niż NOWE");
+            }
+        }
+        orderDao.assignOrdersToSpecifiedProduction(ordersIds, productionId);
     }
 
 

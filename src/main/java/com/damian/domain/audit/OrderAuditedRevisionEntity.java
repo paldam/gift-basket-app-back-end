@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @RevisionEntity(AuditingRevisionListener.class)
 @Entity
-@Table(name = "AUDIT_INFO")
+@Table(name = "audit_info")
 public class OrderAuditedRevisionEntity {
 
     private static final long serialVersionUID = 1L;

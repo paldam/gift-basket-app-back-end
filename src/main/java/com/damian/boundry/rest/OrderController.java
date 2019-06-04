@@ -4,11 +4,14 @@ import com.damian.domain.audit.OrderAuditedRevisionEntity;
 import com.damian.domain.order.*;
 import com.damian.domain.order_file.DbFileDao;
 import com.damian.domain.product.ProductDao;
+import com.damian.domain.user.User;
+import com.damian.domain.user.UserRepository;
 import com.damian.dto.NumberOfBasketOrderedByDate;
 import com.damian.dto.OrderDto;
 import com.damian.domain.order.exceptions.OrderStatusException;
 import com.damian.domain.order_file.DbFileService;
 import com.damian.dto.OrderItemsDto;
+import com.damian.security.SecurityUtils;
 import com.damian.util.PdfOrderProductCustom;
 import org.apache.log4j.Logger;
 import org.hibernate.envers.AuditReaderFactory;
@@ -52,14 +55,16 @@ public class OrderController {
     private ProductDao productDao;
     private DbFileDao dbFileDao;
     private DbFileService dbFileService;
+    private UserRepository userRepository;
 
-    OrderController(DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao, DbFileDao dbFileDao) {
+    OrderController(UserRepository userRepository, DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao, DbFileDao dbFileDao) {
         this.orderDao = orderDao;
         this.orderService = orderService;
         this.orderStatusDao = orderStatusDao;
         this.productDao = productDao;
         this.dbFileDao = dbFileDao;
         this.dbFileService = dbFileService;
+        this.userRepository = userRepository;
     }
 
     @CrossOrigin
@@ -127,6 +132,20 @@ public class OrderController {
     ResponseEntity<List<Order>> getOrders() {
         List<Order> ordersList = orderDao.findAllWithoutDeleted();
         return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/orders/production")
+    ResponseEntity<List<Order>> getOrdersForProduction() {
+
+        Optional<User> optUser=  userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
+
+       if (optUser.isPresent()){
+           List<Order> ordersList  = orderDao.getAllOrdersByProductionUserId(optUser.get().getId());
+           return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
+        }else{
+           return new ResponseEntity<List<Order>>(HttpStatus.FORBIDDEN);
+       }
     }
 
     @CrossOrigin
@@ -268,11 +287,15 @@ public class OrderController {
     }
 
     @CrossOrigin
-    @PostMapping("/order/assign_production")
+    @PostMapping( value = "/order/assign_production",produces = "text/plain;charset=UTF-8")
     ResponseEntity assignOrdersToSpecifiedProduction(@RequestParam(value = "ordersIds", required = true) List<Integer> ordersIds,
                                                      @RequestParam(value = "productionId", required = true) Long productionId) {
-        orderDao.assignOrdersToSpecifiedProduction(ordersIds, productionId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            orderService.assignOrdersToSpecifiedProduction(ordersIds, productionId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (OrderStatusException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
     @CrossOrigin

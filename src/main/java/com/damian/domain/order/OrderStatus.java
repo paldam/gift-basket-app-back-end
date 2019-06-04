@@ -9,6 +9,13 @@ public class OrderStatus {
     private Integer orderStatusId;
     private String orderStatusName;
 
+    public OrderStatus() {
+    }
+
+    public OrderStatus(Integer orderStatusId) {
+        this.orderStatusId = orderStatusId;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_status_id", nullable = false)
