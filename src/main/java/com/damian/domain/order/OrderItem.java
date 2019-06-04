@@ -57,7 +57,7 @@ public class OrderItem {
     }
 
     @Basic
-    @Column(name = "production_state", nullable = false,columnDefinition = "INT DEFAULT 0")
+    @Column(name = "production_state",columnDefinition = "INT DEFAULT 0")
     public Integer getStateOnProduction() {
         return stateOnProduction;
     }
@@ -68,7 +68,7 @@ public class OrderItem {
 
 
     @Basic
-    @Column(name = "warehouse_state", nullable = false,columnDefinition = "INT DEFAULT 0")
+    @Column(name = "warehouse_state",columnDefinition = "INT DEFAULT 0")
     public Integer getStateOnWarehouse() {
         return stateOnWarehouse;
     }
@@ -78,7 +78,7 @@ public class OrderItem {
     }
 
     @Basic
-    @Column(name = "logistics_state", nullable = false,columnDefinition = "INT DEFAULT 0")
+    @Column(name = "logistics_state",columnDefinition = "INT DEFAULT 0")
     public Integer getStateOnLogistics() {
         return stateOnLogistics;
     }

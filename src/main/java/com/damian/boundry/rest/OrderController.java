@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.hibernate.envers.AuditReader;
 
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
@@ -45,8 +44,6 @@ import static com.damian.config.Constants.ANSI_YELLOW;
 public class OrderController {
 
     private static final Logger logger = Logger.getLogger(OrderController.class);
-
-
     @Autowired
     private EntityManagerFactory factory;
     private OrderDao orderDao;
@@ -56,342 +53,231 @@ public class OrderController {
     private DbFileDao dbFileDao;
     private DbFileService dbFileService;
 
-    OrderController(DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao,
-                    DbFileDao dbFileDao){
-        this.orderDao=orderDao;
-        this.orderService=orderService;
-        this.orderStatusDao=orderStatusDao;
-        this.productDao=productDao;
-        this.dbFileDao= dbFileDao;
+    OrderController(DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao, DbFileDao dbFileDao) {
+        this.orderDao = orderDao;
+        this.orderService = orderService;
+        this.orderStatusDao = orderStatusDao;
+        this.productDao = productDao;
+        this.dbFileDao = dbFileDao;
         this.dbFileService = dbFileService;
-
-        
     }
+
     @CrossOrigin
     @GetMapping(value = "/order/{id}")
-    ResponseEntity<Order> getOrder(@PathVariable Long id){
+    ResponseEntity<Order> getOrder(@PathVariable Long id) {
         Order order = orderDao.findByOrderId(id);
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
-
     @CrossOrigin
     @GetMapping(value = "/orderhistory/{id}")
-    ResponseEntity <List<Order>> getOrderHistory2(@PathVariable Long id){
-
-
+    ResponseEntity<List<Order>> getOrderHistory2(@PathVariable Long id) {
         AuditReader auditReader = AuditReaderFactory.get(factory.createEntityManager());
-//
-        AuditQuery query = auditReader.createQuery().forEntitiesModifiedAtRevision(Order.class,id);
-
-        List<Order> orderTmp= (List<Order> )query.getResultList();
-
-
+        //
+        AuditQuery query = auditReader.createQuery().forEntitiesModifiedAtRevision(Order.class, id);
+        List<Order> orderTmp = (List<Order>) query.getResultList();
         return new ResponseEntity<List<Order>>(orderTmp, HttpStatus.OK);
-
     }
 
     @CrossOrigin
     @GetMapping(value = "/order_history_prev_rev/{id}")
-    ResponseEntity <List<Order>> getPreviousVersionOfOrderHistory(@PathVariable Long id){
-
+    ResponseEntity<List<Order>> getPreviousVersionOfOrderHistory(@PathVariable Long id) {
         AuditReader auditReader = AuditReaderFactory.get(factory.createEntityManager());
         Optional<BigInteger> revNumber = orderDao.getRevisionNumberOFfPreviousOrderState(id);
-        BigInteger orderRevisionToGet ;
-
-
+        BigInteger orderRevisionToGet;
         orderRevisionToGet = revNumber.orElseGet(() -> BigInteger.valueOf(id));
-
-
-
-        AuditQuery query = auditReader.createQuery().forEntitiesModifiedAtRevision(Order.class,orderRevisionToGet.longValue());
-
-        List<Order> orderTmp= (List<Order> )query.getResultList();
-
+        AuditQuery query = auditReader.createQuery().forEntitiesModifiedAtRevision(Order.class, orderRevisionToGet.longValue());
+        List<Order> orderTmp = (List<Order>) query.getResultList();
         return new ResponseEntity<List<Order>>(orderTmp, HttpStatus.OK);
-
     }
 
     @CrossOrigin
     @GetMapping(value = "/orderitemshistory/{id}")
-    ResponseEntity <List<OrderItem>> getOrderItemsHistory(@PathVariable Long id){
-
-
-
-
-
-
+    ResponseEntity<List<OrderItem>> getOrderItemsHistory(@PathVariable Long id) {
         AuditReader auditReader = AuditReaderFactory.get(factory.createEntityManager());
-//
-
-
+        //
         Optional<BigInteger> revNumber = orderDao.getRevisionNumberOFfPreviousOrderState(id);
-
-        BigInteger orderRevisionToGet ;
-
-
-        if(revNumber.isPresent()){
+        BigInteger orderRevisionToGet;
+        if (revNumber.isPresent()) {
             orderRevisionToGet = revNumber.get();
-
-        }else{
+        } else {
             orderRevisionToGet = BigInteger.valueOf(id);
         }
-
-
-
-
-        AuditQuery query = auditReader.createQuery().forEntitiesModifiedAtRevision(OrderItem.class,orderRevisionToGet.longValue());
+        AuditQuery query = auditReader.createQuery().forEntitiesModifiedAtRevision(OrderItem.class, orderRevisionToGet.longValue());
         //.forEntitiesAtRevision(OrderItem.class,orderRevisionToGet.longValue());
-
-
-
         // Order order = auditReader.find(Order.class, 1L,1L);
         //ArrayList<Object[]> list = (ArrayList) query.getResultList();
-        List<OrderItem> orderTmp= (List<OrderItem> )query.getResultList();
-
-
-
-
+        List<OrderItem> orderTmp = (List<OrderItem>) query.getResultList();
         return new ResponseEntity<List<OrderItem>>(orderTmp, HttpStatus.OK);
-
     }
 
     @CrossOrigin
     @GetMapping("/order/audit/{id}")
-    ResponseEntity <List<OrderAuditedRevisionEntity>> getOrderAudit(@PathVariable Integer id )
-    {
-
-
-
-
+    ResponseEntity<List<OrderAuditedRevisionEntity>> getOrderAudit(@PathVariable Integer id) {
         List<Object[]> orderHistoryListTmp = orderDao.getOrderHistoryById(id);
-
         List<OrderAuditedRevisionEntity> orderAuditedRevisionEntitiesList = new ArrayList<>();
-
         orderHistoryListTmp.forEach(objects -> {
-            orderAuditedRevisionEntitiesList.add(new OrderAuditedRevisionEntity(
-                ((BigInteger) objects[0]).longValue(),
-                ((BigInteger) objects[1]).longValue(),
-                ((BigInteger) objects[3]).longValue(),
-                (String)      objects[2]));
+            orderAuditedRevisionEntitiesList.add(new OrderAuditedRevisionEntity(((BigInteger) objects[0]).longValue(), ((BigInteger) objects[1]).longValue(), ((BigInteger) objects[3]).longValue(), (String) objects[2]));
         });
-
-
         return new ResponseEntity<List<OrderAuditedRevisionEntity>>(orderAuditedRevisionEntitiesList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/orders")
-    ResponseEntity<List<Order>> getOrders(){
+    ResponseEntity<List<Order>> getOrders() {
         List<Order> ordersList = orderDao.findAllWithoutDeleted();
         return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/orderitem")
-    ResponseEntity<List<Order>> getOrderItem(){
+    ResponseEntity<List<Order>> getOrderItem() {
         List<Order> ordersList = orderDao.findAllWithoutDeleted();
         return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
     }
-
-//    @CrossOrigin
-//    @GetMapping("/orderswithattch/")
-//    ResponseEntity<List<Order>> getOrdersWithAttach(){
-//        List<Order> ordersList = orderDao.findAllByDbFileIsNotNull();
-//        return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
-//    }
-
-
+    //    @CrossOrigin
+    //    @GetMapping("/orderswithattch/")
+    //    ResponseEntity<List<Order>> getOrdersWithAttach(){
+    //        List<Order> ordersList = orderDao.findAllByDbFileIsNotNull();
+    //        return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
+    //    }
 
     @CrossOrigin
     @GetMapping("/orders/daterange")
-    ResponseEntity<List<Order>> getOrdersByDateRange(
-            @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-            @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
-        List<Order> ordersList = orderDao.findOrdersByDateRange(startDate,endDate);
+    ResponseEntity<List<Order>> getOrdersByDateRange(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        List<Order> ordersList = orderDao.findOrdersByDateRange(startDate, endDate);
         return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/order_status")
-    ResponseEntity<List<OrderStatus>> getOrderStatus(){
+    ResponseEntity<List<OrderStatus>> getOrderStatus() {
         List<OrderStatus> ordersStatusList = orderStatusDao.findAllBy();
         return new ResponseEntity<List<OrderStatus>>(ordersStatusList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/orders/products_to_order/daterange")
-    ResponseEntity<List<Order>> getProductsToOrder(
-                    @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-                    @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
-        List<Order> productToOrderList = orderDao.findProductToOrder(startDate,endDate);
+    ResponseEntity<List<Order>> getProductsToOrder(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        List<Order> productToOrderList = orderDao.findProductToOrder(startDate, endDate);
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/orders/products_to_order_without_deleted_by_delivery_date/daterange")
-    ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByDeliveryDate(
-        @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-        @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
-
+    ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByDeliveryDate(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         Calendar c = Calendar.getInstance();
         c.setTime(endDate);
         c.add(Calendar.DATE, 1);
         Date endDateconvertedToTimeStamp = c.getTime();
-
-        List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByDeliveryDate(startDate,endDateconvertedToTimeStamp);
+        List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByDeliveryDate(startDate, endDateconvertedToTimeStamp);
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/orders/products_to_order_without_deleted_by_order_date/daterange")
-    ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByOrderDate(
-        @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-        @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
-
+    ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByOrderDate(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         Calendar c = Calendar.getInstance();
         c.setTime(endDate);
         c.add(Calendar.DATE, 1);
         Date endDateconvertedToTimeStamp = c.getTime();
-
-        List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByOrderDate(startDate,endDateconvertedToTimeStamp);
+        List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByOrderDate(startDate, endDateconvertedToTimeStamp);
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/baskets/statistic/daterange")
-    ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrdered(
-            @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-            @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate) {
-
-
-                        Calendar c = Calendar.getInstance();
-                        c.setTime(endDate);
-                        c.add(Calendar.DATE, 1);
-                        Date endDateconvertedToTimeStamp = c.getTime();
-
-
-        List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrdered(startDate,endDateconvertedToTimeStamp) ;
+    ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrdered(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(endDate);
+        c.add(Calendar.DATE, 1);
+        Date endDateconvertedToTimeStamp = c.getTime();
+        List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrdered(startDate, endDateconvertedToTimeStamp);
         return new ResponseEntity<List<NumberOfBasketOrderedByDate>>(basketList, HttpStatus.OK);
     }
-
 
     @CrossOrigin
     @GetMapping("/order/statistic/orderdaterange")
-    ResponseEntity<List<Order>> getOrdersByBasket(
-        @RequestParam(value="basketId", required=true) Long basketId,
-        @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-        @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
-
-
-
+    ResponseEntity<List<Order>> getOrdersByBasket(@RequestParam(value = "basketId", required = true) Long basketId, @RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         Calendar c = Calendar.getInstance();
         c.setTime(endDate);
         c.add(Calendar.DATE, 1);
         Date endDateconvertedToTimeStamp = c.getTime();
-
-
-        List<Order> orderList = orderDao.findAllOrderByBasketIdAndOrderDate(basketId,startDate,endDateconvertedToTimeStamp) ;
+        List<Order> orderList = orderDao.findAllOrderByBasketIdAndOrderDate(basketId, startDate, endDateconvertedToTimeStamp);
         return new ResponseEntity<List<Order>>(orderList, HttpStatus.OK);
     }
 
-
-
-
     @CrossOrigin
     @GetMapping("/baskets/statistic/orderdaterange")
-    ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrderedFilteredByOrderDate(
-            @RequestParam(value="startDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-            @RequestParam(value="endDate", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
-
-
+    ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrderedFilteredByOrderDate(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         Calendar c = Calendar.getInstance();
         c.setTime(endDate);
         c.add(Calendar.DATE, 1);
         Date endDateconvertedToTimeStamp = c.getTime();
-
-
-        List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrderedFilteredByOrderDate(startDate,endDateconvertedToTimeStamp) ;
+        List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrderedFilteredByOrderDate(startDate, endDateconvertedToTimeStamp);
         return new ResponseEntity<List<NumberOfBasketOrderedByDate>>(basketList, HttpStatus.OK);
     }
-
 
     @CrossOrigin
     @GetMapping("/orderdao")
     ResponseEntity<OrderPageRequest> getOrderDao(
-        @RequestParam(value="page", required=true, defaultValue = "0") int page,
-        @RequestParam(value="size", required=true) int size,
-        @RequestParam(value="searchtext", required=false) String text,
-        @RequestParam(value="orderBy", required=false) String orderBy,
-        @RequestParam(value="sortingDirection", required=false,defaultValue = "1") int sortingDirection,
-        @RequestParam(value="orderStatusFilterList", required=false) List<Integer> orderStatusFilterList,
-        @RequestParam(value="orderYearsFilterList", required=false) List<Integer> orderYearsFilterList)
-    {
+        @RequestParam(value = "page", required = true, defaultValue = "0") int page,
+        @RequestParam(value = "size", required = true) int size,
+        @RequestParam(value = "searchtext", required = false) String text,
+        @RequestParam(value = "orderBy", required = false) String orderBy,
+        @RequestParam(value = "sortingDirection", required = false, defaultValue = "1") int sortingDirection,
+        @RequestParam(value = "orderStatusFilterList", required = false) List<Integer> orderStatusFilterList,
+        @RequestParam(value = "orderYearsFilterList", required = false) List<Integer> orderYearsFilterList) {
 
-
-
-        if(orderStatusFilterList==null){
+        if (orderStatusFilterList == null) {
             orderStatusFilterList = new ArrayList<>();
         }
-        if(orderYearsFilterList==null){
+        if (orderYearsFilterList == null) {
             orderYearsFilterList = new ArrayList<>();
         }
-
-
-        OrderPageRequest orderDtoList =  orderService.getOrderDao(page,size,text,orderBy,sortingDirection,orderStatusFilterList,orderYearsFilterList);
+        OrderPageRequest orderDtoList = orderService.getOrderDao(page, size, text, orderBy, sortingDirection, orderStatusFilterList, orderYearsFilterList);
         return new ResponseEntity<OrderPageRequest>(orderDtoList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/ordercount")
-    ResponseEntity<Long> getOrderCount( )
-    {
+    ResponseEntity<Long> getOrderCount() {
         long numberOfRows = orderDao.getCountOfAllOrdersWithoutDeleted();
         return new ResponseEntity<Long>(numberOfRows, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/ordersyears")
-    ResponseEntity <int[]> getOrderYears( )
-    {
+    ResponseEntity<int[]> getOrderYears() {
         int[] years = orderDao.getOrdersYears();
         return new ResponseEntity<int[]>(years, HttpStatus.OK);
     }
 
-
-
     @CrossOrigin
     @GetMapping("/orderstats")
-    ResponseEntity<List<OrderDto>> getOrderStats( )
-    {
-        List<OrderDto> orderDtoList =  orderService.getOrderStats();
+    ResponseEntity<List<OrderDto>> getOrderStats() {
+        List<OrderDto> orderDtoList = orderService.getOrderStats();
         return new ResponseEntity<List<OrderDto>>(orderDtoList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/order/customer/{id}")
-    ResponseEntity<List<OrderDto>> getOrdersByCustomer( @PathVariable Integer id) {
-
+    ResponseEntity<List<OrderDto>> getOrdersByCustomer(@PathVariable Integer id) {
         List<OrderDto> ordersList = orderService.getOrderDaoByCustomer(id);
         return new ResponseEntity<List<OrderDto>>(ordersList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @PostMapping("/order/assign_production")
-    ResponseEntity assignOrdersToSpecifiedProduction(@RequestParam(value = "ordersIds", required = true) List<Integer> ordersIds, @RequestParam(value = "productionId", required = true) Long productionId) {
+    ResponseEntity assignOrdersToSpecifiedProduction(@RequestParam(value = "ordersIds", required = true) List<Integer> ordersIds,
+                                                     @RequestParam(value = "productionId", required = true) Long productionId) {
         orderDao.assignOrdersToSpecifiedProduction(ordersIds, productionId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-
-
     @CrossOrigin
     @PostMapping("/orders")
-    ResponseEntity createOrder(@RequestBody Order order )throws URISyntaxException, OrderStatusException {
-
- 
- 
+    ResponseEntity createOrder(@RequestBody Order order) throws URISyntaxException, OrderStatusException {
         try {
             orderService.createOrUpdateOrder(order);
             return new ResponseEntity<Order>(order, HttpStatus.CREATED);
@@ -401,62 +287,55 @@ public class OrderController {
     }
 
     @CrossOrigin
-    @PostMapping(value = "/order/status/{id}/{statusId}",produces = "text/plain;charset=UTF-8")
-    ResponseEntity changeOrderStatus(@PathVariable Long id, @PathVariable Integer statusId)throws URISyntaxException, OrderStatusException {
-
-
-        Order updattingOrder =  orderDao.findByOrderId(id);
-        OrderStatus updattingOrderNewStatus =new OrderStatus();
+    @PostMapping(value = "/order/status/{id}/{statusId}", produces = "text/plain;charset=UTF-8")
+    ResponseEntity changeOrderStatus(@PathVariable Long id, @PathVariable Integer statusId) throws URISyntaxException, OrderStatusException {
+        Order updatingOrder = orderDao.findByOrderId(id);
+        OrderStatus updattingOrderNewStatus = new OrderStatus();
         updattingOrderNewStatus.setOrderStatusId(statusId);
-        updattingOrder.setOrderStatus(updattingOrderNewStatus);
-
+        updatingOrder.setOrderStatus(updattingOrderNewStatus);
         try {
-            orderService.createOrUpdateOrder(updattingOrder);
+            orderService.createOrUpdateOrder(updatingOrder);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
         }
-
-
     }
+
+
 
     @CrossOrigin
-    @DeleteMapping ("/order/{id}")
+    @PostMapping(value = "/order/progress/{id}", produces = "text/plain;charset=UTF-8")
+    ResponseEntity changeOrderProgress(@PathVariable Long id, @RequestBody List<OrderItem> orderItems)  {
+        Order updatingOrder = orderDao.findByOrderId(id);
+        updatingOrder.setOrderItems(orderItems);
+
+        orderDao.save(updatingOrder);
+        return new ResponseEntity<>(null, HttpStatus.OK);
+        }
+
+
+    @CrossOrigin
+    @DeleteMapping("/order/{id}")
     ResponseEntity deleteOrderPermanent(@PathVariable Long id) {
-        
         orderDao.deleteById(id);
-
-
-        return new ResponseEntity(HttpStatus.OK)  ;
-
+        return new ResponseEntity(HttpStatus.OK);
     }
-
 
     @CrossOrigin
     @RequestMapping(value = "/order/pdf/aaa", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<InputStreamResource> getBasketProductsPdf(@RequestBody List<OrderItemsDto> orderItemsDto) throws IOException {
-
-
         PdfOrderProductCustom pdfGenerator = new PdfOrderProductCustom();
         ByteArrayInputStream bis = pdfGenerator.generateBasketsProductsCustomListPdf(orderItemsDto);
-
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=produkty_zamowienia.pdf");
         new InputStreamResource(bis);
-        return ResponseEntity
-            .ok()
-            .headers(headers)
-            .contentType(MediaType.APPLICATION_PDF)
-            .body(new InputStreamResource(bis));
+        return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bis));
     }
-    
 
-
-    @Bean(name = "multipartResolver")     
+    @Bean(name = "multipartResolver")
     public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
         multipartResolver.setMaxUploadSize(112000000); //12MB
         return multipartResolver;
     }
-
 }
