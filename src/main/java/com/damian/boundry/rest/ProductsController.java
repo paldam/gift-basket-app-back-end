@@ -15,6 +15,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
+
 @RestController
 public class ProductsController {
 
@@ -172,18 +175,15 @@ public class ProductsController {
         }
     }
 
-
-
     @CrossOrigin
     @PostMapping("/products")
-    ResponseEntity<Product> createProduct(@RequestBody Product products )throws URISyntaxException {
-
-        products.setTmpOrdered(0);
+    ResponseEntity<Product> createProduct(@RequestBody Product products) throws URISyntaxException {
+        System.out.println(ANSI_YELLOW + products.toString() + ANSI_RESET);
+        if (products.getTmpOrdered() == null) {
+            products.setTmpOrdered(0);
+        }
         productsDao.save(products);
-
-        return new ResponseEntity<Product>(products,HttpStatus.CREATED);
-
-
+        return new ResponseEntity<Product>(products, HttpStatus.CREATED);
     }
 
     @CrossOrigin

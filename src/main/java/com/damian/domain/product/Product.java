@@ -155,4 +155,9 @@ public class Product {
     public void setLastNumberOfOrderedEditDate(Date lastNumberOfOrderedEditDate) {
         this.lastNumberOfOrderedEditDate = lastNumberOfOrderedEditDate;
     }
+
+    @Override
+    public String toString() {
+        return "Product{" + "id=" + id + ", capacity='" + capacity + '\'' + ", price=" + price + ", productName='" + productName + '\'' + ", stock=" + stock + ", tmpStock=" + tmpStock + ", tmpOrdered=" + tmpOrdered + ", deliver='" + deliver + '\'' + ", isArchival=" + isArchival + ", supplier=" + supplier + ", productType=" + productType + ", lastStockEditDate=" + lastStockEditDate + ", lastNumberOfOrderedEditDate=" + lastNumberOfOrderedEditDate + '}';
+    }
 }
