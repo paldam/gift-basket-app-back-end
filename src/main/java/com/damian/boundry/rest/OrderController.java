@@ -2,6 +2,7 @@ package com.damian.boundry.rest;
 
 import com.damian.domain.audit.OrderAuditedRevisionEntity;
 import com.damian.domain.order.*;
+import com.damian.domain.order_file.DbFile;
 import com.damian.domain.order_file.DbFileDao;
 import com.damian.domain.product.ProductDao;
 import com.damian.domain.user.User;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.damian.config.Constants.ANSI_RESET;
 import static com.damian.config.Constants.ANSI_YELLOW;
@@ -134,17 +136,48 @@ public class OrderController {
         return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
     }
 
+
+
+    //TODO
     @CrossOrigin
     @GetMapping("/orders/production")
-    ResponseEntity<List<Order>> getOrdersForProduction() {
+    ResponseEntity<List<OrderDto>> getOrdersForProduction() {
 
         Optional<User> optUser=  userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
 
        if (optUser.isPresent()){
            List<Order> ordersList  = orderDao.getAllOrdersByProductionUserId(optUser.get().getId());
-           return new ResponseEntity<List<Order>>(ordersList, HttpStatus.OK);
+
+           List<OrderDto> orderDtoList = new ArrayList<>();
+           List<DbFile> dbFileDtoList = dbFileDao.findAll();
+
+
+           ordersList.forEach(order -> {
+               List<DbFile> result = new LinkedList<>();
+               //result =  dbFileDtoList.stream().filter(data -> data.getOrderHistoryId() == 835).collect(Collectors.toList());
+
+               result = dbFileDtoList.stream()
+                   .filter(data -> order.getOrderId().equals(data.getOrderId()))
+                   .collect(Collectors.toList());
+
+               Long fileIdTmp = null;
+
+               if (result.size() > 0) {
+                   fileIdTmp = result.get(0).getFileId();
+               } else {
+                   fileIdTmp = 0L;
+               }
+
+               orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(),
+                   order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(),
+                   order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(),order.getProductionUser()));
+           });
+
+
+
+           return new ResponseEntity<List<OrderDto>>(orderDtoList, HttpStatus.OK);
         }else{
-           return new ResponseEntity<List<Order>>(HttpStatus.FORBIDDEN);
+           return new ResponseEntity<List<OrderDto>>(HttpStatus.FORBIDDEN);
        }
     }
 
