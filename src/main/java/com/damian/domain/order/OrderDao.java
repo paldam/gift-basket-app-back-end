@@ -60,8 +60,9 @@ public interface OrderDao extends JpaRepository<Order,Long>, JpaSpecificationExe
     public List<Order> getAllOrdersByProductionUserId(Long id);
 
     @Query(value = "SELECT * FROM orders Join order_items ON orders.order_id = order_items.order_id JOIN baskets " +
-        "On order_items.basket_id = baskets.basket_id where baskets.basket_id = ?1 AND orders.order_date BETWEEN ?2 AND ?3",nativeQuery = true)
+        "On order_items.basket_id = baskets.basket_id where baskets.basket_id = ?1 AND orders.order_date >= ?2 AND orders.order_date <= ?3",nativeQuery = true)
     public List<Order> findAllOrderByBasketIdAndOrderDate(Long basketId,Date startDate, Date endDate );
+
 
 
     @Query(value = "SELECT YEAR(order_date) FROM `orders` WHERE 1 GROUP BY YEAR(order_date) ORDER BY order_date DESC",nativeQuery = true)
@@ -101,14 +102,13 @@ public interface OrderDao extends JpaRepository<Order,Long>, JpaSpecificationExe
 
     @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
             "JOIN oi.basket b " +
-            "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId=1 OR o.orderStatus.orderStatusId=4) AND o.deliveryDate BETWEEN ?1 AND ?2  GROUP BY p.id")
-
+            "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId=1 OR o.orderStatus.orderStatusId=6) AND o.deliveryDate >= ?1 AND o.deliveryDate <= ?2  GROUP BY p.id")
     public List<Order> findProductToOrder(Date startDate, Date endDate);
 
 
     @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
         "JOIN oi.basket b " +
-        "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId != 99) AND o.deliveryDate BETWEEN ?1 AND ?2  GROUP BY p.id")
+        "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId != 99) AND o.deliveryDate >= ?1 AND o.deliveryDate <=  ?2  GROUP BY p.id")
 
     public List<Order> findProductToOrderWithoutDeletedOrderByDeliveryDate(Date startDate, Date endDate);
 
@@ -118,7 +118,7 @@ public interface OrderDao extends JpaRepository<Order,Long>, JpaSpecificationExe
 
     @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p.id,p.productName,p.supplier, p.stock,p.tmpOrdered,sum(oi.quantity*bi.quantity),p.capacity) FROM Order o JOIN o.orderItems oi " +
         "JOIN oi.basket b " +
-        "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId != 99) AND o.orderDate  BETWEEN ?1 AND ?2  GROUP BY p.id")
+        "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId != 99) AND o.orderDate  >= ?1  AND o.orderDate <= ?2  GROUP BY p.id")
 
     public List<Order> findProductToOrderWithoutDeletedOrderByOrderDate(Date startDate, Date endDate);
 
@@ -138,11 +138,11 @@ public interface OrderDao extends JpaRepository<Order,Long>, JpaSpecificationExe
 
 
     @Query(value = "select new com.damian.dto.NumberOfBasketOrderedByDate(b.basketId,b.basketName,sum(oi.quantity),count(o.orderId)) FROM Order o JOIN o.orderItems oi JOIN oi.basket b  where " +
-            "o.deliveryDate between ?1 and ?2 and (o.orderStatus =1 Or o.orderStatus =4) group by b.basketName")
+            "o.deliveryDate >= ?1  and  o.deliveryDate <= ?2 and (o.orderStatus =1 Or o.orderStatus =6) group by b.basketName")
     public List<NumberOfBasketOrderedByDate> getNumberOfBasketOrdered (Date startDate, Date endDate);
 
     @Query(value = "select new com.damian.dto.NumberOfBasketOrderedByDate(b.basketId,b.basketName,sum(oi.quantity),count(o.orderId)) FROM Order o JOIN o.orderItems oi JOIN oi.basket b  where " +
-            "o.orderDate between ?1 and ?2 and (o.orderStatus !=99) group by b.basketName")
+            "o.orderDate >= ?1 and o.orderDate <= ?2 and (o.orderStatus !=99) group by b.basketName")
     public List<NumberOfBasketOrderedByDate> getNumberOfBasketOrderedFilteredByOrderDate (Date startDate, Date endDate);
 
 

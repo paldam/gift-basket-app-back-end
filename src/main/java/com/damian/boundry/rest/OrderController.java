@@ -178,64 +178,65 @@ public class OrderController {
     @CrossOrigin
     @GetMapping("/orders/products_to_order/daterange")
     ResponseEntity<List<Order>> getProductsToOrder(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+
+
+
         List<Order> productToOrderList = orderDao.findProductToOrder(startDate, endDate);
+
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/orders/products_to_order_without_deleted_by_delivery_date/daterange")
     ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByDeliveryDate(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(endDate);
-        c.add(Calendar.DATE, 1);
-        Date endDateconvertedToTimeStamp = c.getTime();
-        List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByDeliveryDate(startDate, endDateconvertedToTimeStamp);
+
+        endDate = setEndOfDay(endDate);
+
+        List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByDeliveryDate(startDate, endDate);
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/orders/products_to_order_without_deleted_by_order_date/daterange")
     ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByOrderDate(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(endDate);
-        c.add(Calendar.DATE, 1);
-        Date endDateconvertedToTimeStamp = c.getTime();
-        List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByOrderDate(startDate, endDateconvertedToTimeStamp);
+
+        endDate = setEndOfDay(endDate);
+
+
+        List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByOrderDate(startDate, endDate);
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }
 
-    @CrossOrigin
-    @GetMapping("/baskets/statistic/daterange")
-    ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrdered(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(endDate);
-        c.add(Calendar.DATE, 1);
-        Date endDateconvertedToTimeStamp = c.getTime();
-        List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrdered(startDate, endDateconvertedToTimeStamp);
-        return new ResponseEntity<List<NumberOfBasketOrderedByDate>>(basketList, HttpStatus.OK);
-    }
+
 
     @CrossOrigin
     @GetMapping("/order/statistic/orderdaterange")
     ResponseEntity<List<Order>> getOrdersByBasket(@RequestParam(value = "basketId", required = true) Long basketId, @RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(endDate);
-        c.add(Calendar.DATE, 1);
-        Date endDateconvertedToTimeStamp = c.getTime();
-        List<Order> orderList = orderDao.findAllOrderByBasketIdAndOrderDate(basketId, startDate, endDateconvertedToTimeStamp);
+        endDate = setEndOfDay(endDate);
+        List<Order> orderList = orderDao.findAllOrderByBasketIdAndOrderDate(basketId, startDate, endDate);
         return new ResponseEntity<List<Order>>(orderList, HttpStatus.OK);
+    }
+
+
+
+    @CrossOrigin
+    @GetMapping("/baskets/statistic/daterange")
+    ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrdered(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        endDate = setEndOfDay(endDate);
+        List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrdered(startDate, endDate);
+        return new ResponseEntity<List<NumberOfBasketOrderedByDate>>(basketList, HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/baskets/statistic/orderdaterange")
     ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrderedFilteredByOrderDate(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(endDate);
-        c.add(Calendar.DATE, 1);
-        Date endDateconvertedToTimeStamp = c.getTime();
-        List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrderedFilteredByOrderDate(startDate, endDateconvertedToTimeStamp);
+        endDate = setEndOfDay(endDate);
+        List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrderedFilteredByOrderDate(startDate, endDate);
         return new ResponseEntity<List<NumberOfBasketOrderedByDate>>(basketList, HttpStatus.OK);
     }
+
+
+
 
     @CrossOrigin
     @GetMapping("/orderdao")
@@ -363,4 +364,13 @@ public class OrderController {
         multipartResolver.setMaxUploadSize(112000000); //12MB
         return multipartResolver;
     }
+
+    private Date setEndOfDay(Date date){
+        date.setHours(23);
+        date.setMinutes(59);
+        date.setSeconds(59);
+        return date;
+    }
+
+
 }
