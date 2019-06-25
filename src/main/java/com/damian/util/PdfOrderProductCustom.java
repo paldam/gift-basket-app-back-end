@@ -9,6 +9,8 @@ import com.itextpdf.text.pdf.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +22,7 @@ public class PdfOrderProductCustom {
     static Integer orderTypeId;
     static Order order;
 
-    public static ByteArrayInputStream generateBasketsProductsCustomListPdf(java.util.List<OrderItemsDto> orderItemsDto) throws IOException {
+    public static ByteArrayInputStream generateBasketsProductsCustomListPdf(java.util.List<OrderItemsDto> orderItemsDto, Order order) throws IOException {
 
 
         Document document = new Document();
@@ -59,13 +61,48 @@ public class PdfOrderProductCustom {
             PdfPTable table0 = new PdfPTable(columnWidths0);
             table0.setWidthPercentage(100);
 
+
+            SimpleDateFormat format2 = new SimpleDateFormat("yyyy.MM.dd", Locale.ENGLISH);
+            String orderDateString = format2.format(order.getDeliveryDate());
+
+
+
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder
+                .append("Zamówienie: ")
+                .append(order.getOrderFvNumber())
+                .append(" | Firma: ")
+                .append(order.getCustomer().getCompany().getCompanyName())
+                .append(" | Osoba: ")
+                .append(order.getCustomer().getName())
+                .append(" | Data wysyłki: ")
+                .append(orderDateString)
+                .append(" | Produkcja: ");
+
+            if( order.getProductionUser() != null){
+                stringBuilder.append(order.getProductionUser().getLogin());
+            }
+
+
+            String headline = stringBuilder.toString();
+
+
+            PdfPCell cell00 = new PdfPCell(new Phrase(headline, font2));
+            cell00.setColspan(10);
+            cell00.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell00.setBorder(Rectangle.BOTTOM);
+            cell00.setMinimumHeight(30);
+            cell00.setPaddingBottom(10);
+            table0.addCell(cell00);
+
+
+
             PdfPCell cell0 = new PdfPCell(new Phrase("", font3));
             cell0.setColspan(10);
             cell0.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell0.setVerticalAlignment(Element.ALIGN_CENTER);
             cell0.setBorder(Rectangle.LEFT | Rectangle.TOP | Rectangle.RIGHT);
             table0.addCell(cell0);
-            document.add(table0);
 
             orderItemsDto.forEach(orderItems -> {
 
@@ -94,10 +131,15 @@ public class PdfOrderProductCustom {
 
                         table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getProductName(), font3)));
                         table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getCapacity(), font3)));
-                        table2.addCell(new PdfCellExt(new Phrase(basketItems.getQuantity().toString(), font3)));
+
+                        Integer total = (basketItems.getQuantity() * orderItems.getQuantity());
+
+
+                        table2.addCell(new PdfCellExt(new Phrase(total.toString(), font3)));
                     });
 
                     try {
+                        document.add(table0);
                         document.add(table);
                         document.add(table2);
                         document.newPage();

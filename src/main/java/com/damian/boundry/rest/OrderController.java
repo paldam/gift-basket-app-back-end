@@ -344,10 +344,13 @@ public class OrderController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/order/pdf/aaa", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<InputStreamResource> getBasketProductsPdf(@RequestBody List<OrderItemsDto> orderItemsDto) throws IOException {
+    @RequestMapping(value = "/order/pdf/aaa/{orderId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> getBasketProductsPdf(@RequestBody List<OrderItemsDto> orderItemsDto , @PathVariable Long orderId) throws IOException {
         PdfOrderProductCustom pdfGenerator = new PdfOrderProductCustom();
-        ByteArrayInputStream bis = pdfGenerator.generateBasketsProductsCustomListPdf(orderItemsDto);
+
+        Order order = orderDao.findByOrderId(orderId);
+
+        ByteArrayInputStream bis = pdfGenerator.generateBasketsProductsCustomListPdf(orderItemsDto,order);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=produkty_zamowienia.pdf");
         new InputStreamResource(bis);

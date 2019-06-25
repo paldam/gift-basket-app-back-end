@@ -9,6 +9,8 @@ package com.damian.util;
         import java.io.ByteArrayInputStream;
         import java.io.ByteArrayOutputStream;
         import java.io.IOException;
+        import java.text.SimpleDateFormat;
+        import java.util.Locale;
         import java.util.logging.Level;
         import java.util.logging.Logger;
 
@@ -50,14 +52,26 @@ public class PdfProductToCollectOrder {
             Font font4 = new Font(helvetica4, 10, Font.NORMAL, GrayColor.BLACK);
 
 
+
+            SimpleDateFormat format2 = new SimpleDateFormat("yyyy.MM.dd", Locale.ENGLISH);
+            String orderDateString = format2.format(order.getDeliveryDate());
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder
-                .append("Zamówienie ")
+                .append("Zamówienie: ")
                 .append(order.getOrderFvNumber())
-                .append(" ")
+                .append(" | Firma: ")
                 .append(order.getCustomer().getCompany().getCompanyName())
-                .append(" | ")
-                .append(order.getCustomer().getName());
+                .append(" | Osoba: ")
+                .append(order.getCustomer().getName())
+                .append(" | Data wysyłki: ")
+                .append(orderDateString)
+                .append(" | Produkcja: ");
+
+                if( order.getProductionUser() != null){
+                    stringBuilder.append(order.getProductionUser().getLogin());
+                }
+
 
             String headline = stringBuilder.toString();
 
