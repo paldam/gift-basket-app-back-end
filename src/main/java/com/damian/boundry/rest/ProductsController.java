@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.damian.config.Constants.ANSI_RESET;
 import static com.damian.config.Constants.ANSI_YELLOW;
@@ -26,13 +27,15 @@ public class ProductsController {
    private SupplierDao supplierDao;
     private  ProductService productService;
     private BasketDao basketDao;
+    private ProductSubTypeDao productSubTypeDao;
 
-    public ProductsController(ProductService productService, BasketDao basketDao, ProductTypeDao productsTypeDao, ProductDao productsDao, SupplierDao supplierDao) {
+    public ProductsController(ProductSubTypeDao productSubTypeDao, ProductService productService, BasketDao basketDao, ProductTypeDao productsTypeDao, ProductDao productsDao, SupplierDao supplierDao) {
         this.productsTypeDao = productsTypeDao;
         this.productsDao = productsDao;
         this.supplierDao = supplierDao;
         this.productService = productService;
         this.basketDao = basketDao;
+        this.productSubTypeDao =productSubTypeDao;
     }
 
 
@@ -61,6 +64,43 @@ public class ProductsController {
         List<ProductType> typeList = productsTypeDao.findAll();
         return new ResponseEntity<List<ProductType>>(typeList, HttpStatus.OK);
 
+    }
+
+
+    @CrossOrigin
+    @GetMapping(value = "/products/sub_types",produces = "application/json; charset=utf-8")
+    ResponseEntity<List<ProductSubType>> listAllProductSubTypes(){
+
+        List<ProductSubType> typeList = productSubTypeDao.findAll();
+        return new ResponseEntity<List<ProductSubType>>(typeList, HttpStatus.OK);
+
+    }
+
+    @CrossOrigin
+    @PostMapping("/products/types")
+    ResponseEntity<ProductType> createProductsTypes(@RequestBody ProductType productType )throws URISyntaxException {
+        productsTypeDao.save(productType);
+        return new ResponseEntity<ProductType>(productType,HttpStatus.CREATED);
+
+    }
+
+
+    @CrossOrigin
+    @DeleteMapping(value = "/products/types/{id}")
+    ResponseEntity deleteProductsTypes(@PathVariable Integer id){
+
+
+
+        ProductType productType = productsTypeDao.findByTypeId(id);
+
+
+
+        if (Objects.isNull(productType)) {
+            return new ResponseEntity("Nie znaleziono typu produktu o id " + id, HttpStatus.NOT_FOUND);
+        }else{
+            productsTypeDao.delete(productType);
+            return new ResponseEntity(id, HttpStatus.OK);
+        }
     }
 
 

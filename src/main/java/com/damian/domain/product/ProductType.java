@@ -1,6 +1,9 @@
 package com.damian.domain.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by Damian on 05.09.2017.
@@ -10,6 +13,7 @@ import javax.persistence.*;
 public class ProductType {
     private Integer typeId;
     private String typeName;
+    private List<ProductSubType> subTypeList;
 
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +37,16 @@ public class ProductType {
         this.typeName = typeName;
     }
 
+@JsonIgnore
+    @OneToMany(mappedBy="productType")
+    public List<ProductSubType> getSubTypeList() {
+        return subTypeList;
+    }
+
+    public void setSubTypeList(List<ProductSubType> subTypeList) {
+        this.subTypeList = subTypeList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -51,5 +65,10 @@ public class ProductType {
         int result = typeId != null ? typeId.hashCode() : 0;
         result = 31 * result + (typeName != null ? typeName.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductType{" + "typeId=" + typeId + ", typeName='" + typeName + '\'' + '}';
     }
 }

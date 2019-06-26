@@ -20,6 +20,7 @@ public class Product {
     private Integer isArchival;
     private Supplier supplier;
     private ProductType productType;
+    private ProductSubType productSubType;
     private Date lastStockEditDate;
     private Date lastNumberOfOrderedEditDate;
 
@@ -129,6 +130,16 @@ public class Product {
     @JoinColumn(name = "product_type_id")
     public ProductType getProductType() {
         return productType;
+    }
+
+    public void setProductSubType(ProductSubType productSubType) {
+        this.productSubType = productSubType;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "product_sub_type_id")
+    public ProductSubType getProductSubType() {
+        return productSubType;
     }
 
     public void setProductType(ProductType productType) {

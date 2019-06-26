@@ -10,4 +10,5 @@ public interface ProductTypeDao extends CrudRepository<ProductType,Long> {
 
 
     public List<ProductType> findAll();
+    public ProductType findByTypeId(Integer id);
 }
