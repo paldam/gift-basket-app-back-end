@@ -136,6 +136,30 @@ public class BasketController {
     }
 
 
+
+
+
+    @CrossOrigin
+    @RequestMapping(value = {"/basket/find/{priceMin}/{priceMax}/{productsSubTypes}", "/basket/find/{priceMin}/{priceMax}" }, method = RequestMethod.GET)
+    public ResponseEntity<List<Basket>> getBasketsWithFilters(
+        @PathVariable Integer priceMin,
+        @PathVariable Integer priceMax,
+        @PathVariable Optional<List<Integer>> productsSubTypes ) {
+
+        priceMax = priceMax * 100;
+        priceMin = priceMin * 100;
+        List<Basket> basketList;
+        if(!productsSubTypes.isPresent()){
+            basketList = basketDao.findBasketsWithFilterWithoutTypes(priceMin,priceMax);
+        }else{
+            basketList = basketDao.findBasketsWithFilter(priceMin,priceMax,productsSubTypes.get());
+        }
+
+        return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
+    }
+
+
+
     @CrossOrigin
     @GetMapping("/basketimage/{basketId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable Long basketId) {

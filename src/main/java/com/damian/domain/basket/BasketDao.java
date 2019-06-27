@@ -34,4 +34,13 @@ public interface BasketDao extends CrudRepository<Basket,Long> {
 
     @Query(value = "select * from baskets INNER join basket_items on baskets.basket_id = basket_items.basket_id where basket_items.product_id = ?1 and (baskets.basket_type = 1 Or baskets.basket_type =2) ", nativeQuery = true)
     public List<Basket> BasketListByProduct(Integer productId);
+
+
+    @Query(value = "select * from baskets INNER join basket_items on baskets.basket_id = basket_items.basket_id INNER join products ON basket_items.product_id = products.id" +
+        " where product_sub_type_id IN ?3 AND baskets.basket_total_price >= ?1 AND baskets.basket_total_price <=?2", nativeQuery = true)
+    public List<Basket> findBasketsWithFilter(Integer priceMin,Integer priceMax, List<Integer> subTypeList);
+
+    @Query(value = "select * from baskets INNER join basket_items on baskets.basket_id = basket_items.basket_id INNER join products ON basket_items.product_id = products.id" +
+        " where  baskets.basket_total_price >= ?1 AND baskets.basket_total_price <=?2", nativeQuery = true)
+    public List<Basket> findBasketsWithFilterWithoutTypes(Integer priceMin,Integer priceMax);
 }
