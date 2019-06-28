@@ -76,6 +76,15 @@ public class ProductsController {
 
     }
 
+
+    @CrossOrigin
+    @PostMapping("/products/subtypes")
+    ResponseEntity<ProductSubType> createProductsSubTypes(@RequestBody ProductSubType productSubType )throws URISyntaxException {
+        productSubTypeDao.save(productSubType);
+        return new ResponseEntity<ProductSubType>(productSubType,HttpStatus.CREATED);
+
+    }
+
     @CrossOrigin
     @PostMapping("/products/types")
     ResponseEntity<ProductType> createProductsTypes(@RequestBody ProductType productType )throws URISyntaxException {
@@ -99,6 +108,26 @@ public class ProductsController {
             return new ResponseEntity("Nie znaleziono typu produktu o id " + id, HttpStatus.NOT_FOUND);
         }else{
             productsTypeDao.delete(productType);
+            return new ResponseEntity(id, HttpStatus.OK);
+        }
+    }
+
+
+
+    @CrossOrigin
+    @DeleteMapping(value = "/products/subtypes/{id}")
+    ResponseEntity deleteProductsSubTypes(@PathVariable Integer id){
+
+
+
+        ProductSubType productSubType = productSubTypeDao.findBySubTypeId(id);
+
+
+
+        if (Objects.isNull(productSubType)) {
+            return new ResponseEntity("Nie znaleziono typu produktu o id " + id, HttpStatus.NOT_FOUND);
+        }else{
+            productSubTypeDao.delete(productSubType);
             return new ResponseEntity(id, HttpStatus.OK);
         }
     }

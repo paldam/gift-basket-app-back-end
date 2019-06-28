@@ -33,7 +33,7 @@ public class ProductSubType {
     }
 
 
-    @ManyToOne (cascade = CascadeType.ALL,fetch = FetchType.EAGER)                                    ///////////////////////////////////////////////////////////
+    @ManyToOne (fetch = FetchType.EAGER)                                    ///////////////////////////////////////////////////////////
     @JoinColumn(name="product_type_id")
     public ProductType getProductType() {
         return productType;

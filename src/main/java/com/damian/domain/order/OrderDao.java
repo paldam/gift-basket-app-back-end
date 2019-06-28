@@ -56,7 +56,7 @@ public interface OrderDao extends JpaRepository<Order,Long>, JpaSpecificationExe
     @Query(value = "SELECT * FROM orders WHERE order_id IN ?1", nativeQuery = true)
     public List<Order> findByOrderIds(List<Integer> ordersIds);
 
-    @Query(value = "SELECT * FROM orders WHERE production_user = ?1 and  order_status_id !=99 ", nativeQuery = true)
+    @Query(value = "SELECT * FROM orders WHERE production_user = ?1 and  order_status_id !=99 ORDER BY order_date DESC", nativeQuery = true)
     public List<Order> getAllOrdersByProductionUserId(Long id);
 
     @Query(value = "SELECT * FROM orders Join order_items ON orders.order_id = order_items.order_id JOIN baskets " +
