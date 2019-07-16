@@ -19,7 +19,7 @@ public class Product {
     private String deliver;
     private Integer isArchival;
     private Supplier supplier;
-    private ProductType productType;
+    //private ProductType productType;
     private ProductSubType productSubType;
     private Date lastStockEditDate;
     private Date lastNumberOfOrderedEditDate;
@@ -126,11 +126,15 @@ public class Product {
         this.supplier = supplier;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "product_type_id")
-    public ProductType getProductType() {
-        return productType;
-    }
+//    @ManyToOne
+//    @JoinColumn(name = "product_type_id")
+//    public ProductType getProductType() {
+//        return productType;
+//    }
+//
+//    public void setProductType(ProductType productType) {
+//        this.productType = productType;
+//    }
 
     public void setProductSubType(ProductSubType productSubType) {
         this.productSubType = productSubType;
@@ -142,9 +146,7 @@ public class Product {
         return productSubType;
     }
 
-    public void setProductType(ProductType productType) {
-        this.productType = productType;
-    }
+
 
     @Basic
     @Column(name = "last_stock_edit_date")
@@ -167,8 +169,8 @@ public class Product {
         this.lastNumberOfOrderedEditDate = lastNumberOfOrderedEditDate;
     }
 
-    @Override
-    public String toString() {
-        return "Product{" + "id=" + id + ", capacity='" + capacity + '\'' + ", price=" + price + ", productName='" + productName + '\'' + ", stock=" + stock + ", tmpStock=" + tmpStock + ", tmpOrdered=" + tmpOrdered + ", deliver='" + deliver + '\'' + ", isArchival=" + isArchival + ", supplier=" + supplier + ", productType=" + productType + ", lastStockEditDate=" + lastStockEditDate + ", lastNumberOfOrderedEditDate=" + lastNumberOfOrderedEditDate + '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Product{" + "id=" + id + ", capacity='" + capacity + '\'' + ", price=" + price + ", productName='" + productName + '\'' + ", stock=" + stock + ", tmpStock=" + tmpStock + ", tmpOrdered=" + tmpOrdered + ", deliver='" + deliver + '\'' + ", isArchival=" + isArchival + ", supplier=" + supplier + ", productType=" + productType + ", lastStockEditDate=" + lastStockEditDate + ", lastNumberOfOrderedEditDate=" + lastNumberOfOrderedEditDate + '}';
+//    }
 }
