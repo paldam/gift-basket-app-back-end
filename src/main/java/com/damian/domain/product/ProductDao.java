@@ -30,9 +30,9 @@ public interface ProductDao extends CrudRepository<Product,Long> {
     public void deleteById(Integer id);
 
 
-    @Query(value = "SELECT * from products WHERE supplier_id = ?1 AND is_archival = 0;", nativeQuery = true)
-    public List<Product> findBySupplier_SupplierId(Integer id);
 
+    @Query(value = "SELECT * from products Join product_suppliers  on products.id = product_suppliers.id WHERE product_suppliers.supplier_id= ?1 AND products.is_archival = 0;", nativeQuery = true)
+    public List<Product> findBySupplier_SupplierId(Integer id);
 
     @Query(value = "SELECT * FROM products WHERE is_archival != 1 or is_archival = null", nativeQuery = true)
     public List<Product> findAllWithoutDeleted();

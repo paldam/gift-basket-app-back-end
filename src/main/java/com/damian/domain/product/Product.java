@@ -22,6 +22,7 @@ public class Product {
     private String deliver;
     private Integer isArchival;
     private Set<Supplier> suppliers;
+    private Supplier supplier;
     //private ProductType productType;
     private ProductSubType productSubType;
     private Date lastStockEditDate;
@@ -108,17 +109,17 @@ public class Product {
         this.tmpOrdered = tmpOrdered;
     }
 
-    @Basic
-    @Column(name = "deliver")
-    public String getDeliver() {
-        return deliver;
-    }
+//    @Basic
+//    @Column(name = "deliver")
+//    public String getDeliver() {
+//        return deliver;
+//    }
+//
+//    public void setDeliver(String deliver) {
+//        this.deliver = deliver;
+//    }
 
-    public void setDeliver(String deliver) {
-        this.deliver = deliver;
-    }
-
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "product_suppliers",
         joinColumns = {@JoinColumn(name = "id")},  //
         inverseJoinColumns = {@JoinColumn(name = "supplier_id")})
@@ -130,6 +131,8 @@ public class Product {
     public void setSuppliers(Set<Supplier> suppliers) {
         this.suppliers = suppliers;
     }
+
+
 
 
     @ManyToOne
