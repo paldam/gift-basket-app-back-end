@@ -1,5 +1,14 @@
 package com.damian.domain.product;
 
+import com.damian.domain.basket.BasketItems;
+import com.damian.domain.order.OrderItem;
+
+import java.util.List;
+import java.util.Set;
+
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
+
 /**
  * Created by Damian on 03.11.2017.
  */
@@ -7,17 +16,31 @@ package com.damian.domain.product;
 public class ProductToOrder {
     private Integer id ;
     private String product_name;
-    private Supplier supplier;
+    private Set<Supplier> suppliers;
     private Integer stock;
     private Integer tmpOrdered;
     private Long suma ;
     private String capacity;
 
+    public ProductToOrder() {
+    }
 
-    public ProductToOrder(Integer id, String product_name,Supplier supplier,Integer stock,Integer tmpOrdered, Long suma,String capacity) {
+
+    public ProductToOrder(Product p, Long suma) {
+
+        this.id = p.getId();
+        this.product_name = p.getProductName();
+        this.suppliers = p.getSuppliers();
+        this.stock = p.getStock();
+        this.tmpOrdered = p.getTmpOrdered();
+        this.suma = suma;
+        this.capacity = p.getCapacity();
+    }
+
+    public ProductToOrder(Integer id, String product_name, Set<Supplier> suppliers, Integer stock, Integer tmpOrdered, Long suma, String capacity) {
         this.id = id;
         this.product_name = product_name;
-        this.supplier = supplier;
+        this.suppliers = suppliers;
         this.stock = stock;
         this.tmpOrdered = tmpOrdered;
         this.suma = suma;
@@ -65,12 +88,12 @@ public class ProductToOrder {
         this.product_name = product_name;
     }
 
-    public Supplier getSupplier() {
-        return supplier;
+    public Set<Supplier> getSuppliers() {
+        return suppliers;
     }
 
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
+    public void setSupplier(Set<Supplier> sup) {
+        this.suppliers = sup;
     }
 
     public String getCapacity() {

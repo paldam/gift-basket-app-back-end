@@ -2,6 +2,8 @@ package com.damian.domain.product;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Damian on 05.09.2017.
@@ -9,6 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "products")
 public class Product {
+
     private Integer id;
     private String capacity;
     private Integer price;
@@ -18,12 +21,11 @@ public class Product {
     private Integer tmpOrdered;
     private String deliver;
     private Integer isArchival;
-    private Supplier supplier;
+    private Set<Supplier> suppliers;
     //private ProductType productType;
     private ProductSubType productSubType;
     private Date lastStockEditDate;
     private Date lastNumberOfOrderedEditDate;
-
 
     @Basic
     @Column(name = "is_archival")
@@ -67,7 +69,7 @@ public class Product {
     }
 
     @Basic
-    @Column(name = "product_name", nullable = false, length = 300 )
+    @Column(name = "product_name", nullable = false, length = 300)
     public String getProductName() {
         return productName;
     }
@@ -116,29 +118,19 @@ public class Product {
         this.deliver = deliver;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "supplier_id")
-    public Supplier getSupplier() {
-        return supplier;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "product_suppliers",
+        joinColumns = {@JoinColumn(name = "id")},  //
+        inverseJoinColumns = {@JoinColumn(name = "supplier_id")})
+
+    public Set<Supplier> getSuppliers() {
+        return suppliers;
     }
 
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
+    public void setSuppliers(Set<Supplier> suppliers) {
+        this.suppliers = suppliers;
     }
 
-//    @ManyToOne
-//    @JoinColumn(name = "product_type_id")
-//    public ProductType getProductType() {
-//        return productType;
-//    }
-//
-//    public void setProductType(ProductType productType) {
-//        this.productType = productType;
-//    }
-
-    public void setProductSubType(ProductSubType productSubType) {
-        this.productSubType = productSubType;
-    }
 
     @ManyToOne
     @JoinColumn(name = "product_sub_type_id")
@@ -146,7 +138,9 @@ public class Product {
         return productSubType;
     }
 
-
+    public void setProductSubType(ProductSubType productSubType) {
+        this.productSubType = productSubType;
+    }
 
     @Basic
     @Column(name = "last_stock_edit_date")
@@ -158,7 +152,6 @@ public class Product {
         this.lastStockEditDate = lastStockEditDate;
     }
 
-
     @Basic
     @Column(name = "last_number_of_ordered_edit_date")
     public Date getLastNumberOfOrderedEditDate() {
@@ -169,8 +162,8 @@ public class Product {
         this.lastNumberOfOrderedEditDate = lastNumberOfOrderedEditDate;
     }
 
-//    @Override
-//    public String toString() {
-//        return "Product{" + "id=" + id + ", capacity='" + capacity + '\'' + ", price=" + price + ", productName='" + productName + '\'' + ", stock=" + stock + ", tmpStock=" + tmpStock + ", tmpOrdered=" + tmpOrdered + ", deliver='" + deliver + '\'' + ", isArchival=" + isArchival + ", supplier=" + supplier + ", productType=" + productType + ", lastStockEditDate=" + lastStockEditDate + ", lastNumberOfOrderedEditDate=" + lastNumberOfOrderedEditDate + '}';
-//    }
+    @Override
+    public String toString() {
+        return "Product{" + "id=" + id + ", capacity='" + capacity + '\'' + ", price=" + price + ", productName='" + productName + '\'' + ", stock=" + stock + ", tmpStock=" + tmpStock + ", tmpOrdered=" + tmpOrdered + ", deliver='" + deliver + '\'' + ", isArchival=" + isArchival + ", suppliers=" + suppliers + ", productSubType=" + productSubType + ", lastStockEditDate=" + lastStockEditDate + ", lastNumberOfOrderedEditDate=" + lastNumberOfOrderedEditDate + '}';
+    }
 }

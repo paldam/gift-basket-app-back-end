@@ -219,6 +219,10 @@ public class OrderController {
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }
 
+
+
+
+
     @CrossOrigin
     @GetMapping("/orders/products_to_order_without_deleted_by_delivery_date/daterange")
     ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByDeliveryDate(@RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
@@ -228,6 +232,10 @@ public class OrderController {
         List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByDeliveryDate(startDate, endDate);
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }
+
+
+
+
 
     @CrossOrigin
     @GetMapping("/orders/products_to_order_without_deleted_by_order_date/daterange")
