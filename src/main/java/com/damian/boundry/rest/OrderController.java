@@ -382,9 +382,64 @@ public class OrderController {
 
     @CrossOrigin
     @GetMapping(value = "/order/orderitem/progress/warehouse/{orderItemId}/{newStateValueOnWarehouse}", produces = "text/plain;charset=UTF-8")
-    ResponseEntity changeSpecyfiedOrderItemProgressOnWarehouse(@PathVariable Integer orderItemId, @PathVariable Long newStateValueOnWarehouse) {
+    ResponseEntity changeSpecyfiedOrderItemProgressOnWarehouseByNewValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueOnWarehouse) {
         try {
             orderService.changeOrderItemProgressWarehouse(orderItemId,newStateValueOnWarehouse);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } catch (OrderStatusException oEx) {
+            return ResponseEntity.badRequest().body(oEx.getMessage());
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/order/orderitem/progress/production/{orderItemId}/{newStateValueOnProduction}", produces = "text/plain;charset=UTF-8")
+    ResponseEntity changeSpecyfiedOrderItemProgressOnProductionByNewValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueOnProduction) {
+        try {
+            orderService.changeOrderItemProgressProduction(orderItemId,newStateValueOnProduction);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } catch (OrderStatusException oEx) {
+            return ResponseEntity.badRequest().body(oEx.getMessage());
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/order/orderitem/progress/logistics/{orderItemId}/{newStateValueOnLogistics}", produces = "text/plain;charset=UTF-8")
+    ResponseEntity changeSpecyfiedOrderItemProgressOnLogisticsByNewValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueOnLogistics) {
+        try {
+            orderService.changeOrderItemProgressLogistics(orderItemId, newStateValueOnLogistics);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } catch (OrderStatusException oEx) {
+            return ResponseEntity.badRequest().body(oEx.getMessage());
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/order/orderitem/progress/warehouse/addvalue/{orderItemId}/{newStateValueToAddOnWarehouse}", produces = "text/plain;charset=UTF-8")
+    ResponseEntity changeSpecifiedOrderItemProgressOnWarehouseByAddValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueToAddOnWarehouse) {
+        try {
+            orderService.changeOrderItemProgressByAddValueWarehouse(orderItemId,newStateValueToAddOnWarehouse);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } catch (OrderStatusException oEx) {
+            return ResponseEntity.badRequest().body(oEx.getMessage());
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/order/orderitem/progress/production/addvalue/{orderItemId}/{newStateValueToAddOnProduction}", produces = "text/plain;charset=UTF-8")
+    ResponseEntity changeSpecifiedOrderItemProgressOnProductionByAddValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueToAddOnProduction) {
+        try {
+            orderService.changeOrderItemProgressByAddValueProduction(orderItemId,newStateValueToAddOnProduction);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } catch (OrderStatusException oEx) {
+            return ResponseEntity.badRequest().body(oEx.getMessage());
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/order/orderitem/progress/logistics/addvalue/{orderItemId}/{newStateValueToAddOnLogistics}", produces = "text/plain;charset=UTF-8")
+    ResponseEntity changeSpecifiedOrderItemProgressOnLogisticsByAddValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueToAddOnLogistics) {
+        try {
+            orderService.changeOrderItemProgressByAddValueLogistics(orderItemId,newStateValueToAddOnLogistics);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
