@@ -49,6 +49,11 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
 
     @Transactional
     @Modifying
+    @Query(value = "update order_items set warehouse_state = ?2  WHERE order_item_id  = ?1", nativeQuery = true)
+    void changeSpecyfiedOrderItemProgressOnWarehouse( Integer orderItemId, Long newStateValueOnWarehouse);
+
+    @Transactional
+    @Modifying
     @Query(value = "update orders set production_user =  ?2  WHERE order_id IN  ?1", nativeQuery = true)
     public void assignOrdersToSpecifiedProduction(List<Integer> ordersIds, Long productionId);
 

@@ -378,6 +378,19 @@ public class OrderController {
         }
     }
 
+
+
+    @CrossOrigin
+    @GetMapping(value = "/order/orderitem/progress/warehouse/{orderItemId}/{newStateValueOnWarehouse}", produces = "text/plain;charset=UTF-8")
+    ResponseEntity changeSpecyfiedOrderItemProgressOnWarehouse(@PathVariable Integer orderItemId, @PathVariable Long newStateValueOnWarehouse) {
+        try {
+            orderService.changeOrderItemProgressWarehouse(orderItemId,newStateValueOnWarehouse);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } catch (OrderStatusException oEx) {
+            return ResponseEntity.badRequest().body(oEx.getMessage());
+        }
+    }
+
     @CrossOrigin
     @DeleteMapping("/order/{id}")
     ResponseEntity deleteOrderPermanent(@PathVariable Long id) {
