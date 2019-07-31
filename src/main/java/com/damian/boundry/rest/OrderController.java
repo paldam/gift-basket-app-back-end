@@ -1,6 +1,8 @@
 package com.damian.boundry.rest;
 
 import com.damian.domain.audit.OrderAuditedRevisionEntity;
+import com.damian.domain.notification.Notification;
+import com.damian.domain.notification.NotificationDao;
 import com.damian.domain.order.*;
 import com.damian.domain.order_file.DbFile;
 import com.damian.domain.order_file.DbFileDao;
@@ -30,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.hibernate.envers.AuditReader;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -47,8 +50,9 @@ import static com.damian.config.Constants.ANSI_YELLOW;
 @Transactional
 @RestController
 public class OrderController {
-
+    public static final List<SseEmitter> emitters = Collections.synchronizedList( new ArrayList<>());
     private static final Logger logger = Logger.getLogger(OrderController.class);
+
     @Autowired
     private EntityManagerFactory factory;
     private OrderDao orderDao;
@@ -58,18 +62,34 @@ public class OrderController {
     private DbFileDao dbFileDao;
     private DbFileService dbFileService;
     private UserRepository userRepository;
+    private NotificationDao notificationDao;
 
-    OrderController(UserRepository userRepository, DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao, DbFileDao dbFileDao) {
+    OrderController(UserRepository userRepository, NotificationDao notificationDao, DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao, DbFileDao dbFileDao) {
         this.orderDao = orderDao;
+        this.notificationDao = notificationDao;
         this.orderService = orderService;
         this.orderStatusDao = orderStatusDao;
         this.productDao = productDao;
         this.dbFileDao = dbFileDao;
         this.dbFileService = dbFileService;
         this.userRepository = userRepository;
+
     }
 
-    @CrossOrigin
+    @RequestMapping(path = "/notification", method = RequestMethod.GET)
+    public SseEmitter stream() throws IOException {
+
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+
+        emitters.add(emitter);
+        emitter.onCompletion(() -> emitters.remove(emitter));
+
+        return emitter;
+    }
+
+
+
+
     @GetMapping(value = "/order/{id}")
     ResponseEntity<Order> getOrder(@PathVariable Long id) {
         Order order = orderDao.findByOrderId(id);
@@ -342,7 +362,7 @@ public class OrderController {
 
     @CrossOrigin
     @PostMapping("/orders")
-    ResponseEntity createOrder(@RequestBody Order order) throws URISyntaxException, OrderStatusException {
+    ResponseEntity createOrUpdateOrder(@RequestBody Order order) throws URISyntaxException, OrderStatusException {
         try {
             orderService.createOrUpdateOrder(order);
             return new ResponseEntity<Order>(order, HttpStatus.CREATED);
@@ -350,6 +370,24 @@ public class OrderController {
             return ResponseEntity.badRequest().body(oEx.getMessage());
         }
     }
+
+
+    @CrossOrigin
+    @PostMapping("/order/copy/{originOrderIdCopy}")
+    ResponseEntity copyOrderFromExistingOne(@RequestBody Order order,@PathVariable Long originOrderIdCopy ) throws URISyntaxException, OrderStatusException {
+        Order originOrder = orderDao.findByOrderId(originOrderIdCopy);
+        notificationDao.save(new Notification("Dodano zamówienie nr: "+ order.getOrderFvNumber() + " połączone z zamówieniem nr: "+ originOrder.getOrderFvNumber(),null));
+
+        try {
+            orderService.createOrderFromCopy(order);
+
+            orderService.pushNotificationForCombinedOrder(originOrder.getOrderFvNumber(),order.getOrderFvNumber());
+            return new ResponseEntity<Order>(order, HttpStatus.CREATED);
+        } catch (OrderStatusException oEx) {
+            return ResponseEntity.badRequest().body(oEx.getMessage());
+        }
+    }
+
 
     @CrossOrigin
     @PostMapping(value = "/order/status/{id}/{statusId}", produces = "text/plain;charset=UTF-8")
@@ -384,7 +422,7 @@ public class OrderController {
     @GetMapping(value = "/order/orderitem/progress/warehouse/{orderItemId}/{newStateValueOnWarehouse}", produces = "text/plain;charset=UTF-8")
     ResponseEntity changeSpecyfiedOrderItemProgressOnWarehouseByNewValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueOnWarehouse) {
         try {
-            orderService.changeOrderItemProgressWarehouse(orderItemId,newStateValueOnWarehouse);
+            orderService.changeOrderItemProgressOnSpecifiedPhase(orderItemId,newStateValueOnWarehouse,OrdersPreparePhase.ON_WAREHOUSE);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
@@ -395,7 +433,7 @@ public class OrderController {
     @GetMapping(value = "/order/orderitem/progress/production/{orderItemId}/{newStateValueOnProduction}", produces = "text/plain;charset=UTF-8")
     ResponseEntity changeSpecyfiedOrderItemProgressOnProductionByNewValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueOnProduction) {
         try {
-            orderService.changeOrderItemProgressProduction(orderItemId,newStateValueOnProduction);
+            orderService.changeOrderItemProgressOnSpecifiedPhase(orderItemId,newStateValueOnProduction,OrdersPreparePhase.ON_PRODUCTION);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
@@ -406,7 +444,7 @@ public class OrderController {
     @GetMapping(value = "/order/orderitem/progress/logistics/{orderItemId}/{newStateValueOnLogistics}", produces = "text/plain;charset=UTF-8")
     ResponseEntity changeSpecyfiedOrderItemProgressOnLogisticsByNewValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueOnLogistics) {
         try {
-            orderService.changeOrderItemProgressLogistics(orderItemId, newStateValueOnLogistics);
+            orderService.changeOrderItemProgressOnSpecifiedPhase(orderItemId, newStateValueOnLogistics,OrdersPreparePhase.ON_LOGISTICS);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
@@ -417,7 +455,7 @@ public class OrderController {
     @GetMapping(value = "/order/orderitem/progress/warehouse/addvalue/{orderItemId}/{newStateValueToAddOnWarehouse}", produces = "text/plain;charset=UTF-8")
     ResponseEntity changeSpecifiedOrderItemProgressOnWarehouseByAddValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueToAddOnWarehouse) {
         try {
-            orderService.changeOrderItemProgressByAddValueWarehouse(orderItemId,newStateValueToAddOnWarehouse);
+            orderService.changeOrderItemProgressOnSpecifiedPhaseByAddValue(orderItemId,newStateValueToAddOnWarehouse,OrdersPreparePhase.ON_WAREHOUSE);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
@@ -428,7 +466,7 @@ public class OrderController {
     @GetMapping(value = "/order/orderitem/progress/production/addvalue/{orderItemId}/{newStateValueToAddOnProduction}", produces = "text/plain;charset=UTF-8")
     ResponseEntity changeSpecifiedOrderItemProgressOnProductionByAddValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueToAddOnProduction) {
         try {
-            orderService.changeOrderItemProgressByAddValueProduction(orderItemId,newStateValueToAddOnProduction);
+            orderService.changeOrderItemProgressOnSpecifiedPhaseByAddValue(orderItemId,newStateValueToAddOnProduction,OrdersPreparePhase.ON_PRODUCTION);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
@@ -439,7 +477,7 @@ public class OrderController {
     @GetMapping(value = "/order/orderitem/progress/logistics/addvalue/{orderItemId}/{newStateValueToAddOnLogistics}", produces = "text/plain;charset=UTF-8")
     ResponseEntity changeSpecifiedOrderItemProgressOnLogisticsByAddValue(@PathVariable Integer orderItemId, @PathVariable Long newStateValueToAddOnLogistics) {
         try {
-            orderService.changeOrderItemProgressByAddValueLogistics(orderItemId,newStateValueToAddOnLogistics);
+            orderService.changeOrderItemProgressOnSpecifiedPhaseByAddValue(orderItemId,newStateValueToAddOnLogistics,OrdersPreparePhase.ON_LOGISTICS);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
@@ -466,6 +504,9 @@ public class OrderController {
         new InputStreamResource(bis);
         return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bis));
     }
+
+
+
 
     @Bean(name = "multipartResolver")
     public CommonsMultipartResolver multipartResolver() {

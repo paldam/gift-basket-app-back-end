@@ -1,5 +1,6 @@
 package com.damian.domain.order;
 
+import com.damian.boundry.rest.OrderController;
 import com.damian.domain.basket.BasketItems;
 import com.damian.domain.customer.*;
 import com.damian.domain.order_file.DbFile;
@@ -18,10 +19,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,11 +64,42 @@ public class OrderService {
         this.userRepository = userRepository;
     }
 
+
+    public void pushNotificationForCombinedOrder(String originOrderFV, String combinedOrderFV) {
+        List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
+        OrderController.emitters.forEach((SseEmitter emitter) -> {
+             System.out.println(ANSI_YELLOW + "fsdfsd" + ANSI_RESET);
+             
+             
+            try {
+                emitter.send("Dodano zamówienie nr: "+ combinedOrderFV + " połączone z zamówieniem nr: "+ originOrderFV   , MediaType.APPLICATION_JSON);
+            } catch (Exception e) {
+                emitter.complete();
+                sseEmitterListToRemove.add(emitter);
+            }
+        });
+        OrderController.emitters.removeAll(sseEmitterListToRemove);
+    }
+
+
+
+
     @Transactional
     public void createOrUpdateOrder(Order order) throws OrderStatusException {
         if (!Objects.isNull(order.getOrderId())) {  // update order
             performChangeOrderStatusOperation(order);
         }
+        if (order.getCustomer().getCustomerId() != null) {
+            performOrderCustomerFromDB(order);
+        } else {
+            performOrderWithNewCustomer(order);
+        }
+    }
+
+
+    @Transactional
+    public void createOrderFromCopy(Order order) throws OrderStatusException {
+
         if (order.getCustomer().getCustomerId() != null) {
             performOrderCustomerFromDB(order);
         } else {
@@ -118,95 +154,54 @@ public class OrderService {
     }
 
     @Transactional
-    public void changeOrderItemProgressWarehouse(Integer orderItemId, Long newStateValueOnWarehouse ) throws OrderStatusException {
+    public void changeOrderItemProgressOnSpecifiedPhase(Integer orderItemId, Long newStateValue, OrdersPreparePhase ordersPreparePhase) throws OrderStatusException {
         OrderItem currentOrderItemState = orderItemDao.findByOrderItemId(orderItemId);
-        if(newStateValueOnWarehouse > currentOrderItemState.getQuantity())
+        if (newStateValue > currentOrderItemState.getQuantity())
             throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
-        if(newStateValueOnWarehouse < 0 )
-            throw new OrderStatusException("Wartość nie może być mniejsza od zera");
-
-        orderDao.changeSpecyfiedOrderItemProgressOnWarehouse(orderItemId,newStateValueOnWarehouse);
+        if (newStateValue < 0) throw new OrderStatusException("Wartość nie może być mniejsza od zera");
+        if (ordersPreparePhase.equals(OrdersPreparePhase.ON_WAREHOUSE)) {
+            orderDao.changeSpecyfiedOrderItemProgressOnWarehouse(orderItemId, newStateValue);
+        } else if (ordersPreparePhase.equals(OrdersPreparePhase.ON_PRODUCTION)) {
+            if (newStateValue > currentOrderItemState.getStateOnWarehouse()) {
+                throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez magazyn ");
+            }
+            orderDao.changeSpecyfiedOrderItemProgressOnProduction(orderItemId, newStateValue);
+        } else if (ordersPreparePhase.equals(OrdersPreparePhase.ON_LOGISTICS))
+            if (newStateValue > currentOrderItemState.getStateOnProduction()) {
+                throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez produkcje ");
+            }
+        orderDao.changeSpecyfiedOrderItemProgressOnLogistics(orderItemId, newStateValue);
     }
 
-
     @Transactional
-    public void changeOrderItemProgressProduction(Integer orderItemId, Long newStateValueOnProduction ) throws OrderStatusException {
+    public void changeOrderItemProgressOnSpecifiedPhaseByAddValue(Integer orderItemId, Long newStateValueToAdd, OrdersPreparePhase ordersPreparePhase) throws OrderStatusException {
+        if (newStateValueToAdd < 0) throw new OrderStatusException("Wartość nie może być mniejsza od zera");
         OrderItem currentOrderItemState = orderItemDao.findByOrderItemId(orderItemId);
-        if(newStateValueOnProduction > currentOrderItemState.getQuantity())
-            throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
-        if(newStateValueOnProduction < 0 )
-            throw new OrderStatusException("Wartość nie może być mniejsza od zera");
-        if (newStateValueOnProduction > currentOrderItemState.getStateOnWarehouse()) {
-            throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez magazyn ");
+        Long newOrderStateTotal;
+        if (ordersPreparePhase == OrdersPreparePhase.ON_WAREHOUSE) {
+            newOrderStateTotal = currentOrderItemState.getStateOnWarehouse() + newStateValueToAdd;
+            if (newOrderStateTotal > currentOrderItemState.getQuantity())
+                throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
+            orderDao.changeSpecifiedOrderItemProgressOnWarehouseByAddValue(orderItemId, newStateValueToAdd);
+        } else if (ordersPreparePhase == OrdersPreparePhase.ON_PRODUCTION) {
+            newOrderStateTotal = currentOrderItemState.getStateOnProduction() + newStateValueToAdd;
+            if (newOrderStateTotal > currentOrderItemState.getQuantity())
+                throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
+            orderDao.changeSpecifiedOrderItemProgressOnProductionByAddValue(orderItemId, newStateValueToAdd);
+        } else if (ordersPreparePhase == OrdersPreparePhase.ON_LOGISTICS) {
+            newOrderStateTotal = currentOrderItemState.getStateOnLogistics() + newStateValueToAdd;
+            if (newOrderStateTotal > currentOrderItemState.getQuantity())
+                throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
+            orderDao.changeSpecifiedOrderItemProgressOnLogisticsByAddValue(orderItemId, newStateValueToAdd);
         }
-
-        orderDao.changeSpecyfiedOrderItemProgressOnProduction(orderItemId,newStateValueOnProduction);
-    }
-
-    @Transactional
-    public void changeOrderItemProgressLogistics(Integer orderItemId, Long newStateValueOnLogistics ) throws OrderStatusException {
-        OrderItem currentOrderItemState = orderItemDao.findByOrderItemId(orderItemId);
-        if(newStateValueOnLogistics > currentOrderItemState.getQuantity())
-            throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
-        if(newStateValueOnLogistics < 0 )
-            throw new OrderStatusException("Wartość nie może być mniejsza od zera");
-        if (newStateValueOnLogistics > currentOrderItemState.getStateOnProduction()) {
-            throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez produkcje ");
-        }
-        orderDao.changeSpecyfiedOrderItemProgressOnLogistics(orderItemId,newStateValueOnLogistics);
     }
 
 
-    @Transactional
-    public void changeOrderItemProgressByAddValueWarehouse(Integer orderItemId, Long newStateValueToAddOnWarehouse ) throws OrderStatusException {
-
-        if(newStateValueToAddOnWarehouse < 0)
-            throw new OrderStatusException("Wartość nie może być mniejsza od zera");
-
-        OrderItem currentOrderItemState = orderItemDao.findByOrderItemId(orderItemId);
-        Long newOrderStateTotal = currentOrderItemState.getStateOnWarehouse() + newStateValueToAddOnWarehouse;
-
-        if(newOrderStateTotal > currentOrderItemState.getQuantity())
-            throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
-
-        orderDao.changeSpecifiedOrderItemProgressOnWarehouseByAddValue(orderItemId,newStateValueToAddOnWarehouse);
-    }
-
-    @Transactional
-    public void changeOrderItemProgressByAddValueProduction(Integer orderItemId, Long newStateValueToAddOnProduction ) throws OrderStatusException {
-
-        if(newStateValueToAddOnProduction < 0)
-            throw new OrderStatusException("Wartość nie może być mniejsza od zera");
-
-        OrderItem currentOrderItemState = orderItemDao.findByOrderItemId(orderItemId);
-        Long newOrderStateTotal = currentOrderItemState.getStateOnProduction() + newStateValueToAddOnProduction;
-
-        if(newOrderStateTotal > currentOrderItemState.getQuantity())
-            throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
-
-        orderDao.changeSpecifiedOrderItemProgressOnProductionByAddValue(orderItemId,newStateValueToAddOnProduction);
-    }
-
-    @Transactional
-    public void changeOrderItemProgressByAddValueLogistics(Integer orderItemId, Long newStateValueToAddOnLogistics ) throws OrderStatusException {
-
-        if(newStateValueToAddOnLogistics < 0)
-            throw new OrderStatusException("Wartość nie może być mniejsza od zera");
-
-        OrderItem currentOrderItemState = orderItemDao.findByOrderItemId(orderItemId);
-        Long newOrderStateTotal = currentOrderItemState.getStateOnLogistics() + newStateValueToAddOnLogistics;
-
-        if(newOrderStateTotal > currentOrderItemState.getQuantity())
-            throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
-
-        orderDao.changeSpecifiedOrderItemProgressOnLogisticsByAddValue(orderItemId,newStateValueToAddOnLogistics);
-    }
 
 
     @Transactional
     public void changeOrderProgress(Long id, List<OrderItem> orderItemsList) throws OrderStatusException {
         Order updatingOrder = orderDao.findByOrderId(id);
-        List<OrderItem> tmpCurrentOrderItems = updatingOrder.getOrderItems();
         changeStockWhenWarehouseUpdateOrderProgress(id, orderItemsList);
 
         if (updatingOrder.getOrderStatus().getOrderStatusId() == 1) {
