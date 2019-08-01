@@ -51,6 +51,7 @@ import static com.damian.config.Constants.ANSI_YELLOW;
 @RestController
 public class OrderController {
     public static final List<SseEmitter> emitters = Collections.synchronizedList( new ArrayList<>());
+    public static final List<SseEmitter> newOrderEmitters = Collections.synchronizedList( new ArrayList<>());
     private static final Logger logger = Logger.getLogger(OrderController.class);
 
     @Autowired
@@ -76,16 +77,7 @@ public class OrderController {
 
     }
 
-    @RequestMapping(path = "/notification", method = RequestMethod.GET)
-    public SseEmitter stream() throws IOException {
 
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-
-        emitters.add(emitter);
-        emitter.onCompletion(() -> emitters.remove(emitter));
-
-        return emitter;
-    }
 
 
 
@@ -360,11 +352,37 @@ public class OrderController {
         }
     }
 
+
+
+
+    @RequestMapping(path = "/notification", method = RequestMethod.GET)
+    public SseEmitter stream() throws IOException {
+
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+
+        emitters.add(emitter);
+        emitter.onCompletion(() -> emitters.remove(emitter));
+
+        return emitter;
+    }
+
+    @RequestMapping(path = "/new_order_notification", method = RequestMethod.GET)
+    public SseEmitter streamNewOrderEmit() throws IOException {
+
+        SseEmitter newOrderEmitter = new SseEmitter(Long.MAX_VALUE);
+
+        newOrderEmitters.add(newOrderEmitter);
+        newOrderEmitter.onCompletion(() -> newOrderEmitters.remove(newOrderEmitter));
+
+        return newOrderEmitter;
+    }
+
     @CrossOrigin
     @PostMapping("/orders")
     ResponseEntity createOrUpdateOrder(@RequestBody Order order) throws URISyntaxException, OrderStatusException {
         try {
             orderService.createOrUpdateOrder(order);
+            orderService.pushNotificationForNewOrder();
             return new ResponseEntity<Order>(order, HttpStatus.CREATED);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
@@ -380,8 +398,13 @@ public class OrderController {
 
         try {
             orderService.createOrderFromCopy(order);
+            
+             System.out.println(ANSI_YELLOW + "WWWWWWWWWWWWWWWW" + ANSI_RESET);
+             
+             
 
             orderService.pushNotificationForCombinedOrder(originOrder.getOrderFvNumber(),order.getOrderFvNumber());
+            orderService.pushNotificationForNewOrder();
             return new ResponseEntity<Order>(order, HttpStatus.CREATED);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());

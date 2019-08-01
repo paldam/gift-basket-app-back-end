@@ -65,14 +65,12 @@ public class OrderService {
     }
 
 
+    //TODO refactor  DRY
     public void pushNotificationForCombinedOrder(String originOrderFV, String combinedOrderFV) {
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
         OrderController.emitters.forEach((SseEmitter emitter) -> {
-             System.out.println(ANSI_YELLOW + "fsdfsd" + ANSI_RESET);
-             
-             
             try {
-                emitter.send("Dodano zamówienie nr: "+ combinedOrderFV + " połączone z zamówieniem nr: "+ originOrderFV   , MediaType.APPLICATION_JSON);
+                emitter.send("Dodano zamówienie nr: " + combinedOrderFV + " połączone z zamówieniem nr: " + originOrderFV, MediaType.APPLICATION_JSON);
             } catch (Exception e) {
                 emitter.complete();
                 sseEmitterListToRemove.add(emitter);
@@ -81,6 +79,20 @@ public class OrderService {
         OrderController.emitters.removeAll(sseEmitterListToRemove);
     }
 
+
+    //TODO refactor  DRY
+    public void pushNotificationForNewOrder() {
+        List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
+        OrderController.newOrderEmitters.forEach((SseEmitter newOrderEmitter) -> {
+            try {
+                newOrderEmitter.send("Dodano lub edytowano zamówienie ", MediaType.APPLICATION_JSON);
+            } catch (Exception e) {
+                newOrderEmitter.complete();
+                sseEmitterListToRemove.add(newOrderEmitter);
+            }
+        });
+        OrderController.newOrderEmitters.removeAll(sseEmitterListToRemove);
+    }
 
 
 

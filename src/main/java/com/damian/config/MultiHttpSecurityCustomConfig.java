@@ -95,7 +95,8 @@ public class MultiHttpSecurityCustomConfig {
                     .and()
                     .authorizeRequests()
                     .antMatchers("/auth").permitAll()
-                .antMatchers("/notification").permitAll()
+                    .antMatchers("/notification").permitAll()
+                    .antMatchers("/new_order_notification").permitAll()
                     .anyRequest().authenticated()
                     .and().apply(securityConfigurerAdapter())
             ;
