@@ -181,20 +181,36 @@ public class OrderService {
         if (newStateValue > currentOrderItemState.getQuantity())
             throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
         if (newStateValue < 0) throw new OrderStatusException("Wartość nie może być mniejsza od zera");
-        if (ordersPreparePhase.equals(OrdersPreparePhase.ON_WAREHOUSE)) {
-            orderDao.changeSpecyfiedOrderItemProgressOnWarehouse(orderItemId, newStateValue);
-        } else if (ordersPreparePhase.equals(OrdersPreparePhase.ON_PRODUCTION)) {
-            if (newStateValue > currentOrderItemState.getStateOnWarehouse()) {
-                throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez magazyn ");
-            }
-            orderDao.changeSpecyfiedOrderItemProgressOnProduction(orderItemId, newStateValue);
-        } else if (ordersPreparePhase.equals(OrdersPreparePhase.ON_LOGISTICS))
-            if (newStateValue > currentOrderItemState.getStateOnProduction()) {
-                throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez produkcje ");
-            }
+
+        switch (ordersPreparePhase) {
+            case ON_WAREHOUSE:
+                orderDao.changeSpecyfiedOrderItemProgressOnWarehouse(orderItemId, newStateValue);
+                break;
+            case ON_PRODUCTION:
+                changeOrderItemProgressOnProduction(orderItemId, currentOrderItemState, newStateValue);
+                break;
+            case ON_LOGISTICS:
+                changeOrderItemProgressOnLogistics(orderItemId, currentOrderItemState, newStateValue);
+                break;
+        }
+    }
+
+    private void changeOrderItemProgressOnProduction(Integer orderItemId, OrderItem currentOrderItemState, Long newStateValue) throws OrderStatusException {
+        if (newStateValue > currentOrderItemState.getStateOnWarehouse()) {
+            throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez magazyn ");
+        }
+        orderDao.changeSpecyfiedOrderItemProgressOnProduction(orderItemId, newStateValue);
+    }
+
+    private void changeOrderItemProgressOnLogistics(Integer orderItemId, OrderItem currentOrderItemState, Long newStateValue) throws OrderStatusException {
+        if (newStateValue > currentOrderItemState.getStateOnProduction()) {
+            throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez produkcje ");
+        }
         orderDao.changeSpecyfiedOrderItemProgressOnLogistics(orderItemId, newStateValue);
     }
 
+
+    //TODO refact
     @Transactional
     public void changeOrderItemProgressOnSpecifiedPhaseByAddValue(Integer orderItemId, Long newStateValueToAdd, OrdersPreparePhase ordersPreparePhase) throws OrderStatusException {
         if (newStateValueToAdd < 0) throw new OrderStatusException("Wartość nie może być mniejsza od zera");
@@ -209,11 +225,18 @@ public class OrderService {
             newOrderStateTotal = currentOrderItemState.getStateOnProduction() + newStateValueToAdd;
             if (newOrderStateTotal > currentOrderItemState.getQuantity())
                 throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
+            if (newOrderStateTotal > currentOrderItemState.getStateOnWarehouse())
+                throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez magazyn ");
+
             orderDao.changeSpecifiedOrderItemProgressOnProductionByAddValue(orderItemId, newStateValueToAdd);
         } else if (ordersPreparePhase == OrdersPreparePhase.ON_LOGISTICS) {
             newOrderStateTotal = currentOrderItemState.getStateOnLogistics() + newStateValueToAdd;
             if (newOrderStateTotal > currentOrderItemState.getQuantity())
                 throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
+
+            if (newOrderStateTotal > currentOrderItemState.getStateOnProduction())
+                throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez produkcje ");
+
             orderDao.changeSpecifiedOrderItemProgressOnLogisticsByAddValue(orderItemId, newStateValueToAdd);
         }
     }
