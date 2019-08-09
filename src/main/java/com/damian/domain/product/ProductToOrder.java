@@ -21,6 +21,7 @@ public class ProductToOrder {
     private Integer tmpOrdered;
     private Long suma ;
     private String capacity;
+    private ProductSubType productSubType;
 
     public ProductToOrder() {
     }
@@ -35,6 +36,7 @@ public class ProductToOrder {
         this.tmpOrdered = p.getTmpOrdered();
         this.suma = suma;
         this.capacity = p.getCapacity();
+        this.productSubType = p.getProductSubType();
     }
 
     public ProductToOrder(Integer id, String product_name, Set<Supplier> suppliers, Integer stock, Integer tmpOrdered, Long suma, String capacity) {
@@ -102,6 +104,18 @@ public class ProductToOrder {
 
     public void setCapacity(String capacity) {
         this.capacity = capacity;
+    }
+
+    public void setSuppliers(Set<Supplier> suppliers) {
+        this.suppliers = suppliers;
+    }
+
+    public ProductSubType getProductSubType() {
+        return productSubType;
+    }
+
+    public void setProductSubType(ProductSubType productSubType) {
+        this.productSubType = productSubType;
     }
 }
 
