@@ -382,7 +382,6 @@ public class OrderController {
     ResponseEntity createOrUpdateOrder(@RequestBody Order order) throws URISyntaxException, OrderStatusException {
         try {
             orderService.createOrUpdateOrder(order);
-            orderService.pushNotificationForNewOrder();
             return new ResponseEntity<Order>(order, HttpStatus.CREATED);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
@@ -398,13 +397,7 @@ public class OrderController {
 
         try {
             orderService.createOrderFromCopy(order);
-            
-             System.out.println(ANSI_YELLOW + "WWWWWWWWWWWWWWWW" + ANSI_RESET);
-             
-             
 
-            orderService.pushNotificationForCombinedOrder(originOrder.getOrderFvNumber(),order.getOrderFvNumber());
-            orderService.pushNotificationForNewOrder();
             return new ResponseEntity<Order>(order, HttpStatus.CREATED);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());

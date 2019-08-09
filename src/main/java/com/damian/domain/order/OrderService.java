@@ -69,6 +69,8 @@ public class OrderService {
     public void pushNotificationForCombinedOrder(String originOrderFV, String combinedOrderFV) {
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
         OrderController.emitters.forEach((SseEmitter emitter) -> {
+            System.out.println(ANSI_YELLOW + "copy" + ANSI_RESET);
+
             try {
                 emitter.send("Dodano zamówienie nr: " + combinedOrderFV + " połączone z zamówieniem nr: " + originOrderFV, MediaType.APPLICATION_JSON);
             } catch (Exception e) {
@@ -84,6 +86,7 @@ public class OrderService {
     public void pushNotificationForNewOrder() {
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
         OrderController.newOrderEmitters.forEach((SseEmitter newOrderEmitter) -> {
+            System.out.println(ANSI_YELLOW + "new" + ANSI_RESET);
             try {
                 newOrderEmitter.send("Dodano lub edytowano zamówienie ", MediaType.APPLICATION_JSON);
             } catch (Exception e) {
@@ -93,6 +96,8 @@ public class OrderService {
         });
         OrderController.newOrderEmitters.removeAll(sseEmitterListToRemove);
     }
+
+
 
 
 
@@ -106,6 +111,8 @@ public class OrderService {
         } else {
             performOrderWithNewCustomer(order);
         }
+
+        pushNotificationForNewOrder();
     }
 
 
@@ -117,6 +124,9 @@ public class OrderService {
         } else {
             performOrderWithNewCustomer(order);
         }
+
+        pushNotificationForCombinedOrder("www",order.getOrderFvNumber());
+        pushNotificationForNewOrder();
     }
 
     private void performChangeOrderStatusOperation(Order order) throws OrderStatusException {

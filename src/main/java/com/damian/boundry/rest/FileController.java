@@ -1,16 +1,15 @@
 package com.damian.boundry.rest;
 
+import com.damian.domain.order_file.*;
 import com.damian.dto.FileDto;
 import com.damian.dto.OrderItemsDto;
 import com.damian.dto.ProductToCollectOrder;
-import com.damian.domain.order_file.DbFile;
 import com.damian.domain.order.Order;
 import com.damian.domain.order.OrderItem;
-import com.damian.domain.order_file.DbFileDao;
 import com.damian.domain.order.OrderDao;
-import com.damian.domain.order_file.DbFileService;
 import com.damian.domain.order.OrderService;
 import com.damian.util.*;
+import com.sun.org.apache.xpath.internal.operations.String;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -23,10 +22,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
 
 /**
  * Created by Damian on 14.08.2018.
@@ -38,11 +37,13 @@ public class FileController {
     private DbFileService dbFileService;
     private OrderDao orderDao;
     private OrderService orderService;
-    public FileController(DbFileDao dbFileDao, DbFileService dbFileService, OrderDao orderDao, OrderService orderService) {
+    private FileService fileService;
+    public FileController(DbFileDao dbFileDao, FileService fileService ,DbFileService dbFileService, OrderDao orderDao, OrderService orderService) {
         this.dbFileDao= dbFileDao;
         this.dbFileService = dbFileService;
         this.orderDao= orderDao;
         this.orderService = orderService;
+        this.fileService =fileService;
     }
 
     @CrossOrigin
@@ -106,29 +107,35 @@ public class FileController {
         }
     }
 
-
     @CrossOrigin
     @RequestMapping(value = "/order/pdf/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<InputStreamResource> getPdf(@PathVariable Long id) throws IOException {
-
-
         Order orderToGenerate = orderDao.findByOrderId(id);
         List<Order> orderList = new ArrayList<>();
         orderList.add(orderToGenerate);
-        PdfGenerator pdfGenerator = new PdfGenerator();
-        ByteArrayInputStream bis = pdfGenerator.generatePdf(orderList);
-
+        ByteArrayInputStream pdfToSendBack = fileService.preparePdfFile(orderList);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=order.pdf");
-        new InputStreamResource(bis)  ;
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(bis));
+        return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(pdfToSendBack));
     }
 
 
+
+    @CrossOrigin
+    @RequestMapping(value = "/order/pdf/alltoday", method = RequestMethod.GET)
+    public ResponseEntity getPdf() throws IOException{
+        Optional<List<Order>> allTodaysOrder = orderDao.findAllTodaysOrders();
+        if (allTodaysOrder.isPresent()) {
+            ByteArrayInputStream pdfToSendBack = fileService.preparePdfFile(allTodaysOrder.get());
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "inline; filename=order.pdf");
+            return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(pdfToSendBack));
+
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).contentType(MediaType.APPLICATION_JSON_UTF8).body("brak zamówień z tego dnia");
+
+        }
+    }
 
 
 

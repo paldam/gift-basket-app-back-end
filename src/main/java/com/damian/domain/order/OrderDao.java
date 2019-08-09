@@ -33,6 +33,9 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
 
     public List<Order> findByCustomer_CustomerId(Integer id);
 
+    @Query(value = "SELECT * FROM orders WHERE DATE (order_date) = CURDATE() AND order_status_id != 99 ", nativeQuery = true)
+    public Optional<List<Order>> findAllTodaysOrders();
+
     @Query(value = "SELECT * FROM orders WHERE customer_id = ?1", nativeQuery = true)
     public List<Order> findByCustomerId(Integer id);
 
