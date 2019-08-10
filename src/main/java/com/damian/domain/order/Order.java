@@ -30,6 +30,7 @@ public class Order implements Serializable {
     private List<OrderItem> orderItems;
     private Date orderDate;
     private String additionalInformation;
+    private String textToCard;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
     private Date deliveryDate;
     private Integer weekOfYear;
@@ -67,6 +68,9 @@ public class Order implements Serializable {
     public void setOrderFvNumber(String orderFvNumber) {
         this.orderFvNumber = orderFvNumber;
     }
+
+
+
 
     @Basic
     @Column(name = "added_by_user", length = 300)
@@ -132,6 +136,16 @@ public class Order implements Serializable {
 
     public void setAdditionalInformation(String additionalInformation) {
         this.additionalInformation = additionalInformation;
+    }
+
+    @Basic
+    @Column(name = "text_to_card", length = 1000)
+    public String getTextToCard() {
+        return textToCard;
+    }
+
+    public void setTextToCard(String textToCard) {
+        this.textToCard = textToCard;
     }
 
     @Basic
