@@ -13,7 +13,7 @@ public interface CompanyDao extends JpaRepository<Company,Long> {
 
 
     @Modifying
-    @Query(value = "UPDATE company set company.company_name =?1 WHERE company.company_id = ?2", nativeQuery = true)
+    @Query(value = "UPDATE company set company.company_name =?1, company.was_combined =1 WHERE company.company_id = ?2", nativeQuery = true)
     public void updateCompanyName(String newName, Long id);
 
 

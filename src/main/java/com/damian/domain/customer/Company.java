@@ -8,6 +8,7 @@ public class Company {
 
     private Long companyId;
     private String companyName;
+    private Integer wasCombined;
 
     public Company() {
     }
@@ -19,6 +20,12 @@ public class Company {
     public Company(Long companyId, String companyName) {
         this.companyId = companyId;
         this.companyName = companyName;
+    }
+
+    public Company(Long companyId, String companyName, Integer wasCombined) {
+        this.companyId = companyId;
+        this.companyName = companyName;
+        this.wasCombined = wasCombined;
     }
 
     @Id
@@ -42,12 +49,19 @@ public class Company {
         this.companyName = companyName;
     }
 
+    @Basic
+    @Column(name = "was_combined", columnDefinition = "INT DEFAULT 0")
+    public Integer getWasCombined() {
+        return wasCombined;
+    }
+
+    public void setWasCombined(Integer wasCombined) {
+        this.wasCombined = wasCombined;
+    }
+
     @Override
     public String toString() {
-        return "Company{" +
-            "companyId=" + companyId +
-            ", companyName='" + companyName + '\'' +
-            '}';
+        return "Company{" + "companyId=" + companyId + ", companyName='" + companyName + '\'' + ", wasCombined=" + wasCombined + '}';
     }
 }
 
