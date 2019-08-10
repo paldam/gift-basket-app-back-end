@@ -110,10 +110,11 @@ public class PdfProductToCollectOrder {
 //row 2
 
 //row 4
-
-
-            PdfWriter.getInstance(document, out);
+            PdfWriter writer =PdfWriter.getInstance(document, out);
             document.open();
+
+            writer.setPageEvent(new PageEventListener());
+
             document.add(table);
             document.add(table2);
 

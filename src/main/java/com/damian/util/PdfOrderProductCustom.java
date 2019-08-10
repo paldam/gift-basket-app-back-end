@@ -54,8 +54,11 @@ public class PdfOrderProductCustom {
 
 
 
-            PdfWriter.getInstance(document, out);
+            PdfWriter writer =PdfWriter.getInstance(document, out);
             document.open();
+
+           writer.setPageEvent(new PageEventListener());
+
 
             float[] columnWidths0 = {5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
             PdfPTable table0 = new PdfPTable(columnWidths0);
@@ -142,6 +145,8 @@ public class PdfOrderProductCustom {
                         document.add(table0);
                         document.add(table);
                         document.add(table2);
+
+
                         document.newPage();
                     } catch (DocumentException ex) {
                         Logger.getLogger(PdfGenerator.class.getName()).log(Level.SEVERE, null, ex);
