@@ -2,8 +2,10 @@ package com.damian.domain.basket;
 
 
 import com.damian.domain.basket.Basket;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +37,16 @@ public interface BasketDao extends CrudRepository<Basket,Long> {
     @Query(value = "select * from baskets INNER join basket_items on baskets.basket_id = basket_items.basket_id where basket_items.product_id = ?1 and (baskets.basket_type = 1 Or baskets.basket_type =2) ", nativeQuery = true)
     public List<Basket> BasketListByProduct(Integer productId);
 
+    @Transactional
+    @Modifying
+    @Query(value = "update baskets set stock =  stock + ?2 , last_stock_edit_date = CURRENT_TIMESTAMP WHERE basket_id = ?1", nativeQuery = true)
+    void addBasketToStock(Long basketId,Integer addValue);
+
+
+    @Transactional
+    @Modifying
+    @Query(value = "update baskets set stock =  ?2 , last_stock_edit_date = CURRENT_TIMESTAMP WHERE basket_id = ?1", nativeQuery = true)
+    void saveNewStockOfBasket(Long basketId,Integer newValue);
 
     @Query(value = "select * from baskets join basket_items on baskets.basket_id = basket_items.basket_id join products ON basket_items.product_id = products.id" +
         " where product_sub_type_id IN ?3 AND baskets.basket_total_price >= ?1 AND baskets.basket_total_price <=?2 GROUP BY baskets.basket_id", nativeQuery = true)

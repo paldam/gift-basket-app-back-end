@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
@@ -16,10 +17,12 @@ public class Basket {
     private List<BasketItems> basketItems;
     private Integer basketTotalPrice;
     private String season;
+    private Integer stock;
     private Integer isAlcoholic;
     private Integer isAvailable;
     private byte[] basketImageData;
     private Integer isBasketImg;
+    private Date lastStockEditDate;
 
 
 
@@ -80,6 +83,27 @@ public class Basket {
 
     public void setBasketItems(List<BasketItems> basketItems) {
         this.basketItems = basketItems;
+    }
+
+
+    @Basic
+    @Column(name = "stock", length = 40, columnDefinition = "INT DEFAULT 0")
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    @Basic
+    @Column(name = "last_stock_edit_date")
+    public Date getLastStockEditDate() {
+        return lastStockEditDate;
+    }
+
+    public void setLastStockEditDate(Date lastStockEditDate) {
+        this.lastStockEditDate = lastStockEditDate;
     }
 
     @Basic
