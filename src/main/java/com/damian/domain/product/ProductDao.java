@@ -76,7 +76,7 @@ public interface ProductDao extends CrudRepository<Product,Long> {
     @Transactional
     @Modifying
     @Query(value = "update products set tmp_stock = tmp_stock + ?2 WHERE id = ?1", nativeQuery = true)
-    void updateStockTmpAdd(Integer productId, Long addValue);
+    void updateStockTmpAdd(Integer productId, Integer addValue);
 
     @Transactional
     @Modifying

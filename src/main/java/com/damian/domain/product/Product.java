@@ -80,7 +80,7 @@ public class Product {
     }
 
     @Basic
-    @Column(name = "stock")
+    @Column(name = "stock", columnDefinition = "INT DEFAULT 0")
     public Integer getStock() {
         return stock;
     }

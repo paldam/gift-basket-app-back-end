@@ -11,8 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BasketDao extends CrudRepository<Basket,Long> {
+
+
     public List<Basket> findAllBy();
     public List<Basket> findAllByOrderByBasketIdDesc();
+    public Basket findByBasketId(Long basketId);
 
 
     @Query(value = "SELECT data FROM baskets WHERE basket_id=?1", nativeQuery = true)
@@ -41,6 +44,12 @@ public interface BasketDao extends CrudRepository<Basket,Long> {
     @Modifying
     @Query(value = "update baskets set stock =  stock + ?2 , last_stock_edit_date = CURRENT_TIMESTAMP WHERE basket_id = ?1", nativeQuery = true)
     void addBasketToStock(Long basketId,Integer addValue);
+
+
+    @Transactional
+    @Modifying
+    @Query(value = "update baskets set stock =  stock - ?2 , last_stock_edit_date = CURRENT_TIMESTAMP WHERE basket_id = ?1", nativeQuery = true)
+    void minusBasketToStock(Long basketId,Integer minusValue);
 
 
     @Transactional

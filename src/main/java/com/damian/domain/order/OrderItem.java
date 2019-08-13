@@ -17,9 +17,11 @@ public class OrderItem {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Basket basket;
     private Integer quantity;
+    private Integer quantityFromSurplus;
     private Integer stateOnProduction;
     private Integer stateOnWarehouse;
     private Integer stateOnLogistics;
+
 
 
 
@@ -55,6 +57,18 @@ public class OrderItem {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+
+
+    @Basic
+    @Column(name = "quantity_from_surplus", columnDefinition = "INT DEFAULT 0")
+    public Integer getQuantityFromSurplus() {
+        return quantityFromSurplus;
+    }
+
+    public void setQuantityFromSurplus(Integer quantityFromSurplus) {
+        this.quantityFromSurplus = quantityFromSurplus;
+    }
+
 
     @Basic
     @Column(name = "production_state",columnDefinition = "INT DEFAULT 0")
