@@ -5,6 +5,7 @@ import com.damian.domain.order.Order;
 import com.damian.domain.order.OrderItem;
 import com.damian.domain.order_file.DbFile;
 import com.damian.domain.product.Supplier;
+import com.damian.dto.BasketDto;
 import com.damian.dto.BasketExtStockDao;
 import com.damian.util.PdfBasketContents;
 import com.damian.util.PdfGenerator;
@@ -52,6 +53,13 @@ public class BasketController {
     ResponseEntity<List<Basket>> getBaskets() {
         List<Basket> basketList = basketDao.findAllWithoutDeleted();
         return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/basketsdto")
+    ResponseEntity<List<BasketDto>> getBasketsDto() {
+        List<BasketDto> basketList = basketDao.findBasketDto();
+        return new ResponseEntity<List<BasketDto>>(basketList, HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -121,7 +129,7 @@ public class BasketController {
         if (!productsSubTypes.isPresent()) {
             basketList = basketDao.findBasketsWithFilterWithoutTypes(priceMin, priceMax);
         } else {
-            basketList = basketDao.findBasketsWithFilter(priceMin, priceMax, productsSubTypes.get());
+            basketList = basketDao.findBasketsWithFilter(priceMin, priceMax, productsSubTypes.get(),productsSubTypes.get().size());
         }
         return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
     }

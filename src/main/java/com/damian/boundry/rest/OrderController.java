@@ -18,7 +18,6 @@ import com.damian.security.SecurityUtils;
 import com.damian.util.PdfOrderProductCustom;
 import org.apache.log4j.Logger;
 import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -34,18 +33,13 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.hibernate.envers.AuditReader;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.damian.config.Constants.ANSI_RESET;
-import static com.damian.config.Constants.ANSI_YELLOW;
 
 @Transactional
 @RestController
@@ -354,7 +348,7 @@ public class OrderController {
 
 
 
-
+    @CrossOrigin
     @RequestMapping(path = "/notification", method = RequestMethod.GET)
     public SseEmitter stream() throws IOException {
 
@@ -366,6 +360,7 @@ public class OrderController {
         return emitter;
     }
 
+    @CrossOrigin
     @RequestMapping(path = "/new_order_notification", method = RequestMethod.GET)
     public SseEmitter streamNewOrderEmit() throws IOException {
 
@@ -425,7 +420,7 @@ public class OrderController {
     ResponseEntity changeOrderProgress(@PathVariable Long id, @RequestBody List<OrderItem> orderItems) {
         Order updatingOrder = orderDao.findByOrderId(id);
         try {
-            orderService.changeOrderProgress(id, orderItems);
+            orderService.changeOrderProgressByAdmin(id, orderItems);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());

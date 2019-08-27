@@ -6,6 +6,7 @@ package com.damian.domain.order;
         import org.hibernate.envers.Audited;
 
         import javax.persistence.*;
+        import java.util.Objects;
 
         import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
@@ -102,7 +103,20 @@ public class OrderItem {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderItem orderItem = (OrderItem) o;
+        return Objects.equals(orderItemId, orderItem.orderItemId) && Objects.equals(basket, orderItem.basket) && Objects.equals(quantity, orderItem.quantity) && Objects.equals(quantityFromSurplus, orderItem.quantityFromSurplus) && Objects.equals(stateOnProduction, orderItem.stateOnProduction) && Objects.equals(stateOnWarehouse, orderItem.stateOnWarehouse) && Objects.equals(stateOnLogistics, orderItem.stateOnLogistics);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderItemId, basket, quantity, quantityFromSurplus, stateOnProduction, stateOnWarehouse, stateOnLogistics);
+    }
+
+    @Override
     public String toString() {
-        return "OrderItem{" + "orderItemId=" + orderItemId + ", basket=" + basket + ", quantity=" + quantity + ", stateOnProduction=" + stateOnProduction + ", stateOnWarehouse=" + stateOnWarehouse + ", stateOnLogistics=" + stateOnLogistics + '}';
+        return "OrderItem{" + "orderItemId=" + orderItemId + ", basket=" + basket + ", quantity=" + quantity + ", quantityFromSurplus=" + quantityFromSurplus + ", stateOnProduction=" + stateOnProduction + ", stateOnWarehouse=" + stateOnWarehouse + ", stateOnLogistics=" + stateOnLogistics + '}';
     }
 }

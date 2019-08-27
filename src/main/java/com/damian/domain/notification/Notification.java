@@ -12,6 +12,7 @@ public class Notification {
     private String notificationText;
     private Date notificationDate;
 
+
     public Notification() {
     }
 
