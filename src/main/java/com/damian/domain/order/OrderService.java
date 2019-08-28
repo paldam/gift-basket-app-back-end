@@ -10,9 +10,11 @@ import com.damian.domain.order_file.DbFileDao;
 import com.damian.domain.product.ProductDao;
 import com.damian.domain.product.SupplierDao;
 import com.damian.domain.user.UserRepository;
+import com.damian.domain.user.UserService;
 import com.damian.dto.NumberProductsToChangeStock;
 import com.damian.dto.OrderDto;
 import com.damian.domain.order.exceptions.OrderStatusException;
+import com.damian.security.SecurityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
@@ -104,6 +106,10 @@ public class OrderService {
     @Transactional
     public void createOrderFromCopy(Order order) throws OrderStatusException {
 
+        order.getOrderItems().forEach(orderItem -> {
+            orderItem.setQuantityFromSurplus(0);
+        });
+
         if (order.getCustomer().getCustomerId() != null) {
             performOrderCustomerFromDB(order);
         } else {
@@ -116,9 +122,45 @@ public class OrderService {
 
     }
 
+    @Transactional
+    public void cancelOrder(Order order) {
+        //todo
+        Order currOrder = orderDao.findByOrderId(order.getOrderId());
+        if (currOrder.getOrderStatus().getOrderStatusId() == 1) {
+            currOrder.setOrderStatus(new OrderStatus(99));
+
+        } else if (currOrder.getOrderStatus().getOrderStatusId() == 6) {
+            currOrder.setOrderStatus(new OrderStatus(99));
+
+
+            order.getOrderItems().forEach(orderItem -> {
+                basketDao.addBasketToStock(orderItem.getBasket().getBasketId(), orderItem.getStateOnProduction());
+            });
 
 
 
+            order.getOrderItems().forEach(orderItem -> {
+                orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+                    productDao.updateStock(basketItems.getProduct().getId(), orderItem.getStateOnWarehouse() * basketItems.getQuantity());
+                });
+
+            });
+
+            currOrder.getOrderItems().forEach(orderItem -> {
+                int specificBasketQuantity = orderItem.getQuantity();
+                orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+                    int numberOfProductsInOneSpecifiedBasket = basketItems.getQuantity();
+                    productDao.updateStockTmpMinus(basketItems.getProduct().getId(),Long.valueOf(specificBasketQuantity * numberOfProductsInOneSpecifiedBasket)-(orderItem.getStateOnWarehouse() * basketItems.getQuantity()));
+                });
+            });
+
+
+
+        }
+    }
+
+
+//todo
     @Transactional
     public void createOrUpdateOrder(Order order) throws OrderStatusException {
 
@@ -134,7 +176,16 @@ public class OrderService {
             }
 
             performChangeOrderStatusOperation(order);
+        }else{
+            order.getOrderItems().forEach(orderItem -> {
+                orderItem.setQuantityFromSurplus(0);
+            });
         }
+
+
+
+
+
         if (order.getCustomer().getCustomerId() != null) {
             performOrderCustomerFromDB(order);
         } else {
@@ -200,22 +251,23 @@ public class OrderService {
 
 
 
-    public void getBasketFromSurplusIfExist(){
-
-    };
-
 
     public void changeStockStatusWtrakcieToNowe(Order order) {
         List<OrderItem> tmp = order.getOrderItems();
         List<NumberProductsToChangeStock> numberProductsToChangeStocks = new ArrayList<>();
-        tmp.forEach(oi -> {
-            oi.getBasket().getBasketItems().forEach(basketItems -> {
-                numberProductsToChangeStocks.add(new NumberProductsToChangeStock(basketItems.getProduct().getId(), new Long(oi.getStateOnWarehouse())));
+
+        order.getOrderItems().forEach(orderItem -> {
+
+                int specificBasketQuantity = orderItem.getQuantity();
+                Basket specificBasket = basketDao.findByBasketId(orderItem.getBasket().getBasketId());
+
+                orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+                    int numberOfProductsInOneSpecifiedBasket = basketItems.getQuantity();
+                    productDao.updateStockTmpMinus(basketItems.getProduct().getId(), Long.valueOf(specificBasketQuantity * numberOfProductsInOneSpecifiedBasket));
+                });
+
             });
-        });
-        numberProductsToChangeStocks.forEach(product -> {
-            productDao.updateStockTmpMinus(product.getProductId(), product.getQuantityToChange());
-        });
+
     }
 
     @Transactional
@@ -388,9 +440,13 @@ public class OrderService {
     public void assignOrdersToSpecifiedProduction(List<Integer> ordersIds, Long productionId) throws OrderStatusException {
         List<Order> orderListByIds = orderDao.findByOrderIds(ordersIds);
         for (Order order : orderListByIds) {
-            if (order.getOrderStatus().getOrderStatusId() != ORDER_STATUS_ID_NOWE) {
-                throw new OrderStatusException("Nie można zmienić  lub przydzielić produkcji do zamówienia o statusie innym niż NOWE");
+
+            if(!SecurityUtils.isCurrentUserInRole("admin")){
+                if (order.getOrderStatus().getOrderStatusId() != ORDER_STATUS_ID_NOWE) {
+                    throw new OrderStatusException("Nie można zmienić  lub przydzielić produkcji do zamówienia o statusie innym niż NOWE");
+                }
             }
+
         }
         orderDao.assignOrdersToSpecifiedProduction(ordersIds, productionId);
     }

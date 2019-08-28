@@ -383,6 +383,14 @@ public class OrderController {
         }
     }
 
+    @CrossOrigin
+    @PostMapping("/order/cancel")
+    ResponseEntity cancelOrder(@RequestBody Order orderToCancel) {
+
+            orderService.cancelOrder(orderToCancel);
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
 
     @CrossOrigin
     @PostMapping("/order/copy/{originOrderIdCopy}")
