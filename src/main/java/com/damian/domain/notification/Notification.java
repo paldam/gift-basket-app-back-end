@@ -1,5 +1,8 @@
 package com.damian.domain.notification;
 
+import com.damian.domain.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -11,14 +14,19 @@ public class Notification {
     private Long id;
     private String notificationText;
     private Date notificationDate;
+    private User user;
+    private boolean wasRead;
+    private Long notiOrderContext;
 
 
     public Notification() {
     }
 
-    public Notification(String notificationText, Date notificationDate) {
+    public Notification(String notificationText, Date notificationDate, User user,Long notiOrderContext) {
         this.notificationText = notificationText;
         this.notificationDate = notificationDate;
+        this.user = user;
+        this.notiOrderContext = notiOrderContext;
     }
 
     @Id
@@ -51,5 +59,44 @@ public class Notification {
 
     public void setNotificationDate(Date notificationDate) {
         this.notificationDate = notificationDate;
+    }
+
+
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+
+
+    public boolean isWasRead() {
+        return wasRead;
+    }
+    @Basic
+    @Column(name = "was_read")
+    public void setWasRead(boolean wasRead) {
+        this.wasRead = wasRead;
+    }
+
+
+    @Basic
+    @Column(name = "order_id")
+    public Long getNotiOrderContext() {
+        return notiOrderContext;
+    }
+
+    public void setNotiOrderContext(Long notiOrderContext) {
+        this.notiOrderContext = notiOrderContext;
+    }
+
+    @Override
+    public String toString() {
+        return "Notification{" + "id=" + id + ", notificationText='" + notificationText + '\'' + ", notificationDate=" + notificationDate + ", user=" + user + ", wasRead=" + wasRead + ", notiOrderContext=" + notiOrderContext + '}';
     }
 }

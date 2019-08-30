@@ -23,6 +23,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = "authorities")
     Optional<User> findOneWithAuthoritiesByLogin(String login);
 
+
+
     Optional<User> findOneByLogin(String login);
 
     @Transactional
@@ -37,6 +39,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query("select u.password FROM User u WHERE  u.login = ?1")
     String getPassword(String login);
+
+
+    @Transactional
+    @Query("select u FROM User u JOIN u.authorities a WHERE  a.name IN ('magazyn','wysylka','produkcja')")
+    List<User> getLogisticWarehouseProductionUsers();
 
     @Transactional
     @Modifying

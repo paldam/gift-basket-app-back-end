@@ -18,6 +18,9 @@ import java.util.Set;
 @Table(name = "user")
 public class User implements Serializable {
 
+
+
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -114,5 +117,10 @@ public class User implements Serializable {
         result = 31 * result + (getActivated() ? 1 : 0);
         result = 31 * result + (getAuthorities() != null ? getAuthorities().hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "id=" + id + ", login='" + login + '\'' + ", password='" + password + '\'' + ", activated=" + activated + ", authorities=" + authorities + '}';
     }
 }

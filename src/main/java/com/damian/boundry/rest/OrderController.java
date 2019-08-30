@@ -3,6 +3,7 @@ package com.damian.boundry.rest;
 import com.damian.domain.audit.OrderAuditedRevisionEntity;
 import com.damian.domain.notification.Notification;
 import com.damian.domain.notification.NotificationDao;
+import com.damian.domain.notification.NotificationService;
 import com.damian.domain.order.*;
 import com.damian.domain.order_file.DbFile;
 import com.damian.domain.order_file.DbFileDao;
@@ -58,8 +59,9 @@ public class OrderController {
     private DbFileService dbFileService;
     private UserRepository userRepository;
     private NotificationDao notificationDao;
+    private NotificationService notificationService;
 
-    OrderController(UserRepository userRepository, NotificationDao notificationDao, DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao, DbFileDao dbFileDao) {
+    OrderController(NotificationService notificationService, UserRepository userRepository, NotificationDao notificationDao, DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao, DbFileDao dbFileDao) {
         this.orderDao = orderDao;
         this.notificationDao = notificationDao;
         this.orderService = orderService;
@@ -68,6 +70,7 @@ public class OrderController {
         this.dbFileDao = dbFileDao;
         this.dbFileService = dbFileService;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
 
     }
 
@@ -396,7 +399,8 @@ public class OrderController {
     @PostMapping("/order/copy/{originOrderIdCopy}")
     ResponseEntity copyOrderFromExistingOne(@RequestBody Order order,@PathVariable Long originOrderIdCopy ) throws URISyntaxException, OrderStatusException {
         Order originOrder = orderDao.findByOrderId(originOrderIdCopy);
-        notificationDao.save(new Notification("Dodano zamówienie nr: "+ order.getOrderFvNumber() + " połączone z zamówieniem nr: "+ originOrder.getOrderFvNumber(),null));
+
+        notificationService.saveNotifications(order, originOrder);
 
         try {
             orderService.createOrderFromCopy(order);

@@ -63,13 +63,19 @@ public class OrderService {
 
 
     //TODO refactor  DRY
-    public void pushNotificationForCombinedOrder(String originOrderFV, String combinedOrderFV) {
+    public void pushNotificationForCombinedOrder(Order order) {
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
         OrderController.emitters.forEach((SseEmitter emitter) -> {
-            System.out.println(ANSI_YELLOW + "copy" + ANSI_RESET);
 
             try {
-                emitter.send("Dodano zamówienie nr: " + combinedOrderFV + " połączone z zamówieniem nr: " + originOrderFV, MediaType.APPLICATION_JSON);
+                String productionUserLogin;
+                if(order.getProductionUser() == null){
+                    productionUserLogin = "new";
+                }else{
+                    productionUserLogin = order.getProductionUser().getLogin();
+                }
+
+                emitter.send(productionUserLogin, MediaType.APPLICATION_JSON);
             } catch (Exception e) {
                 emitter.complete();
                 sseEmitterListToRemove.add(emitter);
@@ -116,7 +122,7 @@ public class OrderService {
             performOrderWithNewCustomer(order);
         }
 
-        pushNotificationForCombinedOrder("www",order.getOrderFvNumber());
+        pushNotificationForCombinedOrder(order);
         pushNotificationForNewOrder(order);
 
 
