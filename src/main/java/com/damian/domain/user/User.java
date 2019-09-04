@@ -1,6 +1,7 @@
 package com.damian.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "user")
 public class User implements Serializable {
@@ -31,8 +32,6 @@ public class User implements Serializable {
     @Column(length = 50, unique = true, nullable = false)
     private String login;
 
-    @JsonIgnore
-
     @Size(min = 60, max = 60)
     @Column(name = "password_hash", length = 60)
     private String password;
@@ -42,16 +41,25 @@ public class User implements Serializable {
     @Column(nullable = false)
     private boolean activated = false;
 
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_authority",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
-
-
     private Set<Authority> authorities = new HashSet<Authority>();
 
+
+    @Basic
+    @Column(name = "isArchival",columnDefinition = "boolean default false")
+    private Boolean isArchival;
+
+    public Boolean getIsArchival() {
+        return isArchival;
+    }
+
+    public void setIsArchival(Boolean isArchival) {
+        this.isArchival = isArchival;
+    }
 
     public Set<Authority> getAuthorities() {
         return authorities;

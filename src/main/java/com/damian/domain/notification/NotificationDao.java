@@ -35,6 +35,11 @@ public interface NotificationDao extends JpaRepository<Notification, Long> {
     @Query(value = "UPDATE notifications set wasRead = true where user_id = ?1", nativeQuery = true)
     void markAllAsReaded( Long id);
 
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE from notifications where user_id = ?1", nativeQuery = true)
+    void deleteByUser( Long id);
+
 }
 
 

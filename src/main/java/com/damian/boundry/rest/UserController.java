@@ -130,9 +130,7 @@ public class UserController {
 
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
 
-        userRepository.findOneByLogin(login).ifPresent(user -> {
-            userRepository.delete(user);
-        });
+        userService.deleteUser(login);
         return ResponseEntity.ok().headers(HeaderUtil.createAlert( "userManagement.deleted", login)).build();
     }
 }
