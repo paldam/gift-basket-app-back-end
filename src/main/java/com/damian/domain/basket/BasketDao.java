@@ -2,7 +2,9 @@ package com.damian.domain.basket;
 
 
 import com.damian.domain.basket.Basket;
+import com.damian.domain.order.Order;
 import com.damian.dto.BasketDto;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -11,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-public interface BasketDao extends CrudRepository<Basket,Long> {
+public interface BasketDao extends CrudRepository<Basket,Long>, JpaSpecificationExecutor<Basket> {
 
 
     public List<Basket> findAllBy();

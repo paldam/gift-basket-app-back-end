@@ -93,6 +93,33 @@ public class BasketController {
         return new ResponseEntity<List<BasketSezon>>(basketList, HttpStatus.OK);
     }
 
+
+    @CrossOrigin
+    @GetMapping("/basketpage")
+    ResponseEntity<BasketPageRequest> getBasketsPage(@RequestParam(value = "page", required = true, defaultValue = "0") int page,
+                                                     @RequestParam(value = "size", required = true) int size,
+                                                     @RequestParam(value = "searchtext", required = false) String text,
+                                                     @RequestParam(value = "orderBy", required = false) String orderBy,
+                                                     @RequestParam(value = "sortingDirection", required = false, defaultValue = "1") int sortingDirection,
+                                                     @RequestParam(value = "onlyArchival", required = false) boolean onlyArchival,
+                                                     @RequestParam(value = "basketSeasonFilter", required = false) List<Integer> basketSeasonFilter)
+
+    {
+
+         System.out.println(ANSI_YELLOW + onlyArchival + " | " + basketSeasonFilter+ ANSI_RESET);
+
+
+
+
+        BasketPageRequest basketsPage = basketService.getBasketsPege(page, size, text, orderBy, sortingDirection,onlyArchival,basketSeasonFilter);
+
+
+
+
+        return new ResponseEntity<BasketPageRequest>(basketsPage, HttpStatus.OK);
+    }
+
+
     @CrossOrigin
     @GetMapping("/basketsdto")
     ResponseEntity<List<BasketDto>> getBasketsDto() {
