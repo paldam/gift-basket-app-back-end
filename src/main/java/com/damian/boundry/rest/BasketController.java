@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,19 +41,56 @@ public class BasketController {
     private BasketService basketService;
     private BasketDao basketDao;
     private BasketTypeDao basketTypeDao;
+    private BasketSezonDao basketSezonDao;
 
-    public BasketController(BasketService basketService, BasketDao basketDao, BasketTypeDao basketTypeDao, BasketExtService basketExtService) {
+    public BasketController(BasketSezonDao basketSezonDao, BasketService basketService, BasketDao basketDao, BasketTypeDao basketTypeDao, BasketExtService basketExtService) {
         this.basketDao = basketDao;
         this.basketService = basketService;
         this.basketTypeDao = basketTypeDao;
         this.basketExtService = basketExtService;
+        this.basketSezonDao = basketSezonDao;
     }
+
+   @Transactional
+    @CrossOrigin
+    @GetMapping("/basketconvert")
+    ResponseEntity<List<Basket>> convertBasket() {
+
+        List<Basket> basketList = basketDao.findAllBy();
+        basketList.forEach(basket -> {
+            Optional<BasketSezon> optBasket = basketSezonDao.findByBasketSezonName(basket.getSeason());
+            if(!optBasket.isPresent()){
+                BasketSezon basketSezonTmp = basketSezonDao.save(new BasketSezon(basket.getSeason()));
+                basket.setBasketSezon(basketSezonTmp);
+                basketDao.save(basket);
+            }else{
+
+                basket.setBasketSezon(optBasket.get());
+                basketDao.save(basket);
+
+            }
+
+
+
+        });
+        return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
+    }
+
+
 
     @CrossOrigin
     @GetMapping("/baskets")
     ResponseEntity<List<Basket>> getBaskets() {
         List<Basket> basketList = basketDao.findAllWithoutDeleted();
         return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
+    }
+
+
+    @CrossOrigin
+    @GetMapping("/baskets_seasons")
+    ResponseEntity<List<BasketSezon>> getBasketsSeasons() {
+        List<BasketSezon> basketList = basketSezonDao.findAllBy();
+        return new ResponseEntity<List<BasketSezon>>(basketList, HttpStatus.OK);
     }
 
     @CrossOrigin

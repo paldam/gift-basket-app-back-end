@@ -13,6 +13,7 @@ import java.util.List;
 public class Basket {
     private Long basketId;
     private String basketName;
+    private  BasketSezon basketSezon;
     private BasketType basketType;
     private List<BasketItems> basketItems;
     private Integer basketTotalPrice;
@@ -73,6 +74,17 @@ public class Basket {
 
     public void setBasketType(BasketType basketType) {
         this.basketType = basketType;
+    }
+
+
+    @ManyToOne
+    @JoinColumn(name = "basket_sezon")
+    public BasketSezon getBasketSezon() {
+        return basketSezon;
+    }
+
+    public void setBasketSezon(BasketSezon basketSezon) {
+        this.basketSezon = basketSezon;
     }
 
     @OneToMany(cascade = CascadeType.ALL,fetch =FetchType.EAGER)
