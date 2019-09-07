@@ -1,32 +1,39 @@
 package com.damian.boundry.rest;
 
-import com.damian.domain.notification.Notification;
-import com.damian.domain.prize.Prize;
-import com.damian.domain.prize.PrizeDao;
-import com.damian.domain.user.User;
-import com.damian.security.SecurityUtils;
+import com.damian.domain.prize.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
+@RequestMapping("/prize")
 public class PrizeController {
 
-    PrizeDao prizeDao;
+    private PrizeDao prizeDao;
+    private PrizeOrderDao prizeOrderDao;
+    private PrizeOrderService prizeOrderService;
 
-    public PrizeController(PrizeDao prizeDao) {
+    public PrizeController(PrizeDao prizeDao, PrizeOrderDao prizeOrderDao, PrizeOrderService prizeOrderService) {
         this.prizeDao = prizeDao;
+        this.prizeOrderDao = prizeOrderDao;
+        this.prizeOrderService = prizeOrderService;
+    }
+
+    @CrossOrigin
+    @PostMapping("/order")
+    ResponseEntity<PrizeOrder> createOrder(@RequestBody PrizeOrder prizeOrder) {
+        PrizeOrder savedOrder = prizeOrderService.saveOrder(prizeOrder);
+        return new ResponseEntity<PrizeOrder>(savedOrder, HttpStatus.CREATED);
     }
 
     @CrossOrigin
     @GetMapping("/prizelist")
     ResponseEntity<List<Prize>> getPrizes() {
         List<Prize> prizeList = prizeDao.findAllBy();
+
+
         return new ResponseEntity<List<Prize>>(prizeList, HttpStatus.OK);
     }
 }

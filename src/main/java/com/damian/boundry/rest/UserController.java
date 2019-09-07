@@ -9,6 +9,7 @@ import com.damian.domain.user.AuthorityRepository;
 import com.damian.domain.user.UserRepository;
 import com.damian.boundry.rest.util.HeaderUtil;
 import com.damian.domain.user.UserService;
+import com.damian.security.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,13 +45,32 @@ public class UserController {
     }
 
     @CrossOrigin
+    @GetMapping("/program_users")
+    ResponseEntity<List<User>> getAllProgramUsers(){
+        //
+        List<User> userList = userRepository.getAllProgramUser();
+        return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
+    }
+
+
+    @CrossOrigin
     @GetMapping("/production_users")
     ResponseEntity<List<ProductionUserDto>> getAllProductionUsers(){
-//
+        //
         List<ProductionUserDto> userList = userRepository.getAllProductionUser();
         return new ResponseEntity<List<ProductionUserDto>>(userList, HttpStatus.OK);
     }
 
+
+    @CrossOrigin
+    @GetMapping("/current_user_points")
+    ResponseEntity<Integer> getCurrentUserPoints(){
+        //
+        SecurityUtils.getCurrentUserLogin();
+
+        Integer userPoints = userRepository.getPoints(SecurityUtils.getCurrentUserLogin());
+        return new ResponseEntity<Integer>(userPoints, HttpStatus.OK);
+    }
 
     @CrossOrigin
     @PostMapping(value = "/users")
@@ -72,6 +92,29 @@ public class UserController {
                     .body("Dodano użytownika " +userDto.getLogin());
         }
     }
+
+
+    @CrossOrigin
+    @PostMapping(value = "/program_users")
+    public ResponseEntity createProgramUser(@RequestBody User user) {
+
+        if (user.getId() != null) {
+            return ResponseEntity.badRequest()
+                //.headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new user cannot already have an ID"))
+                .body("Nowy użytkownik nie może mieć numeru ID");
+            // Lowercase the user login before comparing with database
+        } else if (userRepository.findOneByLogin(user.getLogin().toLowerCase()).isPresent()) {
+            return ResponseEntity.badRequest()
+                //.headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "userexists", "Login already in use"))
+                .body("Podany login jest już zajęty");
+        } else {
+            User newUser = userService.createUserForLoyaltyProgram(user);
+            return ResponseEntity.ok(newUser);
+
+        }
+    }
+
+
     @CrossOrigin
     @PutMapping("/users")
     public ResponseEntity updateUser(@RequestBody UserDto userDto) {

@@ -19,7 +19,7 @@ public class UserDto {
     }
 
     public UserDto(User user) {
-        this(user.getId(), user.getLogin(),user.getPassword(), user.getActivated(), user.getAuthorities());
+        this(user.getId(), user.getLogin(),user.getPassword(), user.isActivated(), user.getAuthorities());
     }
 
     public UserDto(Long id, String login, String password, boolean activated,

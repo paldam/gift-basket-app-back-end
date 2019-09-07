@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -32,6 +33,7 @@ public class User implements Serializable {
     @Column(length = 50, unique = true, nullable = false)
     private String login;
 
+    @JsonIgnore
     @Size(min = 60, max = 60)
     @Column(name = "password_hash", length = 60)
     private String password;
@@ -53,20 +55,13 @@ public class User implements Serializable {
     @Column(name = "isArchival",columnDefinition = "boolean default false")
     private Boolean isArchival;
 
-    public Boolean getIsArchival() {
-        return isArchival;
-    }
 
-    public void setIsArchival(Boolean isArchival) {
-        this.isArchival = isArchival;
-    }
+    @Basic
+    @Column(name = "order_total_amount")
+    private Integer points ;
 
-    public Set<Authority> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(Set<Authority> authorities) {
-        this.authorities = authorities;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
     public Long getId() {
@@ -82,7 +77,7 @@ public class User implements Serializable {
     }
 
     public void setLogin(String login) {
-        this.login = StringUtils.lowerCase(login, Locale.ENGLISH);
+        this.login = login;
     }
 
     public String getPassword() {
@@ -93,8 +88,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
-
-    public boolean getActivated() {
+    public boolean isActivated() {
         return activated;
     }
 
@@ -102,33 +96,45 @@ public class User implements Serializable {
         this.activated = activated;
     }
 
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public Boolean getArchival() {
+        return isArchival;
+    }
+
+    public void setArchival(Boolean archival) {
+        isArchival = archival;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         User user = (User) o;
-
-        if (getActivated() != user.getActivated()) return false;
-        if (getId() != null ? !getId().equals(user.getId()) : user.getId() != null) return false;
-        if (getLogin() != null ? !getLogin().equals(user.getLogin()) : user.getLogin() != null) return false;
-        if (getPassword() != null ? !getPassword().equals(user.getPassword()) : user.getPassword() != null)
-            return false;
-        return getAuthorities() != null ? getAuthorities().equals(user.getAuthorities()) : user.getAuthorities() == null;
+        return activated == user.activated && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password, user.password) && Objects.equals(authorities, user.authorities) && Objects.equals(isArchival, user.isArchival) && Objects.equals(points, user.points);
     }
 
     @Override
     public int hashCode() {
-        int result = getId() != null ? getId().hashCode() : 0;
-        result = 31 * result + (getLogin() != null ? getLogin().hashCode() : 0);
-        result = 31 * result + (getPassword() != null ? getPassword().hashCode() : 0);
-        result = 31 * result + (getActivated() ? 1 : 0);
-        result = 31 * result + (getAuthorities() != null ? getAuthorities().hashCode() : 0);
-        return result;
+        return Objects.hash(id, login, password, activated, authorities, isArchival, points);
     }
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", login='" + login + '\'' + ", password='" + password + '\'' + ", activated=" + activated + ", authorities=" + authorities + '}';
+        return "User{" + "id=" + id + ", login='" + login + '\'' + ", password='" + password + '\'' + ", activated=" + activated + ", authorities=" + authorities + ", isArchival=" + isArchival + ", points=" + points + '}';
     }
 }

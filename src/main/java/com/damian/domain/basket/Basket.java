@@ -183,18 +183,7 @@ public class Basket {
 
     @Override
     public String toString() {
-        return "Basket{" +
-            "basketId=" + basketId +
-            ", basketName='" + basketName + '\'' +
-            ", basketType=" + basketType +
-            ", basketItems=" + basketItems +
-            ", basketTotalPrice=" + basketTotalPrice +
-            ", season='" + season + '\'' +
-            ", isAlcoholic=" + isAlcoholic +
-            ", isAvailable=" + isAvailable +
-            ", basketImageData=" + Arrays.toString(basketImageData) +
-            ", isBasketImg=" + isBasketImg +
-            '}';
+        return "Basket{" + "basketId=" + basketId + ", basketName='" + basketName + '\'' + ", basketSezon=" + basketSezon + ", basketType=" + basketType + ", basketItems=" + basketItems + ", basketTotalPrice=" + basketTotalPrice + ", season='" + season + '\'' + ", stock=" + stock + ", isAlcoholic=" + isAlcoholic + ", isAvailable=" + isAvailable + ", basketImageData=" + Arrays.toString(basketImageData) + ", isBasketImg=" + isBasketImg + ", lastStockEditDate=" + lastStockEditDate + '}';
     }
 }
         

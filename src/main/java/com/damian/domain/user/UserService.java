@@ -12,6 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import static com.damian.config.Constants.ANSI_RESET;
@@ -43,6 +46,23 @@ public class UserService {
         userRepository.save(user);
         return user;
     }
+
+    public User createUserForLoyaltyProgram(User user) {
+
+        Set<Authority> authoritiesTmp  = new HashSet<Authority>();
+        authoritiesTmp.add(new Authority("punkty"));
+        user.setAuthorities(authoritiesTmp);
+
+        String encryptedPassword = passwordEncoder.encode("nowe");
+        user.setPassword(encryptedPassword);
+        user.setActivated(true);
+        user.setPoints(0);
+        userRepository.save(user);
+        return user;
+    }
+
+
+
 
     @Transactional
     public void deleteUser(String login) {

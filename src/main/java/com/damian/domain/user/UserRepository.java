@@ -20,6 +20,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select NEW com.damian.dto.ProductionUserDto(u.id,u.login) FROM User u join u.authorities a where a.name ='produkcja'")
     List<ProductionUserDto> getAllProductionUser();
 
+
+
+    @Query("select u FROM User u join u.authorities a where a.name ='punkty'")
+    List<User> getAllProgramUser();
+
+
+
     @EntityGraph(attributePaths = "authorities")
     Optional<User> findOneWithAuthoritiesByLogin(String login);
 
@@ -40,6 +47,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u.password FROM User u WHERE  u.login = ?1")
     String getPassword(String login);
 
+
+
+    @Transactional
+    @Query("select u.points FROM User u WHERE  u.login = ?1")
+    Integer getPoints(String login);
 
     @Transactional
     @Query("select u FROM User u JOIN u.authorities a WHERE  a.name IN ('magazyn','wysylka','produkcja')")
