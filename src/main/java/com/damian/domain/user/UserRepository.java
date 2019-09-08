@@ -34,6 +34,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findOneByLogin(String login);
 
+    Optional<User> findOneByEmail(String email);
+
     @Transactional
     @Modifying
     @Query("update User u set u.password = '$2a$04$FRxFawokSSkDWgv70fm1eOJIl55TPKvI/gS4cUT2tmkHuMp3Gpvkm' where u.login = ?1")

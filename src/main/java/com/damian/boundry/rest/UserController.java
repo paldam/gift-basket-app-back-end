@@ -19,6 +19,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
+
 @CrossOrigin
 @RestController
 @RequestMapping(value={"/"}, produces="application/json;charset=UTF-8")
@@ -69,6 +73,11 @@ public class UserController {
         SecurityUtils.getCurrentUserLogin();
 
         Integer userPoints = userRepository.getPoints(SecurityUtils.getCurrentUserLogin());
+
+         System.out.println(ANSI_YELLOW + SecurityUtils.getCurrentUserLogin() + ANSI_RESET);
+
+
+
         return new ResponseEntity<Integer>(userPoints, HttpStatus.OK);
     }
 
@@ -107,7 +116,11 @@ public class UserController {
             return ResponseEntity.badRequest()
                 //.headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "userexists", "Login already in use"))
                 .body("Podany login jest już zajęty");
-        } else {
+        } else if (userRepository.findOneByEmail(user.getEmail().toLowerCase()).isPresent()) {
+            return ResponseEntity.badRequest()
+                //.headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "userexists", "Login already in use"))
+                .body("Podany email jest już zajęty");
+        }else {
             User newUser = userService.createUserForLoyaltyProgram(user);
             return ResponseEntity.ok(newUser);
 

@@ -1,9 +1,13 @@
 package com.damian.domain.prize;
 
+import com.damian.domain.user.User;
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
 @Table(name = "prize_orders")
@@ -20,6 +24,9 @@ public class PrizeOrder {
     private String city;
     private String phone;
     private String email;
+    private User user;
+    private PrizeOrderStatus prizeOrderStatus;
+
 
 
     @Id
@@ -133,8 +140,29 @@ public class PrizeOrder {
         return email;
     }
 
+
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user")
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "prize_order_status_id")
+    public PrizeOrderStatus getPrizeOrderStatus() {
+        return prizeOrderStatus;
+    }
+
+    public void setPrizeOrderStatus(PrizeOrderStatus prizeOrderStatus) {
+        this.prizeOrderStatus = prizeOrderStatus;
     }
 }
 

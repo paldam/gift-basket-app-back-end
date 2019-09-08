@@ -33,6 +33,13 @@ public class User implements Serializable {
     @Column(length = 50, unique = true, nullable = false)
     private String login;
 
+    @Column(name = "name" ,length = 100, nullable = true, columnDefinition = "DEFAULT NULL")
+    private String name;
+
+    @Column(name = "email" ,length = 100,unique = true, nullable = true, columnDefinition = "DEFAULT NULL")
+    private String email;
+
+
     @JsonIgnore
     @Size(min = 60, max = 60)
     @Column(name = "password_hash", length = 60)
@@ -118,6 +125,22 @@ public class User implements Serializable {
 
     public void setPoints(Integer points) {
         this.points = points;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
