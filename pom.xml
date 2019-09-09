@@ -138,6 +138,17 @@
       <artifactId>jjwt</artifactId>
       <version>0.7.0</version>
     </dependency>
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context-support</artifactId>
+          <version>5.0.1.RELEASE</version>
+      </dependency>
+
+      <dependency>
+          <groupId>javax.mail</groupId>
+          <artifactId>mail</artifactId>
+          <version>1.4.7</version>
+      </dependency>
 
 
 
@@ -158,6 +169,12 @@
       <artifactId>itext-pdfa</artifactId>
       <version>5.5.12</version>
     </dependency>
+
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-text</artifactId>
+          <version>1.8</version>
+      </dependency>
 
     <dependency>
       <groupId>com.itextpdf</groupId>

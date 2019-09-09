@@ -65,21 +65,21 @@ public class UserController {
         return new ResponseEntity<List<ProductionUserDto>>(userList, HttpStatus.OK);
     }
 
-
     @CrossOrigin
     @GetMapping("/current_user_points")
-    ResponseEntity<Integer> getCurrentUserPoints(){
+    ResponseEntity<Integer> getCurrentUserPoints() {
         //
-        SecurityUtils.getCurrentUserLogin();
-
         Integer userPoints = userRepository.getPoints(SecurityUtils.getCurrentUserLogin());
-
-         System.out.println(ANSI_YELLOW + SecurityUtils.getCurrentUserLogin() + ANSI_RESET);
-
-
-
         return new ResponseEntity<Integer>(userPoints, HttpStatus.OK);
     }
+    @CrossOrigin
+    @GetMapping("/is_first_time")
+    ResponseEntity<Boolean> isFirstTimeLog(){
+        //
+        Boolean isFirstTimeLog = userRepository.isFirstLog(SecurityUtils.getCurrentUserLogin());
+        return new ResponseEntity<Boolean>(isFirstTimeLog, HttpStatus.OK);
+    }
+
 
     @CrossOrigin
     @PostMapping(value = "/users")
@@ -162,6 +162,8 @@ public class UserController {
     public ResponseEntity changePassword(@RequestBody UserPasswordChange userPasswordChange ) {
 
         int status = userService.resetPassword(userPasswordChange);
+
+
 
         if (status ==1){
             return ResponseEntity.ok().body("Zmieniono hasło użytkownikowi "+ userPasswordChange.getLogin());

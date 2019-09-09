@@ -1,5 +1,6 @@
 package com.damian.security;
 
+import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -81,4 +82,13 @@ public final class SecurityUtils {
         }
         return false;
     }
+
+
+    public static  String generateRandomSpecialCharacters(int length) {
+        char [][] pairs = {{'a','z'},{'0','9'}};
+        RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(pairs)
+            .build();
+        return pwdGenerator.generate(length);
+    }
+
 }

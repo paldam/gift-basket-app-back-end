@@ -5,7 +5,12 @@ import com.damian.domain.prize.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +57,27 @@ public class PrizeController {
 
         return new ResponseEntity<List<Prize>>(prizeList, HttpStatus.OK);
     }
+
+    @CrossOrigin
+    @PostMapping("/add")
+        // handle file and object in one request
+    ResponseEntity<Prize> createPrize(@RequestPart("prizeimage") MultipartFile[] basketMultipartFiles, @RequestPart("prizeobject") Prize prize ) throws URISyntaxException {
+
+      //  InputStream basketImgtoStore = new ByteArrayInputStream(basketMultipartFiles[0].getBytes();
+
+        try{
+            InputStream basketImgtoStore = new ByteArrayInputStream(basketMultipartFiles[0].getBytes());
+        }catch (IOException ioe) {
+
+            ioe.printStackTrace();
+
+
+        }
+
+        return new ResponseEntity<Prize>(prize, HttpStatus.CREATED);
+    }
+
+
 
     @CrossOrigin
     @PostMapping(value = "/order/status/{id}/{statusId}", produces = "text/plain;charset=UTF-8")

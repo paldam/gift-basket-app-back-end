@@ -67,6 +67,10 @@ public class User implements Serializable {
     @Column(name = "order_total_amount")
     private Integer points ;
 
+    @Basic
+    @Column(name = "first_login",columnDefinition = "boolean default false")
+    private boolean ifFirstLogin;
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
@@ -141,6 +145,14 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isIfFirstLogin() {
+        return ifFirstLogin;
+    }
+
+    public void setIfFirstLogin(boolean ifFirstLogin) {
+        this.ifFirstLogin = ifFirstLogin;
     }
 
     @Override

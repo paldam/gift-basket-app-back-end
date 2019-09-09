@@ -56,6 +56,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Integer getPoints(String login);
 
     @Transactional
+    @Query("select u.ifFirstLogin FROM User u WHERE  u.login = ?1")
+    Boolean isFirstLog(String login);
+
+    @Transactional
     @Query("select u FROM User u JOIN u.authorities a WHERE  a.name IN ('magazyn','wysylka','produkcja')")
     List<User> getLogisticWarehouseProductionUsers();
 
@@ -63,6 +67,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("update User u set u.password = ?1 where u.login = ?2")
     void changePassword(String newPassword, String login);
+
+    @Transactional
+    @Modifying
+    @Query("update User u set u.ifFirstLogin = false where u.login = ?1")
+    void setFirstLoginFalse(String login);
 
     @Transactional
     @Modifying
