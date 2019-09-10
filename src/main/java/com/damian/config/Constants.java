@@ -1,5 +1,8 @@
 package com.damian.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+
 /**
  * Application constants.
  */
@@ -12,6 +15,8 @@ public final class Constants {
     public static final String ANONYMOUS_USER = "anonymoususer";
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_RESET = "\u001B[0m";
+
+
 
     private Constants() {
     }

@@ -14,7 +14,6 @@ public class Prize {
     private String description;
     private Integer pkt;
     private Boolean isAvailable;
-    private String imageLink;
 
 
 
@@ -71,13 +70,5 @@ public class Prize {
         isAvailable = available;
     }
 
-    @Basic
-    @Column(name = "imgLink")
-    public String getImageLink() {
-        return imageLink;
-    }
 
-    public void setImageLink(String imageLink) {
-        this.imageLink = imageLink;
-    }
 }
