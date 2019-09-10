@@ -30,6 +30,8 @@ public class OrderDto {
     private Integer additionalSale;
     private Address address;
     private User productionUser;
+    private User loyaltyUser;
+    private Boolean isAllreadyComputedPoints;
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
                     String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
@@ -51,8 +53,8 @@ public class OrderDto {
     }
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
-                    String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
-                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,Integer additionalSale,Address address) {
+                     String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
+                     OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,Integer additionalSale,Address address) {
         this.orderId = orderId;
         this.orderFvNumber = orderFvNumber;
         this.customer = customer;
@@ -67,6 +69,28 @@ public class OrderDto {
         this.orderItems = orderItems;
         this.additionalSale = additionalSale;
         this.address = address;
+    }
+
+
+    public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
+                    String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,Integer additionalSale,User user,User loyaltyUser, Boolean isAllreadyComputedPoints) {
+        this.orderId = orderId;
+        this.orderFvNumber = orderFvNumber;
+        this.customer = customer;
+        this.orderDate = orderDate;
+        this.additionalInformation = additionalInformation;
+        this.deliveryDate = deliveryDate;
+        this.weekOfYear =weekOfYear;
+        this.deliveryType = deliveryType;
+        this.orderStatus = orderStatus;
+        this.orderTotalAmount = orderTotalAmount;
+        this.dbFileId = dbFileId;
+        this.orderItems = orderItems;
+        this.additionalSale = additionalSale;
+        this.productionUser = user;
+        this.loyaltyUser = loyaltyUser;
+        this.isAllreadyComputedPoints = isAllreadyComputedPoints;
     }
 
 
@@ -193,5 +217,21 @@ public class OrderDto {
 
     public void setProductionUser(User productionUser) {
         this.productionUser = productionUser;
+    }
+
+    public User getLoyaltyUser() {
+        return loyaltyUser;
+    }
+
+    public void setLoyaltyUser(User loyaltyUser) {
+        this.loyaltyUser = loyaltyUser;
+    }
+
+    public Boolean getAllreadyComputedPoints() {
+        return isAllreadyComputedPoints;
+    }
+
+    public void setAllreadyComputedPoints(Boolean allreadyComputedPoints) {
+        isAllreadyComputedPoints = allreadyComputedPoints;
     }
 }

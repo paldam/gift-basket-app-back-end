@@ -1,12 +1,15 @@
 package com.damian.boundry.rest;
 
 import com.damian.domain.audit.OrderAuditedRevisionEntity;
+import com.damian.domain.basket.BasketSezon;
 import com.damian.domain.notification.Notification;
 import com.damian.domain.notification.NotificationDao;
 import com.damian.domain.notification.NotificationService;
 import com.damian.domain.order.*;
 import com.damian.domain.order_file.DbFile;
 import com.damian.domain.order_file.DbFileDao;
+import com.damian.domain.prize.PointScheme;
+import com.damian.domain.prize.PointsDao;
 import com.damian.domain.product.ProductDao;
 import com.damian.domain.user.User;
 import com.damian.domain.user.UserRepository;
@@ -17,6 +20,7 @@ import com.damian.domain.order_file.DbFileService;
 import com.damian.dto.OrderItemsDto;
 import com.damian.security.SecurityUtils;
 import com.damian.util.PdfOrderProductCustom;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import org.apache.log4j.Logger;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditQuery;
@@ -42,6 +46,9 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
+
 @Transactional
 @RestController
 public class OrderController {
@@ -60,8 +67,9 @@ public class OrderController {
     private UserRepository userRepository;
     private NotificationDao notificationDao;
     private NotificationService notificationService;
+    private PointsDao pointsDao;
 
-    OrderController(NotificationService notificationService, UserRepository userRepository, NotificationDao notificationDao, DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao, DbFileDao dbFileDao) {
+    OrderController(PointsDao pointsDao, NotificationService notificationService, UserRepository userRepository, NotificationDao notificationDao, DbFileService dbFileService, OrderDao orderDao, OrderService orderService, DeliveryTypeDao deliveryTypeDao, OrderStatusDao orderStatusDao, ProductDao productDao, DbFileDao dbFileDao) {
         this.orderDao = orderDao;
         this.notificationDao = notificationDao;
         this.orderService = orderService;
@@ -71,6 +79,7 @@ public class OrderController {
         this.dbFileService = dbFileService;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.pointsDao = pointsDao;
 
     }
 
@@ -347,6 +356,40 @@ public class OrderController {
         } catch (OrderStatusException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
+    }
+
+    @Transactional
+    @CrossOrigin
+    @GetMapping(value = "/order/compute_loytaly_points", produces = "text/plain;charset=UTF-8")
+    ResponseEntity computeLoyaltyProgramPoints() {
+        List<PointScheme> pointScheme = pointsDao.findBy();
+        List<Order> orderListToComputePoints = orderDao.findAllOrderForLoyaltyProgram();
+        for (Order order : orderListToComputePoints) {
+            Double pointsToAdd = 0.0;
+            for (OrderItem oi : order.getOrderItems()) {
+                BasketSezon bs = oi.getBasket().getBasketSezon();
+                if (bs != null) {
+                    PointScheme scheme = pointScheme.stream().filter(pointScheme1 -> bs.getBasketSezonId().equals(pointScheme1.getBasketSezon().getBasketSezonId())).findAny().orElse(null);
+                    if (scheme != null) {
+                        Double stepA = (oi.getBasket().getBasketTotalPrice().doubleValue() / 100) * oi.getQuantity();
+                        Double stepB = (stepA / scheme.getStep().doubleValue()) * scheme.getPoints().doubleValue();
+                        pointsToAdd += stepB;
+                    }
+                    System.out.println(ANSI_YELLOW + "Suma w lini" + pointsToAdd + "basket " + oi.getBasket().getBasketName() + " sezon " + oi.getBasket().getBasketSezon().getBasketSezonName() + " |cena kosza " + oi.getBasket().getBasketTotalPrice() / 100 + " | totalline " + ((oi.getBasket().getBasketTotalPrice() * oi.getQuantity()) / 100) + ANSI_RESET);
+                }
+            }
+            Integer tmpPoints = (int) Math.ceil(pointsToAdd);
+            System.out.println(ANSI_YELLOW + "________________________" + tmpPoints + ANSI_RESET);
+
+            userRepository.updateUserPoints(order.getLoyaltyUser().getLogin(),tmpPoints);
+            order.setAllreadyComputedPoints(true);
+            orderDao.save(order);
+
+
+
+
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

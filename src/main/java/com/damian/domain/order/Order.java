@@ -46,6 +46,9 @@ public class Order implements Serializable {
     private String contactPerson;
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User productionUser;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private User loyaltyUser;
+    private Boolean isAllreadyComputedPoints;
 
 
     @Id
@@ -244,6 +247,28 @@ public class Order implements Serializable {
 
     public void setProductionUser(User productionUser) {
         this.productionUser = productionUser;
+    }
+
+
+    @ManyToOne
+    @Audited(targetAuditMode = NOT_AUDITED)
+    @JoinColumn(name = "loyalty_user")
+    public User getLoyaltyUser() {
+        return loyaltyUser;
+    }
+
+    public void setLoyaltyUser(User loyaltyUser) {
+        this.loyaltyUser = loyaltyUser;
+    }
+
+    @Basic
+    @Column(name = "allready_computed_points" , columnDefinition = "boolean default false")
+    public Boolean getAllreadyComputedPoints() {
+        return isAllreadyComputedPoints;
+    }
+
+    public void setAllreadyComputedPoints(Boolean allreadyComputedPoints) {
+        isAllreadyComputedPoints = allreadyComputedPoints;
     }
 
     @Override

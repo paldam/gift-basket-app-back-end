@@ -95,6 +95,7 @@ public class MultiHttpSecurityCustomConfig {
                     .and()
                     .authorizeRequests()
                     .antMatchers("/auth").permitAll()
+                    .antMatchers("/auth_loyalty_program").permitAll()
                     .antMatchers("/notification").permitAll()
                     .antMatchers("/new_order_notification").permitAll()
                     .anyRequest().authenticated()

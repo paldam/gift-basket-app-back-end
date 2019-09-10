@@ -1,6 +1,7 @@
 package com.damian.boundry.rest;
 
 
+import com.damian.security.SecurityUtils;
 import com.damian.security.jwt.JWTConfigurer;
 import com.damian.security.jwt.TokenProvider;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Collections;
+
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
 
 /**
  * Controller to authenticate users.
@@ -50,7 +54,41 @@ public class UserJWTController {
             boolean rememberMe = (loginVM.isRememberMe() == null) ? false : loginVM.isRememberMe();
             String jwt = tokenProvider.createToken(authentication, rememberMe);
             response.addHeader(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + jwt);
-            return ResponseEntity.ok(new JWTToken(jwt));
+            if(!SecurityUtils.isCurrentUserInRole("punkty")){
+                return ResponseEntity.ok(new JWTToken(jwt));
+            }else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Brak uprawnień");
+            }
+        } catch (AuthenticationException ae) {
+            log.trace("Authentication exception trace: {}", ae);
+            return new ResponseEntity<>(Collections.singletonMap("AuthenticationException",
+                ae.getLocalizedMessage()), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @CrossOrigin
+    @PostMapping("/auth_loyalty_program")
+    public ResponseEntity authorizeLoyaltyUser(@Valid @RequestBody LoginVM loginVM, HttpServletResponse response) {
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+            new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
+
+
+        try {
+            Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            boolean rememberMe = (loginVM.isRememberMe() == null) ? false : loginVM.isRememberMe();
+            String jwt = tokenProvider.createToken(authentication, rememberMe);
+            response.addHeader(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + jwt);
+             System.out.println(ANSI_YELLOW + SecurityUtils.getCurrentUserLogin() + ANSI_RESET);
+
+
+             if(SecurityUtils.isCurrentUserInRole("punkty")){
+                 return ResponseEntity.ok(new JWTToken(jwt));
+             }else{
+                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Brak uprawnień");
+             }
+
         } catch (AuthenticationException ae) {
             log.trace("Authentication exception trace: {}", ae);
             return new ResponseEntity<>(Collections.singletonMap("AuthenticationException",

@@ -75,6 +75,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Transactional
     @Modifying
+    @Query("update User u set u.points = u.points + ?2 where u.login = ?1")
+    void updateUserPoints(String login, Integer points);
+
+    @Transactional
+    @Modifying
     @Query(value = "UPDATE user set isArchival = true where id = ?1", nativeQuery = true)
     void markUserAsArchival( Long id);
 }

@@ -93,8 +93,26 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     @Query(value = "update orders set production_user =  ?2  WHERE order_id IN  ?1", nativeQuery = true)
     public void assignOrdersToSpecifiedProduction(List<Integer> ordersIds, Long productionId);
 
+
+    @Transactional
+    @Modifying
+    @Query(value = "update orders set is_ready_to_loyalty_program = true  WHERE order_id IN  ?1", nativeQuery = true)
+    public void markAsReadyToLoyaltyProgram(List<Integer> ordersIds);
+
+
+
     @Query(value = "SELECT * FROM orders WHERE order_id IN ?1", nativeQuery = true)
     public List<Order> findByOrderIds(List<Integer> ordersIds);
+
+
+
+
+
+    @Query(value = "SELECT * FROM orders WHERE order_status_id =5 AND loyalty_user is not null And allready_computed_points = false and order_date > '2019.09.10'", nativeQuery = true)
+    public List<Order> findAllOrderForLoyaltyProgram();
+
+
+
 
     @Query(value = "SELECT * FROM orders WHERE production_user = ?1 and  order_status_id !=99 ORDER BY order_date DESC", nativeQuery = true)
     public List<Order> getAllOrdersByProductionUserId(Long id);

@@ -186,6 +186,7 @@ public class OrderService {
             order.getOrderItems().forEach(orderItem -> {
                 orderItem.setQuantityFromSurplus(0);
             });
+            order.setAllreadyComputedPoints(false);
         }
 
 
@@ -527,7 +528,7 @@ public class OrderService {
             } else {
                 fileIdTmp = 0L;
             }
-            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser()));
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(),order.getLoyaltyUser(),order.getAllreadyComputedPoints()));
         });
         return new OrderPageRequest(orderDtoList, orderList.getTotalElements());
     }
