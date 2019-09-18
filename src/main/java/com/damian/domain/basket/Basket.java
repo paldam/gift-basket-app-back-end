@@ -17,6 +17,7 @@ public class Basket {
     private BasketType basketType;
     private List<BasketItems> basketItems;
     private Integer basketTotalPrice;
+    private Integer basketProductsPrice;
     private String season;
     private Integer stock;
     private Integer isAlcoholic;
@@ -116,6 +117,16 @@ public class Basket {
 
     public void setLastStockEditDate(Date lastStockEditDate) {
         this.lastStockEditDate = lastStockEditDate;
+    }
+
+    @Basic
+    @Column(name = "basket_products_price", length = 40)
+    public Integer getBasketProductsPrice() {
+        return basketProductsPrice;
+    }
+
+    public void setBasketProductsPrice(Integer basketProductsPrice) {
+        this.basketProductsPrice = basketProductsPrice;
     }
 
     @Basic

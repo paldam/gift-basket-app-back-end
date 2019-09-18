@@ -4,6 +4,8 @@ import com.damian.domain.basket.*;
 import com.damian.domain.order.Order;
 import com.damian.domain.order.OrderItem;
 import com.damian.domain.order_file.DbFile;
+import com.damian.domain.product.Product;
+import com.damian.domain.product.ProductDao;
 import com.damian.domain.product.Supplier;
 import com.damian.dto.BasketDto;
 import com.damian.dto.BasketExtStockDao;
@@ -40,39 +42,55 @@ public class BasketController {
     private BasketExtService basketExtService;
     private BasketService basketService;
     private BasketDao basketDao;
+    private ProductDao productDao;
     private BasketTypeDao basketTypeDao;
     private BasketSezonDao basketSezonDao;
 
-    public BasketController(BasketSezonDao basketSezonDao, BasketService basketService, BasketDao basketDao, BasketTypeDao basketTypeDao, BasketExtService basketExtService) {
+    public BasketController(ProductDao productDao,BasketSezonDao basketSezonDao, BasketService basketService, BasketDao basketDao, BasketTypeDao basketTypeDao, BasketExtService basketExtService) {
         this.basketDao = basketDao;
+        this.productDao =productDao;
         this.basketService = basketService;
         this.basketTypeDao = basketTypeDao;
         this.basketExtService = basketExtService;
         this.basketSezonDao = basketSezonDao;
     }
 
-   @Transactional
+    @Transactional
     @CrossOrigin
     @GetMapping("/basketconvert")
     ResponseEntity<List<Basket>> convertBasket() {
-
         List<Basket> basketList = basketDao.findAllBy();
         basketList.forEach(basket -> {
             Optional<BasketSezon> optBasket = basketSezonDao.findByBasketSezonName(basket.getSeason());
-            if(!optBasket.isPresent()){
+            if (!optBasket.isPresent()) {
                 BasketSezon basketSezonTmp = basketSezonDao.save(new BasketSezon(basket.getSeason()));
                 basket.setBasketSezon(basketSezonTmp);
                 basketDao.save(basket);
-            }else{
-
+            } else {
                 basket.setBasketSezon(optBasket.get());
                 basketDao.save(basket);
-
             }
-
-
-
         });
+        return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
+    }
+
+    @Transactional
+    @CrossOrigin
+    @GetMapping("/basketconvert3")
+    ResponseEntity<List<Basket>> convertBasket3() {
+        List<Basket> basketList = basketDao.findAllBy();
+
+
+
+
+        for (Basket basket : basketList) {
+            Integer total = 0;
+            for (BasketItems bi : basket.getBasketItems()) {
+                total += bi.getProduct().getPrice() * bi.getQuantity();
+            }
+            basket.setBasketProductsPrice(total);
+            basketDao.save(basket);
+        }
         return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
     }
 
@@ -186,15 +204,29 @@ public class BasketController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = {"/basket/find/{priceMin}/{priceMax}/{productsSubTypes}", "/basket/find/{priceMin}/{priceMax}"}, method = RequestMethod.GET)
-    public ResponseEntity<List<Basket>> getBasketsWithFilters(@PathVariable Integer priceMin, @PathVariable Integer priceMax, @PathVariable Optional<List<Integer>> productsSubTypes) {
+    @RequestMapping(value = {"/basket/find/{priceMin}/{priceMax}/{basketPrice}/{productsSubTypes}", "/basket/find/{priceMin}/{priceMax}/{basketPrice}"}, method = RequestMethod.GET)
+    public ResponseEntity<List<Basket>> getBasketsWithFilters(@PathVariable Integer priceMin, @PathVariable Integer priceMax,@PathVariable Boolean basketPrice, @PathVariable Optional<List<Integer>> productsSubTypes) {
         priceMax = priceMax * 100;
         priceMin = priceMin * 100;
         List<Basket> basketList;
         if (!productsSubTypes.isPresent()) {
-            basketList = basketDao.findBasketsWithFilterWithoutTypes(priceMin, priceMax);
+
+            if(basketPrice){
+                basketList = basketDao.findBasketsWithFilterWithoutTypes(priceMin, priceMax);
+            }else{
+                basketList = basketDao.findBasketsWithFilterWithoutTypesByProductsPrice(priceMin, priceMax);
+            }
+
+
         } else {
-            basketList = basketDao.findBasketsWithFilter(priceMin, priceMax, productsSubTypes.get(),productsSubTypes.get().size());
+            if(basketPrice){
+                basketList = basketDao.findBasketsWithFilter(priceMin, priceMax, productsSubTypes.get(),productsSubTypes.get().size());
+
+            }else{
+                basketList = basketDao.findBasketsWithFilterByProductsPrice(priceMin, priceMax, productsSubTypes.get(),productsSubTypes.get().size());
+
+            }
+
         }
         return new ResponseEntity<List<Basket>>(basketList, HttpStatus.OK);
     }

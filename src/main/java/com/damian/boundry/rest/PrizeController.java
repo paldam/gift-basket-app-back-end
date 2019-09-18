@@ -2,6 +2,7 @@ package com.damian.boundry.rest;
 
 import com.damian.domain.order.Order;
 import com.damian.domain.prize.*;
+import com.damian.domain.product.ProductType;
 import com.damian.util.FtpConnectionException;
 import com.damian.util.FtpService;
 import com.damian.util.FtpSpace;
@@ -22,12 +23,14 @@ import java.util.Optional;
 public class PrizeController {
 
     private PrizeDao prizeDao;
+    private PointsDao pointsDao;
     private PrizeOrderDao prizeOrderDao;
     private PrizeOrderService prizeOrderService;
     private PrizeService prizeService;
     private FtpService ftpService;
 
-    public PrizeController(PrizeDao prizeDao, PrizeOrderDao prizeOrderDao, PrizeOrderService prizeOrderService, PrizeService prizeService, FtpService ftpService) {
+    public PrizeController(PointsDao pointsDao, PrizeDao prizeDao, PrizeOrderDao prizeOrderDao, PrizeOrderService prizeOrderService, PrizeService prizeService, FtpService ftpService) {
+       this.pointsDao = pointsDao;
         this.prizeDao = prizeDao;
         this.prizeOrderDao = prizeOrderDao;
         this.prizeOrderService = prizeOrderService;
@@ -65,6 +68,21 @@ public class PrizeController {
         return new ResponseEntity<List<Prize>>(prizeList, HttpStatus.OK);
     }
 
+
+    @CrossOrigin
+    @GetMapping("/pointscheme")
+    ResponseEntity<List<PointScheme>> getPointsScheme() {
+        List<PointScheme> prizeSchemeList = pointsDao.findBy();
+
+
+        return new ResponseEntity<List<PointScheme>>(prizeSchemeList, HttpStatus.OK);
+    }
+    @CrossOrigin
+    @PostMapping("/pointscheme/add")
+    ResponseEntity<PointScheme> createPointScheme(@RequestBody PointScheme pointScheme) throws URISyntaxException {
+        pointsDao.save(pointScheme);
+        return new ResponseEntity<PointScheme>(pointScheme, HttpStatus.CREATED);
+    }
 
     @CrossOrigin
     @PostMapping("/add/noimg")

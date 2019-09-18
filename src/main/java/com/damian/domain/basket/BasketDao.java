@@ -68,9 +68,15 @@ public interface BasketDao extends CrudRepository<Basket,Long>, JpaSpecification
         " where product_sub_type_id IN ?3 AND baskets.basket_total_price >= ?1 AND baskets.basket_total_price <=?2 GROUP BY baskets.basket_id having count(distinct products.product_sub_type_id) = ?4", nativeQuery = true)
     public List<Basket> findBasketsWithFilter(Integer priceMin,Integer priceMax, List<Integer> subTypeList, Integer subTypeListLength);
 
-
+    @Query(value = "select * from baskets join basket_items on baskets.basket_id = basket_items.basket_id join products ON basket_items.product_id = products.id" +
+        " where product_sub_type_id IN ?3 AND baskets.basket_products_price >= ?1 AND baskets.basket_products_price <=?2 GROUP BY baskets.basket_id having count(distinct products.product_sub_type_id) = ?4", nativeQuery = true)
+    public List<Basket> findBasketsWithFilterByProductsPrice(Integer priceMin,Integer priceMax, List<Integer> subTypeList, Integer subTypeListLength);
 
     @Query(value = "select * from baskets  join basket_items on baskets.basket_id = basket_items.basket_id  join products ON basket_items.product_id = products.id" +
         " where  baskets.basket_total_price >= ?1 AND baskets.basket_total_price <=?2 GROUP BY baskets.basket_id", nativeQuery = true)
     public List<Basket> findBasketsWithFilterWithoutTypes(Integer priceMin,Integer priceMax);
+
+    @Query(value = "select * from baskets  join basket_items on baskets.basket_id = basket_items.basket_id  join products ON basket_items.product_id = products.id" +
+        " where  baskets.basket_products_price >= ?1 AND baskets.basket_products_price <=?2 GROUP BY baskets.basket_id", nativeQuery = true)
+    public List<Basket> findBasketsWithFilterWithoutTypesByProductsPrice(Integer priceMin,Integer priceMax);
 }
