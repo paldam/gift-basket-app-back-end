@@ -45,6 +45,13 @@ public class PrizeController {
         return new ResponseEntity<PrizeOrder>(savedOrder, HttpStatus.CREATED);
     }
 
+    @CrossOrigin
+    @DeleteMapping("/pointscheme/{id}")
+    ResponseEntity<PointScheme> deletePointScheme(@PathVariable Long id) {
+        pointsDao.deleteById(id);
+        return new ResponseEntity<PointScheme>(HttpStatus.OK);
+    }
+
 
     @CrossOrigin
     @GetMapping("orders")

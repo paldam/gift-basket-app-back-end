@@ -56,6 +56,14 @@ public class UserController {
         return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
     }
 
+    @CrossOrigin
+    @GetMapping("/program_users/resetpassword/{email:.+}")
+    ResponseEntity resetPasswordForProgramUser(@PathVariable String email){
+
+        userService.resetProgramUserPassword(email);
+        return new ResponseEntity( HttpStatus.OK);
+    }
+
 
     @CrossOrigin
     @GetMapping("/production_users")

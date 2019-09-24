@@ -14,10 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import static com.damian.config.Constants.ANSI_RESET;
 import static com.damian.config.Constants.ANSI_YELLOW;
@@ -32,7 +29,7 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
     private EmailService emailService;
 
-    public UserService(EmailService emailService,NotificationDao notificationDao, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository) {
+    public UserService( EmailService emailService,NotificationDao notificationDao, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository) {
         this.userRepository = userRepository;
         this.notificationDao = notificationDao;
         this.passwordEncoder = passwordEncoder;
@@ -74,7 +71,29 @@ public class UserService {
     }
 
 
+    @Transactional
+    public void resetProgramUserPassword(String email) {
 
+        System.out.println(ANSI_YELLOW + email + ANSI_RESET);
+
+        Optional<User> user=  userRepository.findOneByEmail(email);
+
+
+        if( user.isPresent()){
+            String generatedPlainPass = SecurityUtils.generateRandomSpecialCharacters(14);
+            String encryptedPassword = passwordEncoder.encode(generatedPlainPass);
+            user.get().setPassword(encryptedPassword);
+            userRepository.save(user.get());
+            System.out.println(ANSI_YELLOW + "sds" + ANSI_RESET);
+             System.out.println(ANSI_YELLOW + user.get().getEmail() + ANSI_RESET);
+
+
+            emailService.sendSimpleMessage(user.get().getEmail(),"Dane do logowania","Twoje hasło zostało zresetowane nowe hasło to: " +generatedPlainPass );
+
+
+        }
+
+    }
 
     @Transactional
     public void deleteUser(String login) {
