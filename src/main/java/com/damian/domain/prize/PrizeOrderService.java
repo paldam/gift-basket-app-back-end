@@ -20,11 +20,27 @@ public class PrizeOrderService {
         this.userRepository = userRepository;
     }
 
-    public PrizeOrder saveOrder(PrizeOrder order) {
+    @Transactional
+    public PrizeOrder saveOrder(PrizeOrder order) throws NoPointsExceptions {
         Optional<User> curentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
         order.setUser(curentUser.get());
         PrizeOrderStatus prizeOrderStatus = new PrizeOrderStatus(1);
         order.setPrizeOrderStatus(prizeOrderStatus);
+
+
+        Integer pointsBeforeOrder = userRepository.getPoints(curentUser.get().getLogin());
+
+        Integer pointsAfterOrder = pointsBeforeOrder - order.getOrderTotalAmount();
+
+
+        if(pointsAfterOrder <0) {
+            throw new NoPointsExceptions("Brak punktów");
+        }
+
+        curentUser.get().setPoints(pointsAfterOrder);
+
+        userRepository.save( curentUser.get());
+
         return prizeOrderDao.save(order);
     }
 

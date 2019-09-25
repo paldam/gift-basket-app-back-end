@@ -80,6 +80,8 @@ public class UserController {
         Integer userPoints = userRepository.getPoints(SecurityUtils.getCurrentUserLogin());
         return new ResponseEntity<Integer>(userPoints, HttpStatus.OK);
     }
+
+
     @CrossOrigin
     @GetMapping("/is_first_time")
     ResponseEntity<Boolean> isFirstTimeLog(){

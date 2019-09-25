@@ -64,7 +64,7 @@ public class UserService {
         user.setPoints(0);
         userRepository.save(user);
 
-        emailService.sendSimpleMessage("dami@onet.eu","Dane do logowania","Witamy w programie loyalnościowym twoje dane do zalogowania to login: " + user.getLogin() + " hasło: " +generatedPlainPass);
+        emailService.sendSimpleMessage(user.getEmail(),"Dane do logowania","Witamy w programie loyalnościowym twoje dane do zalogowania to login: " + user.getLogin() + " hasło: " +generatedPlainPass);
 
 
         return user;

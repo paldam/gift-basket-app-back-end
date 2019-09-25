@@ -41,8 +41,17 @@ public class PrizeController {
     @CrossOrigin
     @PostMapping("/order")
     ResponseEntity<PrizeOrder> createOrder(@RequestBody PrizeOrder prizeOrder) {
-        PrizeOrder savedOrder = prizeOrderService.saveOrder(prizeOrder);
-        return new ResponseEntity<PrizeOrder>(savedOrder, HttpStatus.CREATED);
+
+        try{
+
+            prizeOrderService.saveOrder(prizeOrder);
+
+        }catch (NoPointsExceptions noPointsExceptions){
+
+
+        }
+
+        return new ResponseEntity<PrizeOrder>( HttpStatus.CREATED);
     }
 
     @CrossOrigin

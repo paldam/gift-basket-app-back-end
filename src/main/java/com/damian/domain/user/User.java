@@ -33,10 +33,10 @@ public class User implements Serializable {
     @Column(length = 50, unique = true, nullable = false)
     private String login;
 
-    @Column(name = "name" ,length = 100, nullable = true, columnDefinition = "DEFAULT NULL")
+    @Column(name = "name" ,length = 100, nullable = true)
     private String name;
 
-    @Column(name = "email" ,length = 100,unique = true, nullable = true, columnDefinition = "DEFAULT NULL")
+    @Column(name = "email" ,length = 100,unique = true, nullable = true )
     private String email;
 
 
