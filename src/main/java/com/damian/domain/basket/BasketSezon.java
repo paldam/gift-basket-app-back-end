@@ -12,6 +12,10 @@ public class BasketSezon {
     public BasketSezon() {
 
     }
+    public BasketSezon(Integer basketSezonId) {
+        this.basketSezonId = basketSezonId;
+
+    }
 
     public BasketSezon(String basketSezonName) {
         this.basketSezonName = basketSezonName;
