@@ -78,7 +78,7 @@ public class PrizeController {
     @CrossOrigin
     @GetMapping("/prizelist")
     ResponseEntity<List<Prize>> getPrizes() {
-        List<Prize> prizeList = prizeDao.findAllBy();
+        List<Prize> prizeList = prizeDao.findAllWithoutDel();
 
 
         return new ResponseEntity<List<Prize>>(prizeList, HttpStatus.OK);
