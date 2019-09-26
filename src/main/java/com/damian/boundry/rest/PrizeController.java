@@ -48,7 +48,7 @@ public class PrizeController {
 
         }catch (NoPointsExceptions noPointsExceptions){
 
-
+            return new ResponseEntity<PrizeOrder>( HttpStatus.NOT_ACCEPTABLE);
         }
 
         return new ResponseEntity<PrizeOrder>( HttpStatus.CREATED);

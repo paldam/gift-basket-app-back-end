@@ -25,6 +25,6 @@ public class AppInitializer extends AbstractAnnotationConfigDispatcherServletIni
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         super.onStartup(servletContext);
-        servletContext.setInitParameter("spring.profiles.active", "prod" );   // active profile
+        servletContext.setInitParameter("spring.profiles.active", "dev" );   // active profile
     }
 }
