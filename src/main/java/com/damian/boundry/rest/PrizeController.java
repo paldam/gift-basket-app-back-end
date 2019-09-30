@@ -3,6 +3,10 @@ package com.damian.boundry.rest;
 import com.damian.domain.order.Order;
 import com.damian.domain.prize.*;
 import com.damian.domain.product.ProductType;
+import com.damian.domain.user.User;
+import com.damian.domain.user.UserRepository;
+import com.damian.domain.user.UserService;
+import com.damian.security.SecurityUtils;
 import com.damian.util.FtpConnectionException;
 import com.damian.util.FtpService;
 import com.damian.util.FtpSpace;
@@ -28,14 +32,16 @@ public class PrizeController {
     private PrizeOrderService prizeOrderService;
     private PrizeService prizeService;
     private FtpService ftpService;
+    private UserRepository userService;
 
-    public PrizeController(PointsDao pointsDao, PrizeDao prizeDao, PrizeOrderDao prizeOrderDao, PrizeOrderService prizeOrderService, PrizeService prizeService, FtpService ftpService) {
+    public PrizeController(UserRepository userService, PointsDao pointsDao, PrizeDao prizeDao, PrizeOrderDao prizeOrderDao, PrizeOrderService prizeOrderService, PrizeService prizeService, FtpService ftpService) {
        this.pointsDao = pointsDao;
         this.prizeDao = prizeDao;
         this.prizeOrderDao = prizeOrderDao;
         this.prizeOrderService = prizeOrderService;
         this.prizeService = prizeService;
         this.ftpService = ftpService;
+        this.userService=userService;
     }
 
     @CrossOrigin
@@ -68,6 +74,16 @@ public class PrizeController {
         List<PrizeOrder> prizeOrderList = prizeOrderDao.findAllByOrderByOrderDateDesc();
         return new ResponseEntity<List<PrizeOrder>>(prizeOrderList, HttpStatus.OK);
     }
+
+    @CrossOrigin
+    @GetMapping("userorders")
+    ResponseEntity<List<PrizeOrder>> getUserPrizeOrders() {
+        SecurityUtils.getCurrentUserLogin();
+        Optional<User> user= userService.findOneByLogin(SecurityUtils.getCurrentUserLogin());
+        List<PrizeOrder> prizeOrderList = prizeOrderDao.findAllByUser(user.get().getId());
+        return new ResponseEntity<List<PrizeOrder>>(prizeOrderList, HttpStatus.OK);
+    }
+
 
     @GetMapping(value = "/order/{id}")
     ResponseEntity<PrizeOrder> getPrizeOrder(@PathVariable Long id) {
