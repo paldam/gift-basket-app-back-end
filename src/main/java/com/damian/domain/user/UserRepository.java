@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
 
-    @Query("select u FROM User u join u.authorities a where a.name ='punkty'")
+    @Query("select u FROM User u join u.authorities a where a.name ='punkty' ")
     List<User> getAllProgramUser();
 
 
@@ -49,11 +49,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u.password FROM User u WHERE  u.login = ?1")
     String getPassword(String login);
 
-
+    @Transactional
+    @Modifying
+    @Query("update User u set u.name =?3 , u.points = ?2 where u.login = ?1")
+    void editSimpleUser(String login, Integer points, String name);
 
     @Transactional
     @Query("select u.points FROM User u WHERE  u.login = ?1")
     Integer getPoints(String login);
+
+    @Transactional
+    @Query("select u.name FROM User u WHERE  u.login = ?1")
+    String getName(String login);
 
     @Transactional
     @Query("select u.ifFirstLogin FROM User u WHERE  u.login = ?1")

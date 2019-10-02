@@ -13,6 +13,7 @@ public class Prize {
     private String name;
     private String description;
     private Integer pkt;
+    private Integer stock;
     private Boolean isAvailable;
 
 
@@ -71,4 +72,18 @@ public class Prize {
     }
 
 
+    @Basic
+    @Column(name = "stock")
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    @Override
+    public String toString() {
+        return "Prize{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", pkt=" + pkt + ", stock=" + stock + ", isAvailable=" + isAvailable + '}';
+    }
 }

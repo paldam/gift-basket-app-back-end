@@ -55,6 +55,9 @@ public class PrizeController {
         }catch (NoPointsExceptions noPointsExceptions){
 
             return new ResponseEntity<PrizeOrder>( HttpStatus.NOT_ACCEPTABLE);
+        }catch (PointsExceptions pointsExceptions){
+
+            return new ResponseEntity<PrizeOrder>( HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<PrizeOrder>( HttpStatus.CREATED);
@@ -94,6 +97,15 @@ public class PrizeController {
     @CrossOrigin
     @GetMapping("/prizelist")
     ResponseEntity<List<Prize>> getPrizes() {
+        List<Prize> prizeList = prizeDao.findAllBy();
+
+
+        return new ResponseEntity<List<Prize>>(prizeList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/prizelistnodel")
+    ResponseEntity<List<Prize>> getPrizesWithoutDel() {
         List<Prize> prizeList = prizeDao.findAllWithoutDel();
 
 

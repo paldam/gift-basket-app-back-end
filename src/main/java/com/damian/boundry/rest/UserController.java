@@ -1,5 +1,6 @@
 package com.damian.boundry.rest;
 
+import com.damian.domain.prize.LoyaltyNumbersDao;
 import com.damian.dto.ProductionUserDto;
 import com.damian.dto.UserDto;
 import com.damian.domain.user.Authority;
@@ -32,11 +33,13 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
     private  AuthorityRepository authorityRepository;
+    private LoyaltyNumbersDao loyaltyNumbersDao;
 
-    public UserController(UserRepository userRepository, UserService userService,AuthorityRepository authorityRepository ) {
+    public UserController( LoyaltyNumbersDao loyaltyNumbersDao,UserRepository userRepository, UserService userService, AuthorityRepository authorityRepository ) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.authorityRepository = authorityRepository;
+        this.loyaltyNumbersDao = loyaltyNumbersDao;
     }
 
 
@@ -83,6 +86,15 @@ public class UserController {
 
 
     @CrossOrigin
+    @GetMapping("/current_user_name")
+    ResponseEntity<String> getCurrentUserName() {
+        //
+        String userName = userRepository.getName(SecurityUtils.getCurrentUserLogin());
+        return new ResponseEntity<>(userName, HttpStatus.OK);
+    }
+
+
+    @CrossOrigin
     @GetMapping("/is_first_time")
     ResponseEntity<Boolean> isFirstTimeLog(){
         //
@@ -117,6 +129,9 @@ public class UserController {
     @PostMapping(value = "/program_users")
     public ResponseEntity createProgramUser(@RequestBody User user) {
 
+        user.setLogin(user.getLogin().toUpperCase());
+
+
         if (user.getId() != null) {
             return ResponseEntity.badRequest()
                 //.headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new user cannot already have an ID"))
@@ -130,11 +145,31 @@ public class UserController {
             return ResponseEntity.badRequest()
                 //.headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "userexists", "Login already in use"))
                 .body("Podany email jest już zajęty");
-        }else {
+
+
+        } else if (!loyaltyNumbersDao.findAllByNumber(user.getLogin()).isPresent()) {
+        return ResponseEntity.badRequest()
+            .body("Błędny numer klienta");
+
+       }
+        else {
             User newUser = userService.createUserForLoyaltyProgram(user);
             return ResponseEntity.ok(newUser);
 
         }
+    }
+
+
+    @CrossOrigin
+    @PostMapping(value = "/useredit")
+    public ResponseEntity simpleEditProgramUser(@RequestBody User user) {
+
+
+
+            userRepository.editSimpleUser(user.getLogin(),user.getPoints(),user.getName());
+            return ResponseEntity.ok(user);
+
+
     }
 
 
@@ -199,6 +234,17 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
 
         userService.deleteUser(login);
+        return ResponseEntity.ok().headers(HeaderUtil.createAlert( "userManagement.deleted", login)).build();
+    }
+
+
+
+    @CrossOrigin
+    @DeleteMapping("/programusers/{login}")
+
+    public ResponseEntity<Void> deleteProgramUser(@PathVariable String login) {
+
+        userService.deleteProgramUser(login);
         return ResponseEntity.ok().headers(HeaderUtil.createAlert( "userManagement.deleted", login)).build();
     }
 }

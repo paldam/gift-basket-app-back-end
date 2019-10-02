@@ -1,6 +1,8 @@
 package com.damian.boundry.rest;
 
 
+import com.damian.domain.user.User;
+import com.damian.domain.user.UserRepository;
 import com.damian.security.SecurityUtils;
 import com.damian.security.jwt.JWTConfigurer;
 import com.damian.security.jwt.TokenProvider;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Collections;
+import java.util.Optional;
 
 import static com.damian.config.Constants.ANSI_RESET;
 import static com.damian.config.Constants.ANSI_YELLOW;
@@ -35,10 +38,12 @@ public class UserJWTController {
     private final TokenProvider tokenProvider;
 
     private final AuthenticationManager authenticationManager;
+    private UserRepository userRepository;
 
-    public UserJWTController(TokenProvider tokenProvider, AuthenticationManager authenticationManager) {
+    public UserJWTController(TokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository userRepository) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
     }
     @CrossOrigin
     @PostMapping("/auth")
@@ -69,6 +74,16 @@ public class UserJWTController {
     @CrossOrigin
     @PostMapping("/auth_loyalty_program")
     public ResponseEntity authorizeLoyaltyUser(@Valid @RequestBody LoginVM loginVM, HttpServletResponse response) {
+
+
+        if(loginVM.getUsername().contains("@")){
+
+          Optional<User> user = userRepository.findOneByEmail(loginVM.getUsername());
+          if(user.isPresent()){
+              loginVM.setUsername(user.get().getLogin());
+          }
+
+        }
 
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());

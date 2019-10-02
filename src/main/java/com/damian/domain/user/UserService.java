@@ -64,7 +64,13 @@ public class UserService {
         user.setPoints(0);
         userRepository.save(user);
 
+         System.out.println(ANSI_YELLOW + user.getEmail() + ANSI_RESET);
+
+
+
+
         emailService.sendSimpleMessage(user.getEmail(),"Dane do logowania","Witamy w programie loyalnościowym twoje dane do zalogowania to login: " + user.getLogin() + " hasło: " +generatedPlainPass);
+        //emailService.sendSimpleMessage(user.getEmail(),"Dane do logowania","Witamy w programie");
 
 
         return user;
@@ -100,6 +106,14 @@ public class UserService {
         userRepository.findOneByLogin(login).ifPresent(user -> {
             notificationDao.deleteByUser(user.getId());
             userRepository.markUserAsArchival(user.getId());
+        });
+    }
+
+
+    @Transactional
+    public void deleteProgramUser(String login) {
+        userRepository.findOneByLogin(login).ifPresent(user -> {
+          userRepository.delete(user);
         });
     }
 

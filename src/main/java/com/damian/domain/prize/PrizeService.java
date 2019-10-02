@@ -22,6 +22,7 @@ public class PrizeService {
     @Transactional
     public void savePrize(InputStream prizeImg, Prize prize) throws FtpConnectionException  {
         prize.setAvailable(true);
+        prize.setStock(0);
         Prize savedPrize = prizeDao.save(prize);
         try {
             ftpService.sendFileViaFtp(prizeImg, savedPrize.getId().toString(), FtpSpace.PRIZES);
