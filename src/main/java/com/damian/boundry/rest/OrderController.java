@@ -232,7 +232,7 @@ public class OrderController {
 
 
 
-        List<Order> productToOrderList = orderDao.findProductToOrder(startDate, endDate);
+        List<Order> productToOrderList = orderDao.findProductToOrder2(startDate, endDate);
 
         return new ResponseEntity<List<Order>>(productToOrderList, HttpStatus.OK);
     }

@@ -3,6 +3,7 @@ package com.damian.domain.product;
 import com.damian.domain.basket.BasketItems;
 import com.damian.domain.order.OrderItem;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -22,12 +23,14 @@ public class ProductToOrder {
     private Long suma ;
     private String capacity;
     private ProductSubType productSubType;
+    private Integer valueForDeliver;
+    private Date lastEditNumberOfOrderedDate;
 
     public ProductToOrder() {
     }
 
 
-    public ProductToOrder(Product p, Long suma) {
+    public ProductToOrder(Product p, Long suma ) {
 
         this.id = p.getId();
         this.product_name = p.getProductName();
@@ -37,6 +40,22 @@ public class ProductToOrder {
         this.suma = suma;
         this.capacity = p.getCapacity();
         this.productSubType = p.getProductSubType();
+        this.valueForDeliver = 0;
+    }
+
+    public ProductToOrder(Product p, Long suma, Date lastEditNumberOfOrderedDate ) {
+
+        this.id = p.getId();
+        this.product_name = p.getProductName();
+        this.suppliers = p.getSuppliers();
+        this.stock = p.getStock();
+        this.tmpOrdered = p.getTmpOrdered();
+        this.suma = suma;
+        this.capacity = p.getCapacity();
+        this.productSubType = p.getProductSubType();
+        this.valueForDeliver = 0;
+        this.lastEditNumberOfOrderedDate = lastEditNumberOfOrderedDate;
+
     }
 
     public ProductToOrder(Integer id, String product_name, Set<Supplier> suppliers, Integer stock, Integer tmpOrdered, Long suma, String capacity) {
@@ -47,6 +66,7 @@ public class ProductToOrder {
         this.tmpOrdered = tmpOrdered;
         this.suma = suma;
         this.capacity = capacity;
+        this.valueForDeliver = 0;
 
     }
 
@@ -116,6 +136,22 @@ public class ProductToOrder {
 
     public void setProductSubType(ProductSubType productSubType) {
         this.productSubType = productSubType;
+    }
+
+    public Integer getValueForDeliver() {
+        return valueForDeliver;
+    }
+
+    public void setValueForDeliver(Integer valueForDeliver) {
+        this.valueForDeliver = valueForDeliver;
+    }
+
+    public Date getLastEditNumberOfOrderedDate() {
+        return lastEditNumberOfOrderedDate;
+    }
+
+    public void setLastEditNumberOfOrderedDate(Date lastEditNumberOfOrderedDate) {
+        this.lastEditNumberOfOrderedDate = lastEditNumberOfOrderedDate;
     }
 }
 

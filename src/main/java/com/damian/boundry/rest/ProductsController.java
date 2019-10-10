@@ -124,6 +124,18 @@ public class ProductsController {
         return new ResponseEntity<List<Basket>>(basketsList, HttpStatus.OK);
     }
 
+
+    @CrossOrigin
+    @GetMapping(value = "/products/multidelivery/{ids}/{values}", produces = "application/json; charset=utf-8")
+    ResponseEntity<List<Basket>> setMultiDelivery(@PathVariable Integer[] ids, @PathVariable Integer[] values) {
+
+        productService.setMultiDelivery(ids,values);
+
+
+
+        return new ResponseEntity<>( HttpStatus.OK);
+    }
+
     @CrossOrigin
     @PostMapping("/products/supplier/")
     ResponseEntity<Supplier> createSupplier(@RequestBody Supplier supplier) throws URISyntaxException {

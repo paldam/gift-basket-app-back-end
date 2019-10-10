@@ -144,6 +144,10 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p,sum(oi.quantity*bi.quantity)) FROM Order o JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId=1 OR o.orderStatus.orderStatusId=6) AND o.deliveryDate >= ?1 AND o.deliveryDate <= ?2  GROUP BY p.id")
     public List<Order> findProductToOrder(Date startDate, Date endDate);
 
+
+    @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p,sum(oi.quantity*bi.quantity),p.lastNumberOfOrderedEditDate) FROM Order o JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId=1 OR o.orderStatus.orderStatusId=6) AND o.deliveryDate >= ?1 AND o.deliveryDate <= ?2  GROUP BY p.id")
+    public List<Order> findProductToOrder2(Date startDate, Date endDate);
+
     @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p,sum(oi.quantity*bi.quantity)) FROM Order o JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId != 99) AND o.deliveryDate >= ?1 AND o.deliveryDate <=  ?2  GROUP BY p.id")
     public List<Order> findProductToOrderWithoutDeletedOrderByDeliveryDate(Date startDate, Date endDate);
 

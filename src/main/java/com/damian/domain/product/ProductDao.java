@@ -63,6 +63,8 @@ public interface ProductDao extends CrudRepository<Product,Long> {
     @Query(value = "update products set tmp_ordered =  ?2  WHERE id = ?1", nativeQuery = true)
     void setProductToDeliver(Integer productId, Integer valueToSet);
 
+
+
     @Transactional
     @Modifying
     @Query(value = "update products set stock =  stock + ?2  WHERE id = ?1", nativeQuery = true)
