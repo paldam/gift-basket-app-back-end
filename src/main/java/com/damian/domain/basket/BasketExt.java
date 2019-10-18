@@ -19,6 +19,7 @@ public class BasketExt {
     private String basketImgContentType;
     private Integer isAlcoholic;
     private Integer isAvailable;
+    private Integer basketProductsPrice;
 
     public BasketExt() {
     }
@@ -34,9 +35,12 @@ public class BasketExt {
         this.season = basket.getSeason();
         this.isAlcoholic = basket.getIsAlcoholic();
         this.isAvailable = basket.getIsAvailable();
+        this.basketProductsPrice = basket.getBasketProductsPrice();
 
 
     }
+
+
 
     public Long getBasketId() {
         return basketId;
@@ -118,6 +122,14 @@ public class BasketExt {
 
     public void setIsAvailable(Integer isAvailable) {
         this.isAvailable = isAvailable;
+    }
+
+    public Integer getBasketProductsPrice() {
+        return basketProductsPrice;
+    }
+
+    public void setBasketProductsPrice(Integer basketProductsPrice) {
+        this.basketProductsPrice = basketProductsPrice;
     }
 
     @Override

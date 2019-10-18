@@ -288,9 +288,24 @@ public class BasketController {
     @CrossOrigin
     @PostMapping("/basketext")
     ResponseEntity<BasketExt> createExternalBasket(@RequestBody BasketExt basketExt) throws URISyntaxException {
+        Integer total = 0;
+        for (BasketItems bi : basketExt.getBasketItems()) {
+            total += bi.getProduct().getPrice() * bi.getQuantity();
+        }
+        basketExt.setBasketProductsPrice(total);
         basketExtService.saveExternalBasket(basketExt);
         return new ResponseEntity<BasketExt>(basketExt, HttpStatus.CREATED);
     }
+
+
+    @CrossOrigin
+    @PostMapping("/basketextedit")
+    ResponseEntity<BasketExt> rditExternalBasket(@RequestBody BasketExt basketExt) throws URISyntaxException {
+
+        basketExtService.editExternalBasket(basketExt);
+        return new ResponseEntity<BasketExt>(basketExt, HttpStatus.CREATED);
+    }
+
 
     @CrossOrigin
     @PostMapping("/basketextstatus")

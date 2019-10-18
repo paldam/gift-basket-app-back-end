@@ -67,6 +67,8 @@ public class ProductService {
 @Transactional
     public void setMultiDelivery(Integer[] ids, Integer[] values)  {
        for(int i=0; i < ids.length; i++){
+
+           if(values[i] >0)
            productDao.addProductToDeliver (ids[i],values[i]);
        }
 

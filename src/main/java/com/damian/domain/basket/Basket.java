@@ -41,6 +41,7 @@ public class Basket {
         this.season = basketExt.getSeason();
         this.isAlcoholic = basketExt.getIsAlcoholic();
         this.isAvailable = basketExt.getIsAvailable();
+        this.basketProductsPrice = basketExt.getBasketProductsPrice();
     }
 
 
