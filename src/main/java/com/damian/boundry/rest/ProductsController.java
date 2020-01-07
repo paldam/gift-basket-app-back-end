@@ -6,6 +6,7 @@ import com.damian.domain.product.*;
 import com.damian.security.UserPermissionDeniedException;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import static com.damian.config.Constants.ANSI_RESET;
 import static com.damian.config.Constants.ANSI_YELLOW;
 
 @RestController
+@RequestMapping( produces = "application/json; charset=utf-8")
 public class ProductsController {
 
     private ProductDao productsDao;
@@ -35,6 +37,25 @@ public class ProductsController {
         this.productService = productService;
         this.basketDao = basketDao;
         this.productSubTypeDao = productSubTypeDao;
+    }
+
+
+
+
+    @CrossOrigin
+    @GetMapping(value = "/test")
+    ResponseEntity<List<Supplier>> listTetst() {
+
+        List<Supplier> supplierList = supplierDao.findAllByOrderBySupplierNameAsc();
+        return new ResponseEntity<List<Supplier>>(supplierList, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/test2", produces = "application/json; charset=utf-8")
+    ResponseEntity<List<Supplier>> listTetst2() {
+
+        List<Supplier> supplierList = supplierDao.findAllByOrderBySupplierNameAsc();
+        return new ResponseEntity<List<Supplier>>( HttpStatus.OK);
     }
 
     @CrossOrigin

@@ -20,13 +20,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+@Configuration
 @EnableWebSecurity
-public class MultiHttpSecurityCustomConfig {
-
+public class WebSecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
-    public MultiHttpSecurityCustomConfig(UserDetailsService userDetailsService ) {
+    public WebSecurityConfig(UserDetailsService userDetailsService ) {
         this.userDetailsService = userDetailsService;
 
     }
@@ -38,9 +38,9 @@ public class MultiHttpSecurityCustomConfig {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 
         auth.inMemoryAuthentication()
-                .withUser("pass")
-                .password("pass")
-                .roles("admin");
+            .withUser("pass")
+            .password("pass")
+            .roles("admin");
 
     }
 
@@ -50,7 +50,7 @@ public class MultiHttpSecurityCustomConfig {
     public static class ApiWebSecurityHttpBasic extends WebSecurityConfigurerAdapter {
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher("/extbaskets").authorizeRequests().anyRequest().hasRole("admin").and().httpBasic();
-                   //http.csrf().disable().antMatcher("/**").authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
+            //http.csrf().disable().antMatcher("/**").authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
 
         }
     }
@@ -87,20 +87,20 @@ public class MultiHttpSecurityCustomConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.cors().and()
-                    .exceptionHandling().authenticationEntryPoint(http401UnauthorizedEntryPoint()).and()
-                    .csrf()
-                    .disable()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
-                    .authorizeRequests()
-                    .antMatchers("/auth").permitAll()
-                    .antMatchers("/auth_loyalty_program").permitAll()
-                    .antMatchers("/program_users/resetpassword/*").permitAll()
-                    .antMatchers("/notification").permitAll()
-                    .antMatchers("/new_order_notification").permitAll()
-                    .anyRequest().authenticated()
-                    .and().apply(securityConfigurerAdapter())
+                .exceptionHandling().authenticationEntryPoint(http401UnauthorizedEntryPoint()).and()
+                .csrf()
+                .disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers("/auth").permitAll()
+                .antMatchers("/auth_loyalty_program").permitAll()
+                .antMatchers("/program_users/resetpassword/*").permitAll()
+                .antMatchers("/notification").permitAll()
+                .antMatchers("/new_order_notification").permitAll()
+               .anyRequest().authenticated()
+                .and().apply(securityConfigurerAdapter())
             ;
         }
 
@@ -142,3 +142,6 @@ public class MultiHttpSecurityCustomConfig {
     }
 
 }
+
+
+

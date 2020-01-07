@@ -183,7 +183,7 @@ public class UserController {
 //        }
         Optional<User> existingUser = userRepository.findOneByLogin(userDto.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDto.getId()))) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "userexists", "Login already in use")).body(null);
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "Login already in use")).body(null);
         }
         User updatedUser = userService.updateUser(userDto);
 
