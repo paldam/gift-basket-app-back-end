@@ -31,8 +31,11 @@ public class NotificationsController {
 
     @CrossOrigin
     @GetMapping("/notificationslist")
-    ResponseEntity<List<Notification>> getNotifications() {
+    ResponseEntity<List<Notification>> getNotificationsForCurrentUser() {
             Optional<User> userTmp = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
+
+
+
         List<Notification> notificationList = notificationDao.getNotificationByUser((userTmp.get().getId().intValue()));
 
 

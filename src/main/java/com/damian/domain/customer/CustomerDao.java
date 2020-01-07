@@ -6,11 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CustomerDao extends JpaRepository<Customer,Long> {
 
     public List<Customer> findAllBy();
-    public Customer findByCustomerId(Integer id) ;
+    public Optional<Customer> findByCustomerId(Integer id) ;
 
     @Transactional
     @Modifying

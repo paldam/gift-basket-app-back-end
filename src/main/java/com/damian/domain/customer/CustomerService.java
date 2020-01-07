@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +34,12 @@ public class CustomerService {
 
          custList.forEach(customer -> {
 
-          Address tmpAddr = addressDao.findCustomerPrimaryAddrById(customer.getCustomerId());
-          logger.info("dsdsd :" + customer.getCustomerId()+ " " +tmpAddr);
+          Address tmpAddr = addressDao.findCustomerPrimaryAddrById(customer.getCustomerId())
+              .orElseThrow(EntityNotFoundException::new);
+
+
+
+
 
           custAddrList.add(new CustomerAddressDTO(customer,tmpAddr));
          });
@@ -42,35 +47,23 @@ public class CustomerService {
          return  custAddrList;
     }
 
-     @Transactional
+    @Transactional
     public ResponseEntity deleteCustomer(Integer customerId) {
-
-        logger.info("s zamowiniea: " + existsAtLeastOneCustomerOrders(customerId));
-
-
         if (existsAtLeastOneCustomerOrders(customerId)) {
-              return new ResponseEntity("Nie można usunąć klienta, Podany klient jest powiązany z conajmniej jednym zamówieniem", HttpStatus.FORBIDDEN);
-        }  else{
-
-             //addressDao.deleteByCustomerId(customerId);
-             customerDao.deleteByCustomerId(customerId);
+            return new ResponseEntity("Nie można usunąć klienta, Podany klient jest powiązany z conajmniej jednym zamówieniem", HttpStatus.FORBIDDEN);
+        } else {
+            customerDao.deleteByCustomerId(customerId);
             return new ResponseEntity(HttpStatus.OK);
         }
     }
 
-
-
-
-    private boolean existsAtLeastOneCustomerOrders(Integer id){
-
-        List<Order> ordersTmp = orderDao.findByCustomerId(id) ;
-
-        if (ordersTmp.isEmpty() ) {
+    private boolean existsAtLeastOneCustomerOrders(Integer id) {
+        List<Order> ordersTmp = orderDao.findByCustomerId(id);
+        if (ordersTmp.isEmpty()) {
             return false;
-        }else{
+        } else {
             return true;
         }
-
     }
 
 }

@@ -6,15 +6,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface AddressDao extends JpaRepository<Address,Long> {
 
+
     @Override
     List<Address> findAll();
 
-    @Query(value = "SELECT * FROM addresses WHERE customer_id = ?1 AND is_primary_address = 1 LIMIT 1 ", nativeQuery = true)
-    public Address findCustomerPrimaryAddrById(Integer id);
+    @Query(value = "SELECT * FROM addresses_old WHERE customer_id = ?1 AND is_primary_address = 1 LIMIT 1 ", nativeQuery = true)
+    public Optional<Address> findCustomerPrimaryAddrById(Integer id);
 
 
 
@@ -24,8 +26,7 @@ public interface AddressDao extends JpaRepository<Address,Long> {
 
 
 
-
-    @Transactional
+@Transactional
     @Modifying
     @Query(value = "DELETE FROM addresses WHERE address_id = ?1", nativeQuery = true)
     public void deleteByAddressId(Long id);

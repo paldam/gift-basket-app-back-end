@@ -49,17 +49,11 @@ public class ProductService {
     @Transactional
     public void resetProductsState() throws UserPermissionDeniedException{
 
-
-
-
-
         if (SecurityUtils.getCurrentUserLogin().equals("paldam")){
             productDao.resetDbPrductsStates();
         } else{
             throw new UserPermissionDeniedException("Brak uprawnień do wykonania tego polecenia");
         }
-
-
 
     }
 
