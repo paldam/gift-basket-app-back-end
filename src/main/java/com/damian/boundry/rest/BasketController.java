@@ -4,6 +4,7 @@ import com.damian.domain.basket.*;
 import com.damian.domain.order.OrderItem;
 import com.damian.dto.BasketDto;
 import com.damian.dto.BasketExtStockDao;
+import com.damian.util.FtpConnectionException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -59,7 +60,13 @@ public class BasketController {
 
     @PostMapping("/basketext")
     ResponseEntity<BasketExt> createExternalBasket(@RequestBody BasketExt basketExt) {
-        basketExtService.saveExternalBasket(basketExt);
+
+        try{
+            basketExtService.saveExternalBasket(basketExt);
+        }catch (FtpConnectionException ftpE){
+            return new ResponseEntity<>(basketExt, HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(basketExt, HttpStatus.CREATED);
     }
 

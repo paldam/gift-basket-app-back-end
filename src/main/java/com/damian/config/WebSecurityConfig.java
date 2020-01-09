@@ -3,7 +3,7 @@ package com.damian.config;
 import com.damian.security.Http401UnauthorizedEntryPoint;
 import com.damian.security.jwt.JWTConfigurer;
 import com.damian.security.jwt.TokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -13,70 +13,54 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import javax.annotation.PostConstruct;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private static String inMemoryUsername;
+    private static String inMemoryPassword;
 
-    public WebSecurityConfig(UserDetailsService userDetailsService ) {
-        this.userDetailsService = userDetailsService;
 
+    @Value("${app.security.inMemoryUsername}")
+    String username;
+
+    @Value("${app.security.inMemoryPassword}")
+    String password;
+
+    @PostConstruct
+    public void initStaticInMemoryUserFields() {
+        WebSecurityConfig.inMemoryUsername = username;
+        WebSecurityConfig.inMemoryPassword = password;
     }
-
-
-
-    @Autowired
-    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-
-        auth.inMemoryAuthentication()
-            .withUser("pass")
-            .password("pass")
-            .roles("admin");
-
-    }
-
 
     @Configuration
     @Order(1)
-    public static class ApiWebSecurityHttpBasic extends WebSecurityConfigurerAdapter {
+    public static class ApiWebSecurityHttpBasic0 extends WebSecurityConfigurerAdapter {
+        @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/extbaskets").authorizeRequests().anyRequest().hasRole("admin").and().httpBasic();
-            //http.csrf().disable().antMatcher("/**").authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
+            http.authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
+        }
 
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+            auth.inMemoryAuthentication()
+                .withUser(inMemoryUsername)
+                .password(encoder.encode(inMemoryPassword))
+                .roles("admin");
         }
     }
 
     @Configuration
     @Order(2)
-    public static class ApiWebSecurityHttpBasic2 extends WebSecurityConfigurerAdapter {
-        protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/basketsextlist").authorizeRequests().anyRequest().hasRole("admin").and().httpBasic();
-            //http.csrf().disable().antMatcher("/**").authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
-
-        }
-    }
-
-    @Configuration
-    @Order(3)
-    public static class ApiWebSecurityHttpBasic3 extends WebSecurityConfigurerAdapter {
-        protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/basket_ext_stock").authorizeRequests().anyRequest().hasRole("admin").and().httpBasic();
-            //http.csrf().disable().antMatcher("/**").authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
-
-        }
-    }
-
-
-    @Configuration
     public static class ApiWebSecurityJWT extends WebSecurityConfigurerAdapter {
 
         private final TokenProvider tokenProvider;
@@ -119,9 +103,7 @@ public class WebSecurityConfig {
         public Http401UnauthorizedEntryPoint http401UnauthorizedEntryPoint() {
             return new Http401UnauthorizedEntryPoint();
         }
-
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -140,7 +122,6 @@ public class WebSecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
 }
 
 
