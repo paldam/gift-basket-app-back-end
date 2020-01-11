@@ -1,11 +1,10 @@
 package com.damian.boundry.rest;
 
-
 import com.damian.config.Constants;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 
 public class LoginVM {
 
@@ -13,10 +12,8 @@ public class LoginVM {
     @NotNull
     @Size(min = 1, max = 50)
     private String username;
-
     @NotNull
     private String password;
-
     private Boolean rememberMe;
 
     public String getUsername() {
@@ -45,9 +42,6 @@ public class LoginVM {
 
     @Override
     public String toString() {
-        return "LoginVM{" +
-            "username='" + username + '\'' +
-            ", rememberMe=" + rememberMe +
-            '}';
+        return "LoginVM{" + "username='" + username + '\'' + ", rememberMe=" + rememberMe + '}';
     }
 }
