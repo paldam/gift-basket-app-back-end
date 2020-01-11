@@ -2,7 +2,6 @@ package com.damian.domain.note;
 
 import com.damian.security.SecurityUtils;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -15,9 +14,7 @@ public class NotesService {
     }
 
     public void saveNote(Note note){
-
         note.setAddedBy(SecurityUtils.getCurrentUserLogin());
-
         noteDao.save(note);
     }
 

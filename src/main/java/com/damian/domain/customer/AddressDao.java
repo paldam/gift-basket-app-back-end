@@ -11,27 +11,13 @@ import java.util.Set;
 
 public interface AddressDao extends JpaRepository<Address,Long> {
 
-
-    @Override
     List<Address> findAll();
 
-    @Query(value = "SELECT * FROM addresses_old WHERE customer_id = ?1 AND is_primary_address = 1 LIMIT 1 ", nativeQuery = true)
-    public Optional<Address> findCustomerPrimaryAddrById(Integer id);
-
-
-
-    @Query(value = "SELECT addresses.* FROM customers join company on customers.company_id = company.company_id JOIN orders on customers.customer_id = orders.customer_id join addresses on orders.address_id = addresses.address_id where customers.company_id =  ?1", nativeQuery = true)
-    public Set<Address> findAddressByCompanyId(Long id);
-
-
-
-
-@Transactional
+    @Transactional
     @Modifying
     @Query(value = "DELETE FROM addresses WHERE address_id = ?1", nativeQuery = true)
     public void deleteByAddressId(Long id);
 
-    @Transactional
     @Modifying
     @Query(value = "DELETE FROM addresses WHERE customer_id = ?1", nativeQuery = true)
     public void deleteByCustomerId(Integer id);
@@ -49,6 +35,21 @@ public interface AddressDao extends JpaRepository<Address,Long> {
     @Modifying
     @Query(value = "UPDATE addresses SET is_primary_address = 1 WHERE address_id = ?1", nativeQuery = true)
     public void setAddreesAsPrimary(Long id);
+
+    @Query(value = "SELECT * FROM addresses_old WHERE customer_id = ?1 AND is_primary_address = 1 LIMIT 1 "
+        , nativeQuery = true)
+    public Optional<Address> findCustomerPrimaryAddrById(Integer id);
+
+    @Query(value = "SELECT addresses.* FROM customers " +
+        "join company on customers.company_id = company.company_id " +
+        "JOIN orders on customers.customer_id = orders.customer_id " +
+        "join addresses on orders.address_id = addresses.address_id " +
+        "where customers.company_id =  ?1"
+        ,nativeQuery = true)
+    public Set<Address> findAddressByCompanyId(Long id);
+
+
+
 
 
 }

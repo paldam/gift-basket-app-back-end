@@ -1,6 +1,5 @@
 package com.damian.domain.customer;
 
-
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -21,43 +20,29 @@ public class CustomCustomerDao {
     EntityManager em;
 
     public List<Customer> findCustomerByCriteria(Customer probeCustomer) {
-
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Customer> cq = cb.createQuery(Customer.class);
         Root<Customer> root = cq.from(Customer.class);
-        Predicate comapnyLike = cb.equal(root.get(Customer_.company),probeCustomer.getCompany());
-        Predicate nameLike = cb.equal(root.get(Customer_.name),probeCustomer.getName());
-        Predicate emailLike = cb.equal(root.get(Customer_.email),probeCustomer.getEmail());
-        Predicate phoneNumber = cb.equal(root.get(Customer_.phoneNumber),probeCustomer.getPhoneNumber());
-        cq.where(comapnyLike,nameLike,emailLike,phoneNumber);
-
+        Predicate comapnyLike = cb.equal(root.get(Customer_.company), probeCustomer.getCompany());
+        Predicate nameLike = cb.equal(root.get(Customer_.name), probeCustomer.getName());
+        Predicate emailLike = cb.equal(root.get(Customer_.email), probeCustomer.getEmail());
+        Predicate phoneNumber = cb.equal(root.get(Customer_.phoneNumber), probeCustomer.getPhoneNumber());
+        cq.where(comapnyLike, nameLike, emailLike, phoneNumber);
         TypedQuery<Customer> query = em.createQuery(cq);
-        List<Customer> results = query.getResultList();
-
-        return results;
+        return query.getResultList();
     }
 
     public Optional<Customer> findExacCustomerByEntity(Customer probeCustomer) {
-
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Customer> cq = cb.createQuery(Customer.class);
         Root<Customer> root = cq.from(Customer.class);
-        Predicate entityEq = cb.equal(root,probeCustomer);
-        Predicate comapnyLike = cb.equal(root.get(Customer_.company),probeCustomer.getCompany());
-        cq.where(entityEq,comapnyLike);
-
-
+        Predicate entityEq = cb.equal(root, probeCustomer);
+        Predicate comapnyLike = cb.equal(root.get(Customer_.company), probeCustomer.getCompany());
+        cq.where(entityEq, comapnyLike);
         try {
-            return Optional.of(
-                em.createQuery(cq).getSingleResult()
-            );
-        }catch (NoResultException e){
+            return Optional.of(em.createQuery(cq).getSingleResult());
+        } catch (NoResultException e) {
             return Optional.empty();
         }
-
-
     }
-
-
-
 }

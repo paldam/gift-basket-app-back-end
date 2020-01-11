@@ -2,14 +2,13 @@ package com.damian.domain.order;
 
 import com.damian.dto.OrderDto;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 @Component
 public class OrderPageRequest {
+
     private List<OrderDto> orderDtoList;
     private long totalRowsOfRequest;
-
 
     public OrderPageRequest() {
     }

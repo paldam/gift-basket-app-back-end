@@ -2,13 +2,11 @@ package com.damian.domain.notification;
 
 import com.damian.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "notifications")
-
 public class Notification {
 
     private Long id;
@@ -18,11 +16,10 @@ public class Notification {
     private boolean wasRead;
     private Long notiOrderContext;
 
-
     public Notification() {
     }
 
-    public Notification(String notificationText, Date notificationDate, User user,Long notiOrderContext) {
+    public Notification(String notificationText, Date notificationDate, User user, Long notiOrderContext) {
         this.notificationText = notificationText;
         this.notificationDate = notificationDate;
         this.user = user;
@@ -50,7 +47,6 @@ public class Notification {
         this.notificationText = notificationText;
     }
 
-
     @Basic
     @Column(name = "notification_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     public Date getNotificationDate() {
@@ -60,7 +56,6 @@ public class Notification {
     public void setNotificationDate(Date notificationDate) {
         this.notificationDate = notificationDate;
     }
-
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -73,17 +68,15 @@ public class Notification {
         this.user = user;
     }
 
-
-
     public boolean isWasRead() {
         return wasRead;
     }
+
     @Basic
     @Column(name = "was_read")
     public void setWasRead(boolean wasRead) {
         this.wasRead = wasRead;
     }
-
 
     @Basic
     @Column(name = "order_id")
@@ -97,6 +90,7 @@ public class Notification {
 
     @Override
     public String toString() {
-        return "Notification{" + "id=" + id + ", notificationText='" + notificationText + '\'' + ", notificationDate=" + notificationDate + ", user=" + user + ", wasRead=" + wasRead + ", notiOrderContext=" + notiOrderContext + '}';
+        return "Notification{" + "id=" + id + ", notificationText='" + notificationText + '\'' + ", notificationDate" +
+            "=" + notificationDate + ", user=" + user + ", wasRead=" + wasRead + ", notiOrderContext=" + notiOrderContext + '}';
     }
 }

@@ -1,12 +1,12 @@
 package com.damian.domain.basket;
 
 import com.damian.domain.product.Product;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "basket_items")
 public class BasketItems {
+
     private Integer basketItemsId;
     private Product product;
     private Integer quantity;
@@ -21,7 +21,6 @@ public class BasketItems {
     public void setBasketItemsId(Integer basketItemsId) {
         this.basketItemsId = basketItemsId;
     }
-
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -42,6 +41,4 @@ public class BasketItems {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
-
-
 }

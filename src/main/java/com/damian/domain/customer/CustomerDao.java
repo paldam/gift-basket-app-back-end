@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-public interface CustomerDao extends JpaRepository<Customer,Long> {
+public interface CustomerDao extends JpaRepository<Customer, Long> {
 
     public List<Customer> findAllBy();
-    public Optional<Customer> findByCustomerId(Integer id) ;
+    public Optional<Customer> findByCustomerId(Integer id);
 
     @Transactional
     @Modifying

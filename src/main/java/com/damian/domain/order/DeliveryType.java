@@ -21,7 +21,7 @@ public class DeliveryType {
     }
 
     @Basic
-    @Column(name ="delivery_type_name" )
+    @Column(name = "delivery_type_name")
     public String getDeliveryTypeName() {
         return deliveryTypeName;
     }
@@ -32,22 +32,19 @@ public class DeliveryType {
 
     @Override
     public String toString() {
-        return "DeliveryType{" +
-                "deliveryTypeId=" + deliveryTypeId +
-                ", deliveryTypeName='" + deliveryTypeName + '\'' +
-                '}';
+        return "DeliveryType{" + "deliveryTypeId=" + deliveryTypeId + ", deliveryTypeName='" + deliveryTypeName + '\'' + '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         DeliveryType that = (DeliveryType) o;
-
-        if (getDeliveryTypeId() != null ? !getDeliveryTypeId().equals(that.getDeliveryTypeId()) : that.getDeliveryTypeId() != null)
+        if (getDeliveryTypeId() != null ? !getDeliveryTypeId().equals(that.getDeliveryTypeId()) :
+            that.getDeliveryTypeId() != null)
             return false;
-        return getDeliveryTypeName() != null ? getDeliveryTypeName().equals(that.getDeliveryTypeName()) : that.getDeliveryTypeName() == null;
+        return getDeliveryTypeName() != null ? getDeliveryTypeName().equals(that.getDeliveryTypeName()) :
+            that.getDeliveryTypeName() == null;
     }
 
     @Override

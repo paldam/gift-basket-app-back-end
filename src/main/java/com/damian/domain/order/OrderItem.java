@@ -1,19 +1,17 @@
-
 package com.damian.domain.order;
 
-        import com.damian.domain.basket.Basket;
-        import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-        import org.hibernate.envers.Audited;
-
-        import javax.persistence.*;
-        import java.util.Objects;
-
-        import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
+import com.damian.domain.basket.Basket;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.envers.Audited;
+import javax.persistence.*;
+import java.util.Objects;
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
 @Audited
 @Table(name = "order_items")
 public class OrderItem {
+
     private Integer orderItemId;
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Basket basket;
@@ -22,9 +20,6 @@ public class OrderItem {
     private Integer stateOnProduction;
     private Integer stateOnWarehouse;
     private Integer stateOnLogistics;
-
-
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +31,6 @@ public class OrderItem {
     public void setOrderItemId(Integer orderItemId) {
         this.orderItemId = orderItemId;
     }
-
 
     @ManyToOne
     @JoinColumn(name = "basket_id")
@@ -59,7 +53,6 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-
     @Basic
     @Column(name = "quantity_from_surplus", columnDefinition = "INT DEFAULT 0")
     public Integer getQuantityFromSurplus() {
@@ -70,9 +63,8 @@ public class OrderItem {
         this.quantityFromSurplus = quantityFromSurplus;
     }
 
-
     @Basic
-    @Column(name = "production_state",columnDefinition = "INT DEFAULT 0")
+    @Column(name = "production_state", columnDefinition = "INT DEFAULT 0")
     public Integer getStateOnProduction() {
         return stateOnProduction;
     }
@@ -81,9 +73,8 @@ public class OrderItem {
         this.stateOnProduction = stateOnProduction;
     }
 
-
     @Basic
-    @Column(name = "warehouse_state",columnDefinition = "INT DEFAULT 0")
+    @Column(name = "warehouse_state", columnDefinition = "INT DEFAULT 0")
     public Integer getStateOnWarehouse() {
         return stateOnWarehouse;
     }
@@ -93,7 +84,7 @@ public class OrderItem {
     }
 
     @Basic
-    @Column(name = "logistics_state",columnDefinition = "INT DEFAULT 0")
+    @Column(name = "logistics_state", columnDefinition = "INT DEFAULT 0")
     public Integer getStateOnLogistics() {
         return stateOnLogistics;
     }
@@ -112,11 +103,14 @@ public class OrderItem {
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderItemId, basket, quantity, quantityFromSurplus, stateOnProduction, stateOnWarehouse, stateOnLogistics);
+        return Objects.hash(orderItemId, basket, quantity, quantityFromSurplus, stateOnProduction, stateOnWarehouse,
+            stateOnLogistics);
     }
 
     @Override
     public String toString() {
-        return "OrderItem{" + "orderItemId=" + orderItemId + ", basket=" + basket + ", quantity=" + quantity + ", quantityFromSurplus=" + quantityFromSurplus + ", stateOnProduction=" + stateOnProduction + ", stateOnWarehouse=" + stateOnWarehouse + ", stateOnLogistics=" + stateOnLogistics + '}';
+        return "OrderItem{" + "orderItemId=" + orderItemId + ", basket=" + basket + ", quantity=" + quantity + ", " +
+            "quantityFromSurplus=" + quantityFromSurplus + ", stateOnProduction=" + stateOnProduction + ", " +
+            "stateOnWarehouse=" + stateOnWarehouse + ", stateOnLogistics=" + stateOnLogistics + '}';
     }
 }
