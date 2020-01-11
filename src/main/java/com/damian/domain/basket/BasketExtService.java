@@ -3,57 +3,41 @@ package com.damian.domain.basket;
 import com.damian.util.FtpConnectionException;
 import com.damian.util.FtpService;
 import com.damian.util.FtpSpace;
-import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
-
 import java.io.*;
 
 @Service
 public class BasketExtService {
-    private static final Logger logger = Logger.getLogger(BasketExtService.class);
 
-    private FtpService ftpService;
-    private BasketDao basketDao;
-    private BasketTypeDao basketTypeDao;
+    private final FtpService ftpService;
+    private final BasketDao basketDao;
 
-    public BasketExtService(FtpService ftpService,BasketDao basketDao, BasketTypeDao basketTypeDao) {
+    public BasketExtService(FtpService ftpService, BasketDao basketDao) {
         this.ftpService = ftpService;
         this.basketDao = basketDao;
-        this.basketTypeDao = basketTypeDao;
     }
 
-
-
-
     public void editExternalBasket(BasketExt basket) {
-
         Basket currBasketState = basketDao.findByBasketId(basket.getBasketId());
-
         currBasketState.setBasketName(basket.getBasketName());
         currBasketState.setBasketTotalPrice(basket.getBasketTotalPrice());
         currBasketState.setIsAlcoholic(basket.getIsAlcoholic());
         currBasketState.setBasketType(basket.getBasketType());
-
-
-        Integer total = 0;
+        int total = 0;
         for (BasketItems bi : basket.getBasketItems()) {
             total += bi.getProduct().getPrice() * bi.getQuantity();
         }
         currBasketState.setBasketProductsPrice(total);
-
-
         basketDao.save(currBasketState);
     }
 
     public void saveExternalBasket(BasketExt basket) throws FtpConnectionException {
         basket.setBasketProductsPrice(computeTotalProductsPriceInBasket(basket));
-        Basket basketD = new Basket(basket);
-        basketD.setBasketType(new BasketType(100, "eksportowy"));
-        basketD.setBasketSezon(new BasketSezon(0));
-        Basket savedBasket = basketDao.save(basketD);
+        Basket externalBasket = new Basket(basket);
+        externalBasket.setBasketType(new BasketType(100, "eksportowy"));
+        externalBasket.setBasketSezon(new BasketSezon(0));
+        Basket savedBasket = basketDao.save(externalBasket);
         InputStream basketImgtoStore = new ByteArrayInputStream(basket.getBasketImg());
         try {
             ftpService.sendFileViaFtp(basketImgtoStore, savedBasket.getBasketId().toString(), FtpSpace.PRIZES);
@@ -71,8 +55,6 @@ public class BasketExtService {
         return totalProductsPriceInBasket;
     }
 
-
-
     private static void showServerReply(FTPClient ftpClient) {
         String[] replies = ftpClient.getReplyStrings();
         if (replies != null && replies.length > 0) {
@@ -81,8 +63,6 @@ public class BasketExtService {
             }
         }
     }
-
-
 }
 
 

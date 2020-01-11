@@ -30,7 +30,7 @@ public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "company_id",nullable = false)
+    @Column(name = "company_id", nullable = false)
     public Long getCompanyId() {
         return companyId;
     }
@@ -57,11 +57,6 @@ public class Company {
 
     public void setWasCombined(Integer wasCombined) {
         this.wasCombined = wasCombined;
-    }
-
-    @Override
-    public String toString() {
-        return "Company{" + "companyId=" + companyId + ", companyName='" + companyName + '\'' + ", wasCombined=" + wasCombined + '}';
     }
 }
 

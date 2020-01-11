@@ -1,14 +1,11 @@
 package com.damian.domain.customer;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "customers")
 public class Customer {
+
     private Integer customerId;
     private String name;
     private String email;
@@ -16,26 +13,22 @@ public class Customer {
     private String additionalInformation;
     private Company company;
 
-//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) //only deserialization
-//    private List<Address> addresses;
-
     public Customer() {
     }
 
-    public Customer(Integer customerId,String name, String email, String phoneNumber, String additionalInformation, Company company) {
+    public Customer(Integer customerId, String name, String email, String phoneNumber, String additionalInformation,
+                    Company company) {
         this.customerId = customerId;
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.additionalInformation = additionalInformation;
         this.company = company;
-       // this.addresses = addresses;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_id",nullable=false)
-
+    @Column(name = "customer_id", nullable = false)
     public Integer getCustomerId() {
         return customerId;
     }
@@ -43,8 +36,6 @@ public class Customer {
     public void setCustomerId(Integer customerId) {
         this.customerId = customerId;
     }
-
-
 
     @Basic
     @Column(name = "name", length = 300)
@@ -55,8 +46,6 @@ public class Customer {
     public void setName(String name) {
         this.name = name;
     }
-
-
 
     @Basic
     @Column(name = "email", length = 300)
@@ -94,24 +83,11 @@ public class Customer {
         return company;
     }
 
-
-
-
     public void setCompany(Company company) {
         this.company = company;
     }
-
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "customer_id",nullable=true)
-//    public List<Address> getAddresses() {
-//        return addresses;
-//    }
-//
-//    public void setAddresses(List<Address> addresses) {
-//        this.addresses = addresses;
-//    }
-
-
+    
+    
     @Override
     public String toString() {
         return "Customer{" +

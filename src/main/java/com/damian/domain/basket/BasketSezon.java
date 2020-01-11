@@ -10,11 +10,10 @@ public class BasketSezon {
     private String basketSezonName;
 
     public BasketSezon() {
-
     }
+
     public BasketSezon(Integer basketSezonId) {
         this.basketSezonId = basketSezonId;
-
     }
 
     public BasketSezon(String basketSezonName) {

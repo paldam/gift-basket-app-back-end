@@ -1,7 +1,6 @@
 package com.damian.domain.basket;
 
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 @Component
@@ -11,7 +10,6 @@ public class BasketPageRequest {
     private long totalRowsOfRequest;
 
     public BasketPageRequest() {
-
     }
 
     public BasketPageRequest(List<Basket> basketsList, long totalRowsOfRequest) {

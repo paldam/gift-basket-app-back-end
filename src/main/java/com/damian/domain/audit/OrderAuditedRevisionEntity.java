@@ -1,17 +1,10 @@
 package com.damian.domain.audit;
 
-
 import org.hibernate.envers.RevisionEntity;
-import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
-
-
 import javax.persistence.*;
-import java.math.BigInteger;
-import java.util.Date;
 import java.util.Objects;
-
 
 @RevisionEntity(AuditingRevisionListener.class)
 @Entity
@@ -19,30 +12,24 @@ import java.util.Objects;
 public class OrderAuditedRevisionEntity {
 
     private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue
     @RevisionNumber
     private Long revId;
-
     @RevisionTimestamp
     private Long changeTime;
-
     private String user;
     private Long orderId;
 
     public OrderAuditedRevisionEntity() {
     }
 
-
-    public OrderAuditedRevisionEntity(Long revId,Long changeTime, Long orderId,String user) {
+    public OrderAuditedRevisionEntity(Long revId, Long changeTime, Long orderId, String user) {
         this.revId = revId;
         this.changeTime = changeTime;
         this.user = user;
         this.orderId = orderId;
     }
-
-
 
     public Long getRevId() {
         return revId;
@@ -81,10 +68,10 @@ public class OrderAuditedRevisionEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderAuditedRevisionEntity that = (OrderAuditedRevisionEntity) o;
-        return Objects.equals(revId, that.revId) &&
-            Objects.equals(changeTime, that.changeTime) &&
-            Objects.equals(user, that.user) &&
-            Objects.equals(orderId, that.orderId);
+        return Objects.equals(revId, that.revId)
+            && Objects.equals(changeTime, that.changeTime)
+            && Objects.equals(user, that.user)
+            && Objects.equals(orderId, that.orderId);
     }
 
     @Override

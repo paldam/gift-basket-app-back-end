@@ -1,13 +1,8 @@
 package com.damian.domain.basket;
 
-import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by Damian on 05.10.2018.
- */
 public class BasketExt {
-
 
     private Long basketId;
     private String basketName;
@@ -25,22 +20,16 @@ public class BasketExt {
     }
 
     public BasketExt(Basket basket) {
-
-
         this.basketId = basket.getBasketId();
         this.basketName = basket.getBasketName();
-        this.basketType  = basket.getBasketType();
-        this.basketItems= basket.getBasketItems();
+        this.basketType = basket.getBasketType();
+        this.basketItems = basket.getBasketItems();
         this.basketTotalPrice = basket.getBasketTotalPrice();
         this.season = basket.getSeason();
         this.isAlcoholic = basket.getIsAlcoholic();
         this.isAvailable = basket.getIsAvailable();
         this.basketProductsPrice = basket.getBasketProductsPrice();
-
-
     }
-
-
 
     public Long getBasketId() {
         return basketId;
@@ -90,7 +79,6 @@ public class BasketExt {
         this.season = season;
     }
 
-
     public byte[] getBasketImg() {
         return basketImg;
     }
@@ -106,7 +94,6 @@ public class BasketExt {
     public void setBasketImgContentType(String basketImgContentType) {
         this.basketImgContentType = basketImgContentType;
     }
-
 
     public Integer getIsAlcoholic() {
         return isAlcoholic;
@@ -132,21 +119,7 @@ public class BasketExt {
         this.basketProductsPrice = basketProductsPrice;
     }
 
-    @Override
-    public String toString() {
-        return "BasketExt{" +
-                "basketId=" + basketId +
-                ", basketName='" + basketName + '\'' +
-                ", basketType=" + basketType +
-                ", basketItems=" + basketItems +
-                ", basketTotalPrice=" + basketTotalPrice +
-                ", season='" + season + '\'' +
-                ", basketImg=" + Arrays.toString(basketImg) +
-                ", basketImgContentType='" + basketImgContentType + '\'' +
-                ", isAlcoholic=" + isAlcoholic +
-                ", isAvailable=" + isAvailable +
-                '}';
-    }
+
 }
 
 

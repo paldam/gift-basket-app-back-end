@@ -1,6 +1,5 @@
 package com.damian.domain.customer;
 
-
 import javax.persistence.*;
 
 @Entity

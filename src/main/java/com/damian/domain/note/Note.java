@@ -1,8 +1,6 @@
 package com.damian.domain.note;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -13,29 +11,28 @@ public class Note {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notes_id")
-private Long notesId;
+    private Long notesId;
 
     @Basic
     @Column(name = "creation_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-private Date creationDate;
+    private Date creationDate;
 
     @Basic
     @Column(name = "expiration_date", columnDefinition = "DATE")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
-private Date expirationDate;
+    private Date expirationDate;
 
     @Basic
     @Column(name = "priority", length = 10)
-private Integer priority;
+    private Integer priority;
 
     @Basic
     @Column(name = "note_content", length = 2000)
-private String noteContent;
+    private String noteContent;
 
     @Basic
     @Column(name = "note_status", length = 10)
     private Integer noteStatus;
-
 
     @Basic
     @Column(name = "added_by", length = 100)

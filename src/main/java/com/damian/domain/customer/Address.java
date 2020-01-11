@@ -14,11 +14,11 @@ public class Address {
     private String phoneNumber;
     private String additionalInformation;
 
-
     public Address() {
     }
 
-    public Address(Long addressId, String address, String zipCode, String cityName, String contactPerson, String phoneNumber, String additionalInformation) {
+    public Address(Long addressId, String address, String zipCode, String cityName, String contactPerson,
+                   String phoneNumber, String additionalInformation) {
         this.addressId = addressId;
         this.address = address;
         this.zipCode = zipCode;
@@ -28,12 +28,9 @@ public class Address {
         this.additionalInformation = additionalInformation;
     }
 
-
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_id",nullable=false)
+    @Column(name = "address_id", nullable = false)
     public Long getAddressId() {
         return addressId;
     }
@@ -41,8 +38,6 @@ public class Address {
     public void setAddressId(Long addressId) {
         this.addressId = addressId;
     }
-
-
 
     @Basic
     @Column(name = "address", length = 350)
@@ -104,19 +99,9 @@ public class Address {
         this.additionalInformation = additionalInformation;
     }
 
-    public String addressDesc(){
-        return
-            address + " " + zipCode +   " " + cityName ;
+    public String addressDesc() {
+        return address + " " + zipCode + " " + cityName;
     }
 
-    @Override
-    public String toString() {
-        return "Address{" +
-            "addressId=" + addressId +
-            ", address='" + address + '\'' +
-            ", zipCode='" + zipCode + '\'' +
-            ", cityName='" + cityName + '\'' +
-            ", contactPerson='" + contactPerson + '\'' +
-            '}';
-    }
+
 }

@@ -7,13 +7,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-
 @Entity
 @Table(name = "baskets")
 public class Basket {
+
     private Long basketId;
     private String basketName;
-    private  BasketSezon basketSezon;
+    private BasketSezon basketSezon;
     private BasketType basketType;
     private List<BasketItems> basketItems;
     private Integer basketTotalPrice;
@@ -26,10 +26,7 @@ public class Basket {
     private Integer isBasketImg;
     private Date lastStockEditDate;
 
-
-
     public Basket() {
-        this.basketId = basketId;
     }
 
     public Basket(BasketExt basketExt) {
@@ -43,8 +40,6 @@ public class Basket {
         this.isAvailable = basketExt.getIsAvailable();
         this.basketProductsPrice = basketExt.getBasketProductsPrice();
     }
-
-
 
     @Basic
     @Column(name = "basket_name", nullable = false, length = 300)
@@ -67,7 +62,6 @@ public class Basket {
         this.basketId = basketId;
     }
 
-
     @ManyToOne
     @JoinColumn(name = "basket_type")
     public BasketType getBasketType() {
@@ -77,7 +71,6 @@ public class Basket {
     public void setBasketType(BasketType basketType) {
         this.basketType = basketType;
     }
-
 
     @ManyToOne
     @JoinColumn(name = "basket_sezon")
@@ -89,8 +82,8 @@ public class Basket {
         this.basketSezon = basketSezon;
     }
 
-    @OneToMany(cascade = CascadeType.ALL,fetch =FetchType.EAGER)
-    @JoinColumn(name="basket_id", referencedColumnName="basket_id")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "basket_id", referencedColumnName = "basket_id")
     public List<BasketItems> getBasketItems() {
         return basketItems;
     }
@@ -98,7 +91,6 @@ public class Basket {
     public void setBasketItems(List<BasketItems> basketItems) {
         this.basketItems = basketItems;
     }
-
 
     @Basic
     @Column(name = "stock", length = 40, columnDefinition = "INT DEFAULT 0")
@@ -150,8 +142,6 @@ public class Basket {
         this.season = season;
     }
 
-
-
     @Basic
     @Column(name = "is_alcoholic", length = 40, columnDefinition = "INT DEFAULT 0")
     public Integer getIsAlcoholic() {
@@ -161,6 +151,7 @@ public class Basket {
     public void setIsAlcoholic(Integer isAlcoholic) {
         this.isAlcoholic = isAlcoholic;
     }
+
     @Basic
     @Column(name = "is_available", length = 40, columnDefinition = "INT DEFAULT 1")
     public Integer getIsAvailable() {
@@ -170,7 +161,6 @@ public class Basket {
     public void setIsAvailable(Integer isAvailable) {
         this.isAvailable = isAvailable;
     }
-
 
     @JsonIgnore
     @Basic
@@ -195,7 +185,21 @@ public class Basket {
 
     @Override
     public String toString() {
-        return "Basket{" + "basketId=" + basketId + ", basketName='" + basketName + '\'' + ", basketSezon=" + basketSezon + ", basketType=" + basketType + ", basketItems=" + basketItems + ", basketTotalPrice=" + basketTotalPrice + ", season='" + season + '\'' + ", stock=" + stock + ", isAlcoholic=" + isAlcoholic + ", isAvailable=" + isAvailable + ", basketImageData=" + Arrays.toString(basketImageData) + ", isBasketImg=" + isBasketImg + ", lastStockEditDate=" + lastStockEditDate + '}';
+        return "Basket{"
+            + "basketId=" + basketId
+            + ", basketName='" + basketName + '\''
+            + ", basketSezon=" + basketSezon
+            + ", basketType=" + basketType
+            + ", basketItems=" + basketItems
+            + ", basketTotalPrice=" + basketTotalPrice
+            + ", season='" + season + '\''
+            + ", stock=" + stock
+            + ", isAlcoholic=" + isAlcoholic
+            + ", isAvailable=" + isAvailable
+            + ", basketImageData=" + Arrays.toString(basketImageData)
+            + ", isBasketImg=" + isBasketImg
+            + ", lastStockEditDate=" + lastStockEditDate
+            + '}';
     }
 }
         

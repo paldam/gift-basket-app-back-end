@@ -45,7 +45,8 @@ public class WebSecurityConfig {
     public static class ApiWebSecurityHttpBasic0 extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock").authenticated().and().httpBasic();
+            http.authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock")
+                .authenticated().and().httpBasic();
         }
 
         @Override

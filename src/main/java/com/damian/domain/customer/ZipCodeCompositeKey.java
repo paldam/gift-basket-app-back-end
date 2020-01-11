@@ -10,7 +10,6 @@ public class ZipCodeCompositeKey  implements Serializable {
     @Column(name = "code",length = 6 )
     private String code;
 
-
     @Basic
     @Column(name = "city",length = 100)
     private String city;
