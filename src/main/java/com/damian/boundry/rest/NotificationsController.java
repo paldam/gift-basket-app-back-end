@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 public class NotificationsController {
 
@@ -26,7 +27,6 @@ public class NotificationsController {
         this.userRepository = userRepository;
     }
 
-    @CrossOrigin
     @GetMapping("/notificationslist")
     ResponseEntity<List<Notification>> getNotificationsForCurrentUser() {
         Optional<User> userTmp = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
@@ -39,7 +39,6 @@ public class NotificationsController {
         return new ResponseEntity<>(notificationList, HttpStatus.OK);
     }
 
-    @CrossOrigin
     @GetMapping("/notifications/count")
     ResponseEntity<Long> getNotificationsCount() {
         Optional<User> currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
@@ -52,7 +51,6 @@ public class NotificationsController {
         return new ResponseEntity<>(notificationsCount, HttpStatus.OK);
     }
 
-    @CrossOrigin
     @GetMapping("/notifications/markasreaded/{id}")
     ResponseEntity markNotifyAsReaded(@PathVariable Long id) {
         Optional<User> currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());

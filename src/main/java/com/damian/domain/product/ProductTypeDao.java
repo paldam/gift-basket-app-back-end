@@ -1,14 +1,10 @@
 package com.damian.domain.product;
 
-import com.damian.domain.product.ProductType;
 import org.springframework.data.repository.CrudRepository;
-
 import java.util.List;
-
+import java.util.Optional;
 
 public interface ProductTypeDao extends CrudRepository<ProductType,Long> {
-
-
     public List<ProductType> findAll();
-    public ProductType findByTypeId(Integer id);
+    public Optional<ProductType> findByTypeId(Integer id);
 }
