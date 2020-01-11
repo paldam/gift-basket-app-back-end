@@ -4,11 +4,15 @@ import com.damian.boundry.rest.OrderController;
 import com.damian.domain.basket.Basket;
 import com.damian.domain.basket.BasketDao;
 import com.damian.domain.basket.BasketItems;
+import com.damian.domain.basket.BasketSezon;
 import com.damian.domain.customer.*;
 import com.damian.domain.order_file.DbFile;
 import com.damian.domain.order_file.DbFileDao;
+import com.damian.domain.prize.PointScheme;
+import com.damian.domain.prize.PointsDao;
 import com.damian.domain.product.ProductDao;
 import com.damian.domain.product.SupplierDao;
+import com.damian.domain.user.User;
 import com.damian.domain.user.UserRepository;
 import com.damian.domain.user.UserService;
 import com.damian.dto.NumberProductsToChangeStock;
@@ -18,6 +22,7 @@ import com.damian.security.SecurityUtils;
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -36,7 +41,6 @@ public class OrderService {
     private static final Logger logger = Logger.getLogger(OrderService.class);
     private OrderDao orderDao;
     private OrderItemDao orderItemDao;
-
     private CustomerDao customerDao;
     private AddressDao addressDao;
     private ProductDao productDao;
@@ -46,8 +50,9 @@ public class OrderService {
     private CompanyDao companyDao;
     private UserRepository userRepository;
     private BasketDao basketDao;
+    private PointsDao pointsDao;
 
-    OrderService(BasketDao basketDao,UserRepository userRepository, OrderDao orderDao, OrderItemDao orderItemDao, CompanyDao companyDao, CustomCustomerDao customCustomerDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao, DbFileDao dbFileDao, SupplierDao supplierDao) {
+    OrderService(BasketDao basketDao, UserRepository userRepository, OrderDao orderDao, OrderItemDao orderItemDao, CompanyDao companyDao, CustomCustomerDao customCustomerDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao, DbFileDao dbFileDao, SupplierDao supplierDao, PointsDao pointsDao) {
         this.companyDao = companyDao;
         this.orderDao = orderDao;
         this.orderItemDao = orderItemDao;
@@ -58,23 +63,21 @@ public class OrderService {
         this.dbFileDao = dbFileDao;
         this.customCustomerDao = customCustomerDao;
         this.userRepository = userRepository;
-        this.basketDao =basketDao;
+        this.basketDao = basketDao;
+        this.pointsDao = pointsDao;
     }
-
 
     //TODO refactor  DRY
     public void pushNotificationForCombinedOrder(Order order) {
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
         OrderController.emitters.forEach((SseEmitter emitter) -> {
-
             try {
                 String productionUserLogin;
-                if(order.getProductionUser() == null){
+                if (order.getProductionUser() == null) {
                     productionUserLogin = "new";
-                }else{
+                } else {
                     productionUserLogin = order.getProductionUser().getLogin();
                 }
-
                 emitter.send(productionUserLogin, MediaType.APPLICATION_JSON);
             } catch (Exception e) {
                 emitter.complete();
@@ -84,21 +87,18 @@ public class OrderService {
         OrderController.emitters.removeAll(sseEmitterListToRemove);
     }
 
-
     //TODO refactor  DRY
     public void pushNotificationForNewOrder(Order order) {
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
         OrderController.newOrderEmitters.forEach((SseEmitter newOrderEmitter) -> {
             System.out.println(ANSI_YELLOW + "new" + ANSI_RESET);
             try {
-
                 String productionUserLogin;
-                if(order.getProductionUser() == null){
+                if (order.getProductionUser() == null) {
                     productionUserLogin = "new";
-                }else{
+                } else {
                     productionUserLogin = order.getProductionUser().getLogin();
                 }
-
                 newOrderEmitter.send(productionUserLogin, MediaType.APPLICATION_JSON);
             } catch (Exception e) {
                 newOrderEmitter.complete();
@@ -108,24 +108,18 @@ public class OrderService {
         OrderController.newOrderEmitters.removeAll(sseEmitterListToRemove);
     }
 
-
     @Transactional
     public void createOrderFromCopy(Order order) throws OrderStatusException {
-
         order.getOrderItems().forEach(orderItem -> {
             orderItem.setQuantityFromSurplus(0);
         });
-
         if (order.getCustomer().getCustomerId() != null) {
             performOrderCustomerFromDB(order);
         } else {
             performOrderWithNewCustomer(order);
         }
-
         pushNotificationForCombinedOrder(order);
         pushNotificationForNewOrder(order);
-
-
     }
 
     @Transactional
@@ -134,86 +128,61 @@ public class OrderService {
         Order currOrder = orderDao.findByOrderId(order.getOrderId());
         if (currOrder.getOrderStatus().getOrderStatusId() == 1) {
             currOrder.setOrderStatus(new OrderStatus(99));
-
         } else if (currOrder.getOrderStatus().getOrderStatusId() == 6) {
             currOrder.setOrderStatus(new OrderStatus(99));
-
-
             order.getOrderItems().forEach(orderItem -> {
                 basketDao.addBasketToStock(orderItem.getBasket().getBasketId(), orderItem.getStateOnProduction());
             });
-
-
-
             order.getOrderItems().forEach(orderItem -> {
                 orderItem.getBasket().getBasketItems().forEach(basketItems -> {
                     productDao.updateStock(basketItems.getProduct().getId(), orderItem.getStateOnWarehouse() * basketItems.getQuantity());
                 });
-
             });
-
             currOrder.getOrderItems().forEach(orderItem -> {
                 int specificBasketQuantity = orderItem.getQuantity();
                 orderItem.getBasket().getBasketItems().forEach(basketItems -> {
                     int numberOfProductsInOneSpecifiedBasket = basketItems.getQuantity();
-                    productDao.updateStockTmpMinus(basketItems.getProduct().getId(),Long.valueOf(specificBasketQuantity * numberOfProductsInOneSpecifiedBasket)-(orderItem.getStateOnWarehouse() * basketItems.getQuantity()));
+                    productDao.updateStockTmpMinus(basketItems.getProduct().getId(), Long.valueOf(specificBasketQuantity * numberOfProductsInOneSpecifiedBasket) - (orderItem.getStateOnWarehouse() * basketItems.getQuantity()));
                 });
             });
-
-
-
         }
     }
 
-
-//todo
+    //todo
     @Transactional
     public void createOrUpdateOrder(Order order) throws OrderStatusException {
-
         if (!Objects.isNull(order.getOrderId())) {
             //TODO
-            if(order.getOrderStatus().getOrderStatusId() == 6){
+            if (order.getOrderStatus().getOrderStatusId() == 6) {
                 Order currentOrderState = orderDao.findByOrderId(order.getOrderId());
                 order.setOrderItems(currentOrderState.getOrderItems());
-            }if(order.getOrderStatus().getOrderStatusId() == 1){
+            }
+            if (order.getOrderStatus().getOrderStatusId() == 1) {
                 order.getOrderItems().forEach(orderItem -> {
                     orderItem.setQuantityFromSurplus(0);
                 });
             }
-
             performChangeOrderStatusOperation(order);
-        }else{
+        } else {
             order.getOrderItems().forEach(orderItem -> {
                 orderItem.setQuantityFromSurplus(0);
             });
             order.setAllreadyComputedPoints(false);
         }
-
-
-
-
-
         if (order.getCustomer().getCustomerId() != null) {
             performOrderCustomerFromDB(order);
         } else {
             performOrderWithNewCustomer(order);
         }
-
         pushNotificationForNewOrder(order);
     }
 
-
-
-
     private void performChangeOrderStatusOperation(Order order) throws OrderStatusException {
-
-
         Order orderPrevState = orderDao.findByOrderId(order.getOrderId());
         Integer prevOrderStatus = orderPrevState.getOrderStatus().getOrderStatusId();
         Integer newOrderStatus = order.getOrderStatus().getOrderStatusId();
         //TODO
         if (prevOrderStatus == 1 && newOrderStatus == 6) {
-
             changeStockStatusNoweToWtrakcie(order);
         }
         if (prevOrderStatus == 6 && newOrderStatus == 1) {
@@ -227,54 +196,39 @@ public class OrderService {
             }
             changeStockStatusWtrakcieToNowe(order);
         }
-
     }
 
     @Transactional
     public void changeStockStatusNoweToWtrakcie(Order order) {
-
-
         order.getOrderItems().forEach(orderItem -> {  // ustala czy dla konkretnego kosza z zmaówienia jest tyle koszy na stanie , jesli
-                                                        // tak to automatyczniedodaje progres M i P na tą ilosc
-
+            // tak to automatyczniedodaje progres M i P na tą ilosc
             int specificBasketQuantity = orderItem.getQuantity();
             Basket specificBasket = basketDao.findByBasketId(orderItem.getBasket().getBasketId());
-
-            if (specificBasketQuantity <= specificBasket.getStock()){
+            if (specificBasketQuantity <= specificBasket.getStock()) {
                 orderItem.setQuantityFromSurplus(specificBasketQuantity);
                 orderItem.setStateOnWarehouse(specificBasketQuantity);
                 orderItem.setStateOnProduction(specificBasketQuantity);
-                basketDao.minusBasketToStock(orderItem.getBasket().getBasketId(),specificBasketQuantity);
-            }else{
-
+                basketDao.minusBasketToStock(orderItem.getBasket().getBasketId(), specificBasketQuantity);
+            } else {
                 orderItem.getBasket().getBasketItems().forEach(basketItems -> {
                     int numberOfProductsInOneSpecifiedBasket = basketItems.getQuantity();
                     productDao.updateStockTmpAdd(basketItems.getProduct().getId(), (specificBasketQuantity * numberOfProductsInOneSpecifiedBasket));
                 });
             }
-
         });
     }
-
-
-
 
     public void changeStockStatusWtrakcieToNowe(Order order) {
         List<OrderItem> tmp = order.getOrderItems();
         List<NumberProductsToChangeStock> numberProductsToChangeStocks = new ArrayList<>();
-
         order.getOrderItems().forEach(orderItem -> {
-
-                int specificBasketQuantity = orderItem.getQuantity();
-                Basket specificBasket = basketDao.findByBasketId(orderItem.getBasket().getBasketId());
-
-                orderItem.getBasket().getBasketItems().forEach(basketItems -> {
-                    int numberOfProductsInOneSpecifiedBasket = basketItems.getQuantity();
-                    productDao.updateStockTmpMinus(basketItems.getProduct().getId(), Long.valueOf(specificBasketQuantity * numberOfProductsInOneSpecifiedBasket));
-                });
-
+            int specificBasketQuantity = orderItem.getQuantity();
+            Basket specificBasket = basketDao.findByBasketId(orderItem.getBasket().getBasketId());
+            orderItem.getBasket().getBasketItems().forEach(basketItems -> {
+                int numberOfProductsInOneSpecifiedBasket = basketItems.getQuantity();
+                productDao.updateStockTmpMinus(basketItems.getProduct().getId(), Long.valueOf(specificBasketQuantity * numberOfProductsInOneSpecifiedBasket));
             });
-
+        });
     }
 
     @Transactional
@@ -283,11 +237,10 @@ public class OrderService {
         if (newStateValue > currentOrderItemState.getQuantity())
             throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
         if (newStateValue < 0) throw new OrderStatusException("Wartość nie może być mniejsza od zera");
-
         switch (ordersPreparePhase) {
             case ON_WAREHOUSE:
                 changeOrderItemProgressOnWarehouse(orderItemId, currentOrderItemState, newStateValue);
-                changeProductsStockWhenWarehouseUpdateOrderProgress(currentOrderItemState,newStateValue);
+                changeProductsStockWhenWarehouseUpdateOrderProgress(currentOrderItemState, newStateValue);
                 break;
             case ON_PRODUCTION:
                 changeOrderItemProgressOnProduction(orderItemId, currentOrderItemState, newStateValue);
@@ -297,9 +250,6 @@ public class OrderService {
                 break;
         }
     }
-
-
-
 
     private void changeOrderItemProgressOnWarehouse(Integer orderItemId, OrderItem currentOrderItemState, Long newStateValue) throws OrderStatusException {
         if (newStateValue < currentOrderItemState.getStateOnProduction()) {
@@ -322,18 +272,14 @@ public class OrderService {
         if (newStateValue > currentOrderItemState.getStateOnProduction()) {
             throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez produkcje ");
         }
-
         orderDao.changeSpecyfiedOrderItemProgressOnLogistics(orderItemId, newStateValue);
-
         Order orderTmp = orderDao.findOrderByOrderItemId(orderItemId.longValue());
-
         Boolean completeOrderWatch = true;
         for (OrderItem oi : orderTmp.getOrderItems()) {
             if (!oi.getQuantity().equals(oi.getStateOnLogistics())) {
                 completeOrderWatch = false;
             }
         }
-
         if (completeOrderWatch) orderTmp.setOrderStatus(new OrderStatus(ORDER_STATUS_ID_ZREALIZOWANE));
         orderDao.save(orderTmp);
     }
@@ -346,15 +292,12 @@ public class OrderService {
         Long newOrderStateTotal;
         if (ordersPreparePhase == OrdersPreparePhase.ON_WAREHOUSE) {
             newOrderStateTotal = currentOrderItemState.getStateOnWarehouse() + newStateValueToAdd;
-
-
             if (newOrderStateTotal > currentOrderItemState.getQuantity())
                 throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
-
             if (newOrderStateTotal < currentOrderItemState.getStateOnProduction()) {
                 throw new OrderStatusException("Stan koszy ukończonych przez magazyn nie może być mniejszy od liczby koszy przygotowanych przez produkcję ");
             }
-            changeProductsStockWhenWarehouseUpdateOrderProgress(currentOrderItemState,newOrderStateTotal);
+            changeProductsStockWhenWarehouseUpdateOrderProgress(currentOrderItemState, newOrderStateTotal);
             orderDao.changeSpecifiedOrderItemProgressOnWarehouseByAddValue(orderItemId, newStateValueToAdd);
         } else if (ordersPreparePhase == OrdersPreparePhase.ON_PRODUCTION) {
             newOrderStateTotal = currentOrderItemState.getStateOnProduction() + newStateValueToAdd;
@@ -364,34 +307,24 @@ public class OrderService {
                 throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez magazyn ");
             if (newOrderStateTotal < currentOrderItemState.getStateOnLogistics())
                 throw new OrderStatusException("Stan koszy ukończonych przez produkcję nie może być mniejszy od liczby koszy przygotowanych do wysyłki przez logistykę");
-
             orderDao.changeSpecifiedOrderItemProgressOnProductionByAddValue(orderItemId, newStateValueToAdd);
         } else if (ordersPreparePhase == OrdersPreparePhase.ON_LOGISTICS) {
             newOrderStateTotal = currentOrderItemState.getStateOnLogistics() + newStateValueToAdd;
             if (newOrderStateTotal > currentOrderItemState.getQuantity())
                 throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
-
             if (newOrderStateTotal > currentOrderItemState.getStateOnProduction())
                 throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez produkcje ");
-
             orderDao.changeSpecifiedOrderItemProgressOnLogisticsByAddValue(orderItemId, newStateValueToAdd);
         }
     }
 
-
-
-
-
     @Transactional
     public void changeOrderProgressByAdmin(Long id, List<OrderItem> orderItemsList) throws OrderStatusException {  // BY admin
         Order updatingOrder = orderDao.findByOrderId(id);
-
         if (updatingOrder.getOrderStatus().getOrderStatusId() == 1) {
             throw new OrderStatusException("Brak możliwości zmiany przy statusie zamowienia 'nowy' ");
         }
-
         Boolean completeOrderWatch = true;
-
         for (OrderItem oi : orderItemsList) {
             if (oi.getStateOnLogistics() > oi.getQuantity() || oi.getStateOnProduction() > oi.getQuantity() || oi.getStateOnWarehouse() > oi.getQuantity()) {
                 throw new OrderStatusException("Brak możliwości zmiany, liczba nie może być większa od całkowitej liczby koszy ");
@@ -408,7 +341,6 @@ public class OrderService {
             if (oi.getStateOnLogistics() > oi.getStateOnWarehouse()) {
                 throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy przygotowanych przez magazyn ");
             }
-
             if (!oi.getQuantity().equals(oi.getStateOnLogistics())) {
                 completeOrderWatch = false;
             }
@@ -433,7 +365,6 @@ public class OrderService {
         }
     }
 
-
     private void changeProductsStockWhenWarehouseUpdateOrderProgress(OrderItem currentOrderItemState, Long newWarehouseStateValue) {
         if (currentOrderItemState.getQuantityFromSurplus() == 0) {
             Long v1 = newWarehouseStateValue - currentOrderItemState.getStateOnWarehouse();  //possible negative value
@@ -447,13 +378,11 @@ public class OrderService {
     public void assignOrdersToSpecifiedProduction(List<Integer> ordersIds, Long productionId) throws OrderStatusException {
         List<Order> orderListByIds = orderDao.findByOrderIds(ordersIds);
         for (Order order : orderListByIds) {
-
-            if(!SecurityUtils.isCurrentUserInRole("admin")){
+            if (!SecurityUtils.isCurrentUserInRole("admin")) {
                 if (order.getOrderStatus().getOrderStatusId() != ORDER_STATUS_ID_NOWE) {
                     throw new OrderStatusException("Nie można zmienić  lub przydzielić produkcji do zamówienia o statusie innym niż NOWE");
                 }
             }
-
         }
         orderDao.assignOrdersToSpecifiedProduction(ordersIds, productionId);
     }
@@ -490,7 +419,6 @@ public class OrderService {
         return orderDtoList;
     }
 
-
     @Transactional
     public List<Order> getOrderListFromIdList(List<Long> orederIdList) {
         List<Order> ordersList = new ArrayList<>();
@@ -500,6 +428,7 @@ public class OrderService {
         });
         return ordersList;
     }
+
     public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection, List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Order> orderList;
@@ -528,10 +457,11 @@ public class OrderService {
             } else {
                 fileIdTmp = 0L;
             }
-            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(),order.getLoyaltyUser(),order.getAllreadyComputedPoints()));
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(), order.getLoyaltyUser(), order.getAllreadyComputedPoints()));
         });
         return new OrderPageRequest(orderDtoList, orderList.getTotalElements());
     }
+
     private void performOrderCustomerFromDB(Order order) {
         Customer customerToSave = order.getCustomer();
         Company company = order.getCustomer().getCompany();
@@ -570,7 +500,55 @@ public class OrderService {
         orderDao.save(order);
     }
 
+    public List<OrderDto> getOrderDtoForCurrentProductionUser() {
+        Optional<User> currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
+        if (currentUser.isPresent()) {
+            List<Order> ordersList = orderDao.getAllOrdersByProductionUserId(currentUser.get().getId());
+            return getOrderDtoListFromOrderList(ordersList);
+        } else {
+            throw new AccessDeniedException("Access Denied");
+        }
+    }
 
+    private List<OrderDto> getOrderDtoListFromOrderList(List<Order> ordersList) {
+        List<OrderDto> orderDtoList = new ArrayList<>();
+        List<DbFile> dbFileDtoList = dbFileDao.findAll();
+        ordersList.forEach(order -> {
+            List<DbFile> result;
+            result = dbFileDtoList.stream().filter(data -> order.getOrderId().equals(data.getOrderId())).collect(Collectors.toList());
+            Long fileIdTmp;
+            if (result.size() > 0) {
+                fileIdTmp = result.get(0).getFileId();
+            } else {
+                fileIdTmp = 0L;
+            }
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser()));
+        });
+        return orderDtoList;
+    }
+
+    public void computeLoyaltyProgramPoints() {
+        List<PointScheme> pointScheme = pointsDao.findBy();
+        List<Order> orderListToComputePoints = orderDao.findAllOrderForLoyaltyProgram();
+        for (Order order : orderListToComputePoints) {
+            Double pointsToAdd = 0.0;
+            for (OrderItem oi : order.getOrderItems()) {
+                BasketSezon bs = oi.getBasket().getBasketSezon();
+                if (bs != null) {
+                    PointScheme scheme = pointScheme.stream().filter(pointScheme1 -> bs.getBasketSezonId().equals(pointScheme1.getBasketSezon().getBasketSezonId())).findAny().orElse(null);
+                    if (scheme != null) {
+                        Double stepA = (oi.getBasket().getBasketTotalPrice().doubleValue() / 100) * oi.getQuantity();
+                        Double stepB = (stepA / scheme.getStep().doubleValue()) * scheme.getPoints().doubleValue();
+                        pointsToAdd += stepB;
+                    }
+                }
+            }
+            Integer tmpPoints = (int) Math.ceil(pointsToAdd);
+            userRepository.updateUserPoints(order.getLoyaltyUser().getLogin(), tmpPoints);
+            order.setAllreadyComputedPoints(true);
+            orderDao.save(order);
+        }
+    }
 }
 
 
