@@ -2,12 +2,8 @@ package com.damian.domain.product;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
-/**
- * Created by Damian on 05.09.2017.
- */
 @Entity
 @Table(name = "products")
 public class Product {
@@ -19,11 +15,8 @@ public class Product {
     private Integer stock;
     private Integer tmpStock;
     private Integer tmpOrdered;
-    private String deliver;
     private Integer isArchival;
     private Set<Supplier> suppliers;
-    private Supplier supplier;
-    //private ProductType productType;
     private ProductSubType productSubType;
     private Date lastStockEditDate;
     private Date lastNumberOfOrderedEditDate;
@@ -109,21 +102,9 @@ public class Product {
         this.tmpOrdered = tmpOrdered;
     }
 
-//    @Basic
-//    @Column(name = "deliver")
-//    public String getDeliver() {
-//        return deliver;
-//    }
-//
-//    public void setDeliver(String deliver) {
-//        this.deliver = deliver;
-//    }
-
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "product_suppliers",
-        joinColumns = {@JoinColumn(name = "id")},  //
+    @JoinTable(name = "product_suppliers", joinColumns = {@JoinColumn(name = "id")},  //
         inverseJoinColumns = {@JoinColumn(name = "supplier_id")})
-
     public Set<Supplier> getSuppliers() {
         return suppliers;
     }
@@ -131,9 +112,6 @@ public class Product {
     public void setSuppliers(Set<Supplier> suppliers) {
         this.suppliers = suppliers;
     }
-
-
-
 
     @ManyToOne
     @JoinColumn(name = "product_sub_type_id")
@@ -163,10 +141,5 @@ public class Product {
 
     public void setLastNumberOfOrderedEditDate(Date lastNumberOfOrderedEditDate) {
         this.lastNumberOfOrderedEditDate = lastNumberOfOrderedEditDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" + "id=" + id + ", capacity='" + capacity + '\'' + ", price=" + price + ", productName='" + productName + '\'' + ", stock=" + stock + ", tmpStock=" + tmpStock + ", tmpOrdered=" + tmpOrdered + ", deliver='" + deliver + '\'' + ", isArchival=" + isArchival + ", suppliers=" + suppliers + ", productSubType=" + productSubType + ", lastStockEditDate=" + lastStockEditDate + ", lastNumberOfOrderedEditDate=" + lastNumberOfOrderedEditDate + '}';
     }
 }

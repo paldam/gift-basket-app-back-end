@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -17,20 +16,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = "authorities")
     User findOneWithAuthoritiesById(Long id);
 
-    @Query("select NEW com.damian.dto.ProductionUserDto(u.id,u.login) FROM User u join u.authorities a where a.name ='produkcja'")
+    @Query("select NEW com.damian.dto.ProductionUserDto(u.id,u.login) FROM User u join u.authorities a where a.name " +
+        "='produkcja'")
     List<ProductionUserDto> getAllProductionUser();
-
-
 
     @Query("select u FROM User u join u.authorities a where a.name ='punkty' ")
     List<User> getAllProgramUser();
 
-
-
     @EntityGraph(attributePaths = "authorities")
     Optional<User> findOneWithAuthoritiesByLogin(String login);
-
-
 
     Optional<User> findOneByLogin(String login);
 
@@ -38,7 +32,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Transactional
     @Modifying
-    @Query("update User u set u.password = '$2a$04$FRxFawokSSkDWgv70fm1eOJIl55TPKvI/gS4cUT2tmkHuMp3Gpvkm' where u.login = ?1")
+    @Query("update User u set u.password = '$2a$04$FRxFawokSSkDWgv70fm1eOJIl55TPKvI/gS4cUT2tmkHuMp3Gpvkm' where u" +
+        ".login = ?1")
     void resetPassword(String login);
 
     @Transactional
@@ -88,7 +83,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Modifying
     @Query(value = "UPDATE user set isArchival = true where id = ?1", nativeQuery = true)
-    void markUserAsArchival( Long id);
+    void markUserAsArchival(Long id);
 }
 
 

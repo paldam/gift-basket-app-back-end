@@ -1,9 +1,6 @@
 package com.damian.domain.prize;
 
-import com.damian.domain.product.Supplier;
-
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "prizes")
@@ -15,8 +12,6 @@ public class Prize {
     private Integer pkt;
     private Integer stock;
     private Boolean isAvailable;
-
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,9 +34,8 @@ public class Prize {
         this.name = name;
     }
 
-
     @Basic
-    @Column(name = "description",length = 8000)
+    @Column(name = "description", length = 8000)
     public String getDescription() {
         return description;
     }
@@ -60,7 +54,6 @@ public class Prize {
         this.pkt = pkt;
     }
 
-
     @Basic
     @Column(name = "isAvailable")
     public Boolean getAvailable() {
@@ -70,7 +63,6 @@ public class Prize {
     public void setAvailable(Boolean available) {
         isAvailable = available;
     }
-
 
     @Basic
     @Column(name = "stock")
@@ -82,8 +74,5 @@ public class Prize {
         this.stock = stock;
     }
 
-    @Override
-    public String toString() {
-        return "Prize{" + "id=" + id + ", name='" + name + '\'' + ", description='" + description + '\'' + ", pkt=" + pkt + ", stock=" + stock + ", isAvailable=" + isAvailable + '}';
-    }
+
 }

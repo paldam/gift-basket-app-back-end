@@ -6,6 +6,6 @@ import java.util.List;
 
 
 public interface OrderStatusDao extends CrudRepository<OrderStatus,Long> {
-    public List<OrderStatus> findAllBy();
+    List<OrderStatus> findAllBy();
 
 }

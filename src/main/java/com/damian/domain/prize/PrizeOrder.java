@@ -1,13 +1,10 @@
 package com.damian.domain.prize;
 
 import com.damian.domain.user.User;
-import org.hibernate.envers.Audited;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
 @Table(name = "prize_orders")
@@ -15,7 +12,7 @@ public class PrizeOrder {
 
     private Long id;
     private Date orderDate;
-    private List<PrizeOrderItems> prizeOrderItems ;
+    private List<PrizeOrderItems> prizeOrderItems;
     private String additionalInformation;
     private Integer orderTotalAmount;
     private String nameLastname;
@@ -26,8 +23,6 @@ public class PrizeOrder {
     private String email;
     private User user;
     private PrizeOrderStatus prizeOrderStatus;
-
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +45,6 @@ public class PrizeOrder {
         this.orderDate = orderDate;
     }
 
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "prize_order_id", referencedColumnName = "prize_order_id")
     public List<PrizeOrderItems> getPrizeOrderItems() {
@@ -60,7 +54,6 @@ public class PrizeOrder {
     public void setPrizeOrderItems(List<PrizeOrderItems> prizeOrderItems) {
         this.prizeOrderItems = prizeOrderItems;
     }
-
 
     @Basic
     @Column(name = "additional_information", length = 3000)
@@ -72,7 +65,6 @@ public class PrizeOrder {
         this.additionalInformation = additionalInformation;
     }
 
-
     @Basic
     @Column(name = "order_total_amount")
     public Integer getOrderTotalAmount() {
@@ -82,7 +74,6 @@ public class PrizeOrder {
     public void setOrderTotalAmount(Integer orderTotalAmount) {
         this.orderTotalAmount = orderTotalAmount;
     }
-
 
     @Basic
     @Column(name = "name", length = 1000)
@@ -139,7 +130,6 @@ public class PrizeOrder {
     public String getEmail() {
         return email;
     }
-
 
     public void setEmail(String email) {
         this.email = email;

@@ -1,26 +1,16 @@
 package com.damian.domain.product;
 
-import com.damian.domain.basket.BasketItems;
-import com.damian.domain.order.OrderItem;
-
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
-import static com.damian.config.Constants.ANSI_RESET;
-import static com.damian.config.Constants.ANSI_YELLOW;
-
-/**
- * Created by Damian on 03.11.2017.
- */
-
 public class ProductToOrder {
-    private Integer id ;
+
+    private Integer id;
     private String product_name;
     private Set<Supplier> suppliers;
     private Integer stock;
     private Integer tmpOrdered;
-    private Long suma ;
+    private Long suma;
     private String capacity;
     private ProductSubType productSubType;
     private Integer valueForDeliver;
@@ -29,9 +19,7 @@ public class ProductToOrder {
     public ProductToOrder() {
     }
 
-
-    public ProductToOrder(Product p, Long suma ) {
-
+    public ProductToOrder(Product p, Long suma) {
         this.id = p.getId();
         this.product_name = p.getProductName();
         this.suppliers = p.getSuppliers();
@@ -43,8 +31,7 @@ public class ProductToOrder {
         this.valueForDeliver = 0;
     }
 
-    public ProductToOrder(Product p, Long suma, Date lastEditNumberOfOrderedDate ) {
-
+    public ProductToOrder(Product p, Long suma, Date lastEditNumberOfOrderedDate) {
         this.id = p.getId();
         this.product_name = p.getProductName();
         this.suppliers = p.getSuppliers();
@@ -55,10 +42,10 @@ public class ProductToOrder {
         this.productSubType = p.getProductSubType();
         this.valueForDeliver = 0;
         this.lastEditNumberOfOrderedDate = lastEditNumberOfOrderedDate;
-
     }
 
-    public ProductToOrder(Integer id, String product_name, Set<Supplier> suppliers, Integer stock, Integer tmpOrdered, Long suma, String capacity) {
+    public ProductToOrder(Integer id, String product_name, Set<Supplier> suppliers, Integer stock, Integer tmpOrdered
+        , Long suma, String capacity) {
         this.id = id;
         this.product_name = product_name;
         this.suppliers = suppliers;
@@ -67,7 +54,6 @@ public class ProductToOrder {
         this.suma = suma;
         this.capacity = capacity;
         this.valueForDeliver = 0;
-
     }
 
     public Long getSuma() {

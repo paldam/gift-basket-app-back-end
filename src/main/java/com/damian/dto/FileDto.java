@@ -2,22 +2,17 @@ package com.damian.dto;
 
 import com.damian.domain.order_file.DbFile;
 
-/**
- * Created by Damian on 29.08.2018.
- */
 public class FileDto {
 
-     private Long fileId;
-    private Long  orderId;
-
+    private Long fileId;
+    private Long orderId;
 
     public FileDto() {
-        // Empty constructor needed for Jackson.
     }
 
     public FileDto(DbFile dbFile) {
-        this.fileId =dbFile.getFileId();
-        this.orderId= dbFile.getOrderId();
+        this.fileId = dbFile.getFileId();
+        this.orderId = dbFile.getOrderId();
     }
 
     public Long getFileId() {

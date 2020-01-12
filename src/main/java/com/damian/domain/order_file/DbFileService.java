@@ -1,10 +1,8 @@
 package com.damian.domain.order_file;
 
 import com.damian.dto.FileDto;
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +10,7 @@ import java.util.List;
 
 @Service
 public class DbFileService {
+
     private DbFileDao dbFileDao;
 
     public DbFileService(DbFileDao dbFileDao) {
