@@ -1,13 +1,9 @@
 package com.damian.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.List;
 
-/**
- * Created by Damian on 05.09.2017.
- */
 @Entity
 @Table(name = "products_types")
 public class ProductType {

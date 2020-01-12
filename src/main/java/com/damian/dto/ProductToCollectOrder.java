@@ -3,7 +3,7 @@ package com.damian.dto;
 public class ProductToCollectOrder {
 
     private String product_name;
-    private Long suma ;
+    private Long suma;
     private String capacity;
 
     public ProductToCollectOrder(String product_name, Long suma, String capacity) {

@@ -3,29 +3,21 @@ package com.damian.dto;
 import com.damian.domain.customer.Address;
 import com.damian.domain.customer.Customer;
 
-/**
- * Created by Damian on 19.08.2018.
- */
 public class CustomerAddressDTO {
-
 
     private Integer customerId;
     private String organizationName;
     private String name;
-    //private List<Address> addresses;
     private String email;
     private Long addressId;
     private String address;
     private String zipCode;
     private String cityName;
     private String phoneNumber;
-    //private Customer customer;
-    //private byte isPrimaryAddress;
-
 
     public CustomerAddressDTO(Customer cust, Address addr) {
-        this.customerId = cust.getCustomerId() ;
-        this.organizationName = cust.getCompany().getCompanyName(); //TODO
+        this.customerId = cust.getCustomerId();
+        this.organizationName = cust.getCompany().getCompanyName();
         this.name = cust.getName();
         this.email = cust.getEmail();
         this.phoneNumber = cust.getPhoneNumber();
@@ -33,9 +25,7 @@ public class CustomerAddressDTO {
         this.address = addr.getAddress();
         this.zipCode = addr.getZipCode();
         this.cityName = addr.getCityName();
-
     }
-
 
     public Integer getCustomerId() {
         return customerId;

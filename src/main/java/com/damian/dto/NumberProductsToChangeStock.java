@@ -1,8 +1,5 @@
 package com.damian.dto;
 
-/**
- * Created by Damian on 04.09.2018.
- */
 public class NumberProductsToChangeStock {
 
       private Integer productId;

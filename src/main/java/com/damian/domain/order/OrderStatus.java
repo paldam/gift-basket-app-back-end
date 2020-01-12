@@ -1,4 +1,3 @@
-
 package com.damian.domain.order;
 
 import javax.persistence.*;
@@ -6,6 +5,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "order_status")
 public class OrderStatus {
+
     private Integer orderStatusId;
     private String orderStatusName;
 
@@ -41,12 +41,12 @@ public class OrderStatus {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         OrderStatus that = (OrderStatus) o;
-
-        if (getOrderStatusId() != null ? !getOrderStatusId().equals(that.getOrderStatusId()) : that.getOrderStatusId() != null)
+        if (getOrderStatusId() != null ? !getOrderStatusId().equals(that.getOrderStatusId()) :
+            that.getOrderStatusId() != null)
             return false;
-        return getOrderStatusName() != null ? getOrderStatusName().equals(that.getOrderStatusName()) : that.getOrderStatusName() == null;
+        return getOrderStatusName() != null ? getOrderStatusName().equals(that.getOrderStatusName()) :
+            that.getOrderStatusName() == null;
     }
 
     @Override

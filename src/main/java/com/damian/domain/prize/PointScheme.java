@@ -1,18 +1,16 @@
 package com.damian.domain.prize;
 
 import com.damian.domain.basket.BasketSezon;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "point_scheme")
 public class PointScheme {
-        private Long id;
+
+    private Long id;
     private BasketSezon basketSezon;
     private Integer points;
     private Integer step;
-
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,9 +22,6 @@ public class PointScheme {
     public void setId(Long id) {
         this.id = id;
     }
-
-
-
 
     @ManyToOne
     @JoinColumn(name = "basket_sezon")

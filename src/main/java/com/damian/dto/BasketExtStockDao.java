@@ -2,9 +2,7 @@ package com.damian.dto;
 
 import com.damian.domain.basket.Basket;
 
-
 public class BasketExtStockDao {
-
 
     private Long basketId;
     private Integer isAvailable;
@@ -13,12 +11,8 @@ public class BasketExtStockDao {
     }
 
     public BasketExtStockDao(Basket basket) {
-
-
         this.basketId = basket.getBasketId();
-
         this.isAvailable = basket.getIsAvailable();
-
     }
 
     public Long getBasketId() {
@@ -29,8 +23,6 @@ public class BasketExtStockDao {
         this.basketId = basketId;
     }
 
-
-
     public Integer getIsAvailable() {
         return isAvailable;
     }
@@ -38,8 +30,6 @@ public class BasketExtStockDao {
     public void setIsAvailable(Integer isAvailable) {
         this.isAvailable = isAvailable;
     }
-
-
 }
 
 

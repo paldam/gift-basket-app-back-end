@@ -8,9 +8,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-/**
- * An authority (a security role) used by Spring Security.
- */
 @Entity
 @Table(name = "authority")
 public class Authority implements Serializable {
@@ -42,9 +39,7 @@ public class Authority implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Authority authority = (Authority) o;
-
         return getName().equals(authority.getName());
     }
 
@@ -55,8 +50,6 @@ public class Authority implements Serializable {
 
     @Override
     public String toString() {
-        return "Authority{" +
-                "name='" + name + '\'' +
-                '}';
+        return "Authority{" + "name='" + name + '\'' + '}';
     }
 }

@@ -3,7 +3,6 @@ package com.damian.dto;
 import com.damian.domain.basket.Basket;
 import com.damian.domain.basket.BasketType;
 
-
 public class BasketDto {
 
     private Long basketId;
@@ -13,7 +12,6 @@ public class BasketDto {
     private String season;
     private Integer stock;
 
-
     public BasketDto() {
     }
 
@@ -22,8 +20,8 @@ public class BasketDto {
         this.basketName = basket.getBasketName();
         this.basketType = basket.getBasketType();
         this.basketTotalPrice = basket.getBasketTotalPrice();
-        this.season  =  basket.getSeason();
-        this.stock  = basket.getStock();
+        this.season = basket.getSeason();
+        this.stock = basket.getStock();
     }
 
     public Long getBasketId() {
@@ -73,6 +71,4 @@ public class BasketDto {
     public void setStock(Integer stock) {
         this.stock = stock;
     }
-
-
 }

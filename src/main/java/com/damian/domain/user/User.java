@@ -2,8 +2,6 @@ package com.damian.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.apache.commons.lang3.StringUtils;
-
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -11,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,56 +17,46 @@ import java.util.Set;
 @Table(name = "user")
 public class User implements Serializable {
 
-
-
-
     private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(length = 50, unique = true, nullable = false)
     private String login;
 
-    @Column(name = "name" ,length = 100, nullable = true)
+    @Column(name = "name", length = 100, nullable = true)
     private String name;
 
-    @Column(name = "email" ,length = 100,unique = true, nullable = true )
+    @Column(name = "email", length = 100, unique = true, nullable = true)
     private String email;
-
 
     @JsonIgnore
     @Size(min = 60, max = 60)
     @Column(name = "password_hash", length = 60)
     private String password;
 
-
     @NotNull
     @Column(nullable = false)
     private boolean activated = false;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_authority",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
+    @JoinTable(name = "user_authority", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+        inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
     private Set<Authority> authorities = new HashSet<Authority>();
 
-
     @Basic
-    @Column(name = "isArchival",columnDefinition = "boolean default false")
+    @Column(name = "isArchival", columnDefinition = "boolean default false")
     private Boolean isArchival;
-
 
     @Basic
     @Column(name = "order_total_amount")
-    private Integer points ;
+    private Integer points;
 
     @Basic
-    @Column(name = "first_login",columnDefinition = "boolean default false")
+    @Column(name = "first_login", columnDefinition = "boolean default false")
     private boolean ifFirstLogin;
+
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -160,7 +147,9 @@ public class User implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return activated == user.activated && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password, user.password) && Objects.equals(authorities, user.authorities) && Objects.equals(isArchival, user.isArchival) && Objects.equals(points, user.points);
+        return activated == user.activated && Objects.equals(id, user.id) && Objects.equals(login, user.login)
+            && Objects.equals(password, user.password) && Objects.equals(authorities, user.authorities)
+            && Objects.equals(isArchival, user.isArchival) && Objects.equals(points, user.points);
     }
 
     @Override
@@ -168,8 +157,5 @@ public class User implements Serializable {
         return Objects.hash(id, login, password, activated, authorities, isArchival, points);
     }
 
-    @Override
-    public String toString() {
-        return "User{" + "id=" + id + ", login='" + login + '\'' + ", password='" + password + '\'' + ", activated=" + activated + ", authorities=" + authorities + ", isArchival=" + isArchival + ", points=" + points + '}';
-    }
+
 }

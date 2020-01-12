@@ -4,6 +4,7 @@ import com.damian.domain.user.User;
 import com.damian.domain.user.UserRepository;
 import com.damian.security.SecurityUtils;
 import com.itextpdf.tool.xml.PipelineException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,8 @@ import static com.damian.config.Constants.ANSI_YELLOW;
 @Transactional
 @Service
 public class PrizeOrderService {
+
+    private final int PRIZE_ORDER_STATUS_NOWE = 1;
 
     private PrizeOrderDao prizeOrderDao;
     private UserRepository userRepository;
@@ -29,61 +32,31 @@ public class PrizeOrderService {
     @Transactional
     public PrizeOrder saveOrder(PrizeOrder order) throws NoPointsExceptions, PointsExceptions {
         Optional<User> curentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
-        order.setUser(curentUser.get());
-        PrizeOrderStatus prizeOrderStatus = new PrizeOrderStatus(1);
+        order.setUser(curentUser.orElseThrow(() -> new AccessDeniedException("Access Denied")));
+        PrizeOrderStatus prizeOrderStatus = new PrizeOrderStatus(PRIZE_ORDER_STATUS_NOWE);
         order.setPrizeOrderStatus(prizeOrderStatus);
-
-
         Integer pointsBeforeOrder = userRepository.getPoints(curentUser.get().getLogin());
-
         Integer pointsAfterOrder = pointsBeforeOrder - order.getOrderTotalAmount();
-
-
-        if(pointsAfterOrder <0) {
+        if (pointsAfterOrder < 0) {
             throw new NoPointsExceptions("Brak punktów");
         }
-
-
-
-
-        for(PrizeOrderItems prizeOrderItems: order.getPrizeOrderItems()){
+        for (PrizeOrderItems prizeOrderItems : order.getPrizeOrderItems()) {
             Prize prize = prizeDao.findByIdNr(prizeOrderItems.getPrize().getId());
-
-            if(prize.getStock() - prizeOrderItems.getQuantity() <0 ){
+            if (prize.getStock() - prizeOrderItems.getQuantity() < 0) {
                 throw new PointsExceptions("Brak nagrody na stanie magazynowym");
             }
-
-            if(prize.getStock() -prizeOrderItems.getQuantity() <=0){
+            if (prize.getStock() - prizeOrderItems.getQuantity() <= 0) {
                 prize.setAvailable(false);
                 prizeDao.save(prize);
             }
-
-            prizeDao.updateStockMinus(prizeOrderItems.getPrize().getId(),prizeOrderItems.getQuantity());
-
+            prizeDao.updateStockMinus(prizeOrderItems.getPrize().getId(), prizeOrderItems.getQuantity());
         }
-
-
         curentUser.get().setPoints(pointsAfterOrder);
-        userRepository.save( curentUser.get());
-
-
-
-
+        userRepository.save(curentUser.get());
         return prizeOrderDao.save(order);
-
-
-
-
-
-
-
     }
 
-
     public void updateOrder(PrizeOrder order) {
-
         prizeOrderDao.save(order);
-
-
     }
 }

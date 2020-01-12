@@ -2,23 +2,21 @@ package com.damian.dto;
 
 import com.damian.domain.user.Authority;
 import com.damian.domain.user.User;
-
 import java.util.Set;
 
 public class ProductionUserDto {
+
     private Long id;
     private String login;
     private Set<Authority> authorities;
 
     public ProductionUserDto() {
-
     }
 
     public ProductionUserDto(Long id, String login) {
         this.id = id;
         this.login = login;
     }
-
 
     public ProductionUserDto(Long id, String login, Set<Authority> authorities) {
         this.id = id;
@@ -27,8 +25,7 @@ public class ProductionUserDto {
     }
 
     public ProductionUserDto(User user) {
-        this (user.getId(), user.getLogin(), user.getAuthorities());
-
+        this(user.getId(), user.getLogin(), user.getAuthorities());
     }
 
     public Long getId() {

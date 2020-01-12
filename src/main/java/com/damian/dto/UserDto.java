@@ -5,7 +5,6 @@ import com.damian.domain.user.User;
 
 import java.util.Set;
 
-
 public class UserDto {
 
     private Long id;
@@ -15,16 +14,13 @@ public class UserDto {
     private Set<Authority> authorities;
 
     public UserDto() {
-        // Empty constructor needed for Jackson.
     }
 
     public UserDto(User user) {
-        this(user.getId(), user.getLogin(),user.getPassword(), user.isActivated(), user.getAuthorities());
+        this(user.getId(), user.getLogin(), user.getPassword(), user.isActivated(), user.getAuthorities());
     }
 
-    public UserDto(Long id, String login, String password, boolean activated,
-                   Set<Authority> authorities) {
-
+    public UserDto(Long id, String login, String password, boolean activated, Set<Authority> authorities) {
         this.id = id;
         this.login = login;
         this.password = password;
@@ -71,6 +67,4 @@ public class UserDto {
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
     }
-
-
 }

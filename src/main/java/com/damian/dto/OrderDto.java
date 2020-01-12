@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import java.util.List;
 
-
 public class OrderDto {
 
     private Long orderId;
@@ -19,7 +18,7 @@ public class OrderDto {
     private Customer customer;
     private Date orderDate;
     private String additionalInformation;
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Europe/Warsaw")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
     private Date deliveryDate;
     private Integer weekOfYear;
     private DeliveryType deliveryType;
@@ -34,15 +33,16 @@ public class OrderDto {
     private Boolean isAllreadyComputedPoints;
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
-                    String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
-                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,Integer additionalSale, User user) {
+                    String additionalInformation, Date deliveryDate, Integer weekOfYear, DeliveryType deliveryType,
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,
+                    Integer additionalSale, User user) {
         this.orderId = orderId;
         this.orderFvNumber = orderFvNumber;
         this.customer = customer;
         this.orderDate = orderDate;
         this.additionalInformation = additionalInformation;
         this.deliveryDate = deliveryDate;
-        this.weekOfYear =weekOfYear;
+        this.weekOfYear = weekOfYear;
         this.deliveryType = deliveryType;
         this.orderStatus = orderStatus;
         this.orderTotalAmount = orderTotalAmount;
@@ -53,15 +53,16 @@ public class OrderDto {
     }
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
-                     String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
-                     OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,Integer additionalSale,Address address) {
+                    String additionalInformation, Date deliveryDate, Integer weekOfYear, DeliveryType deliveryType,
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,
+                    Integer additionalSale, Address address) {
         this.orderId = orderId;
         this.orderFvNumber = orderFvNumber;
         this.customer = customer;
         this.orderDate = orderDate;
         this.additionalInformation = additionalInformation;
         this.deliveryDate = deliveryDate;
-        this.weekOfYear =weekOfYear;
+        this.weekOfYear = weekOfYear;
         this.deliveryType = deliveryType;
         this.orderStatus = orderStatus;
         this.orderTotalAmount = orderTotalAmount;
@@ -71,17 +72,17 @@ public class OrderDto {
         this.address = address;
     }
 
-
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
-                    String additionalInformation, Date deliveryDate,Integer weekOfYear, DeliveryType deliveryType,
-                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,Integer additionalSale,User user,User loyaltyUser, Boolean isAllreadyComputedPoints) {
+                    String additionalInformation, Date deliveryDate, Integer weekOfYear, DeliveryType deliveryType,
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,
+                    Integer additionalSale, User user, User loyaltyUser, Boolean isAllreadyComputedPoints) {
         this.orderId = orderId;
         this.orderFvNumber = orderFvNumber;
         this.customer = customer;
         this.orderDate = orderDate;
         this.additionalInformation = additionalInformation;
         this.deliveryDate = deliveryDate;
-        this.weekOfYear =weekOfYear;
+        this.weekOfYear = weekOfYear;
         this.deliveryType = deliveryType;
         this.orderStatus = orderStatus;
         this.orderTotalAmount = orderTotalAmount;
@@ -92,11 +93,6 @@ public class OrderDto {
         this.loyaltyUser = loyaltyUser;
         this.isAllreadyComputedPoints = isAllreadyComputedPoints;
     }
-
-
-
-
-
 
     public Long getOrderId() {
         return orderId;
@@ -177,7 +173,6 @@ public class OrderDto {
     public void setOrderTotalAmount(Integer orderTotalAmount) {
         this.orderTotalAmount = orderTotalAmount;
     }
-
 
     public Long getDbFileId() {
         return dbFileId;

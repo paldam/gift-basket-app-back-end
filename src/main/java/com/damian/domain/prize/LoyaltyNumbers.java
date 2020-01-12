@@ -9,7 +9,6 @@ public class LoyaltyNumbers {
     private Long id;
     private String number;
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ids", nullable = false)
@@ -21,9 +20,7 @@ public class LoyaltyNumbers {
         this.id = id;
     }
 
-
-
-    @Column(name = "number", unique=true)
+    @Column(name = "number", unique = true)
     public String getNumber() {
         return number;
     }
@@ -31,6 +28,4 @@ public class LoyaltyNumbers {
     public void setNumber(String id) {
         this.number = id;
     }
-
-
 }
