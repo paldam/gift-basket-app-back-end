@@ -43,13 +43,15 @@ public class OrderController {
     private OrderService orderService;
     private OrderStatusDao orderStatusDao;
     private NotificationService notificationService;
+    private OrderProgressService orderProgressService;
 
     OrderController(NotificationService notificationService, OrderDao orderDao, OrderService orderService,
-                    OrderStatusDao orderStatusDao) {
+                    OrderStatusDao orderStatusDao,OrderProgressService orderProgressService) {
         this.orderDao = orderDao;
         this.orderService = orderService;
         this.orderStatusDao = orderStatusDao;
         this.notificationService = notificationService;
+        this.orderProgressService = orderProgressService;
     }
 
     @GetMapping(value = "/order/{id}")
@@ -123,8 +125,8 @@ public class OrderController {
 
     @GetMapping("/orders/daterange")
     ResponseEntity<List<Order>> getOrdersByDateRange(
-        @RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-        @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         List<Order> ordersList = orderDao.findOrdersByDateRange(startDate, endDate);
         return new ResponseEntity<>(ordersList, HttpStatus.OK);
     }
@@ -137,16 +139,16 @@ public class OrderController {
 
     @GetMapping("/orders/products_to_order/daterange")
     ResponseEntity<List<Order>> getProductsToOrder(
-        @RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-        @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         List<Order> productToOrderList = orderDao.findProductToOrder2(startDate, endDate);
         return new ResponseEntity<>(productToOrderList, HttpStatus.OK);
     }
 
     @GetMapping("/orders/products_to_order_without_deleted_by_delivery_date/daterange")
-    ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByDeliveryDate(@RequestParam(value = "startDate",
-        required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @RequestParam(value = "endDate",
-        required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByDeliveryDate(
+        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         endDate = setEndOfDay(endDate);
         List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByDeliveryDate(startDate, endDate);
         return new ResponseEntity<>(productToOrderList, HttpStatus.OK);
@@ -154,8 +156,8 @@ public class OrderController {
 
     @GetMapping("/orders/products_to_order_without_deleted_by_order_date/daterange")
     ResponseEntity<List<Order>> getProductsToOrderWithoutDeletedByOrderDate(
-        @RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-        @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         endDate = setEndOfDay(endDate);
         List<Order> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByOrderDate(startDate, endDate);
         return new ResponseEntity<>(productToOrderList, HttpStatus.OK);
@@ -163,9 +165,9 @@ public class OrderController {
 
     @GetMapping("/order/statistic/orderdaterange")
     ResponseEntity<List<Order>> getOrdersByBasket(
-        @RequestParam(value = "basketId", required = true) Long basketId,
-        @RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-        @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        @RequestParam(value = "basketId") Long basketId,
+        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         endDate = setEndOfDay(endDate);
         List<Order> orderList = orderDao.findAllOrderByBasketIdAndOrderDate(basketId, startDate, endDate);
         return new ResponseEntity<>(orderList, HttpStatus.OK);
@@ -173,8 +175,8 @@ public class OrderController {
 
     @GetMapping("/baskets/statistic/daterange")
     ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrdered(
-        @RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-        @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         endDate = setEndOfDay(endDate);
         List<NumberOfBasketOrderedByDate> basketList = orderDao.getNumberOfBasketOrdered(startDate, endDate);
         return new ResponseEntity<>(basketList, HttpStatus.OK);
@@ -182,8 +184,8 @@ public class OrderController {
 
     @GetMapping("/baskets/statistic/orderdaterange")
     ResponseEntity<List<NumberOfBasketOrderedByDate>> getNumberOfBasketOrderedFilteredByOrderDate(
-        @RequestParam(value = "startDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-        @RequestParam(value = "endDate", required = true) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         endDate = setEndOfDay(endDate);
         List<NumberOfBasketOrderedByDate> basketList =
             orderDao.getNumberOfBasketOrderedFilteredByOrderDate(startDate, endDate);
@@ -192,8 +194,8 @@ public class OrderController {
 
     @GetMapping("/orderdao")
     ResponseEntity<OrderPageRequest> getOrderDao(
-        @RequestParam(value = "page", required = true, defaultValue = "0") int page,
-        @RequestParam(value = "size", required = true) int size,
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        @RequestParam(value = "size") int size,
         @RequestParam(value = "searchtext", required = false) String text,
         @RequestParam(value = "orderBy", required = false) String orderBy,
         @RequestParam(value = "sortingDirection", required = false, defaultValue = "1") int sortingDirection,
@@ -236,8 +238,8 @@ public class OrderController {
 
     @PostMapping( value = "/order/assign_production",produces = "text/plain;charset=UTF-8")
     ResponseEntity assignOrdersToSpecifiedProduction(
-        @RequestParam(value = "ordersIds", required = true) List<Integer> ordersIds,
-        @RequestParam(value = "productionId", required = true) Long productionId) {
+        @RequestParam(value = "ordersIds") List<Integer> ordersIds,
+        @RequestParam(value = "productionId") Long productionId) {
         try {
             orderService.assignOrdersToSpecifiedProduction(ordersIds, productionId);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -315,7 +317,7 @@ public class OrderController {
     @PostMapping(value = "/order/progress/{id}", produces = "text/plain;charset=UTF-8")
     ResponseEntity changeOrderProgress(@PathVariable Long id, @RequestBody List<OrderItem> orderItems){
         try {
-            orderService.changeOrderProgressByAdmin(id, orderItems);
+            orderProgressService.changeOrderProgressByAdmin(id, orderItems);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
@@ -327,7 +329,7 @@ public class OrderController {
     ResponseEntity changeSpecifiedOrderItemProgressOnWarehouseByNewValue(@PathVariable Integer orderItemId,
                                                                          @PathVariable Long newStateValueOnWarehouse){
         try {
-            orderService.changeOrderItemProgressOnSpecifiedPhase(
+            orderProgressService.changeOrderItemProgressOnSpecifiedPhase(
                 orderItemId,newStateValueOnWarehouse,OrdersPreparePhase.ON_WAREHOUSE);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
@@ -340,7 +342,7 @@ public class OrderController {
     ResponseEntity changeSpecifiedOrderItemProgressOnProductionByNewValue(@PathVariable Integer orderItemId,
                                                                           @PathVariable Long newStateValueOnProduction){
         try {
-            orderService.changeOrderItemProgressOnSpecifiedPhase(
+            orderProgressService.changeOrderItemProgressOnSpecifiedPhase(
                 orderItemId,newStateValueOnProduction,OrdersPreparePhase.ON_PRODUCTION);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
@@ -353,7 +355,7 @@ public class OrderController {
     ResponseEntity changeSpecifiedOrderItemProgressOnLogisticsByNewValue(@PathVariable Integer orderItemId,
                                                                          @PathVariable Long newStateValueOnLogistics){
         try {
-            orderService.changeOrderItemProgressOnSpecifiedPhase(
+            orderProgressService.changeOrderItemProgressOnSpecifiedPhase(
                 orderItemId, newStateValueOnLogistics,OrdersPreparePhase.ON_LOGISTICS);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
@@ -367,7 +369,7 @@ public class OrderController {
         @PathVariable Integer orderItemId,
         @PathVariable Long newStateValueToAddOnWarehouse) {
         try {
-            orderService.changeOrderItemProgressOnSpecifiedPhaseByAddValue(orderItemId,newStateValueToAddOnWarehouse,
+            orderProgressService.changeOrderItemProgressOnSpecifiedPhaseByAddValue(orderItemId,newStateValueToAddOnWarehouse,
                 OrdersPreparePhase.ON_WAREHOUSE);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
@@ -381,7 +383,7 @@ public class OrderController {
         @PathVariable Integer orderItemId,
         @PathVariable Long newStateValueToAddOnProduction) {
         try {
-            orderService.changeOrderItemProgressOnSpecifiedPhaseByAddValue(orderItemId,newStateValueToAddOnProduction,
+            orderProgressService.changeOrderItemProgressOnSpecifiedPhaseByAddValue(orderItemId,newStateValueToAddOnProduction,
                 OrdersPreparePhase.ON_PRODUCTION);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
@@ -395,7 +397,7 @@ public class OrderController {
         @PathVariable Integer orderItemId,
         @PathVariable Long newStateValueToAddOnLogistics) {
         try {
-            orderService.changeOrderItemProgressOnSpecifiedPhaseByAddValue(
+            orderProgressService.changeOrderItemProgressOnSpecifiedPhaseByAddValue(
                 orderItemId,newStateValueToAddOnLogistics,OrdersPreparePhase.ON_LOGISTICS);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
