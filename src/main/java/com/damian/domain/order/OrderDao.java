@@ -45,9 +45,9 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
         "?1)) AND  REV < ?1 ORDER BY REV DESC Limit 1;", nativeQuery = true)
     public Optional<BigInteger> getRevisionNumberOFfPreviousOrderState(Long id);
 
-    @Query(value = "select audit_info.revId, audit_info.changeTime, audit_info.user, orders_audit.order_id  from " +
-        "audit_info join orders_audit on audit_info.revId = orders_audit.REV where orders_audit.order_id = ?1 Order " +
-        "By audit_info.changeTime DESC ", nativeQuery = true)
+    @Query(value = "select audit_info.rev_id, audit_info.change_time, audit_info.user, orders_audit.order_id  from " +
+        "audit_info join orders_audit on audit_info.rev_id = orders_audit.REV where orders_audit.order_id = ?1 Order " +
+        "By audit_info.change_time DESC ", nativeQuery = true)
     public List<Object[]> getOrderHistoryById(Integer id);
 
     @Transactional

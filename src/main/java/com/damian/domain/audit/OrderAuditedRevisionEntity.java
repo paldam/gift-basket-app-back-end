@@ -39,6 +39,8 @@ public class OrderAuditedRevisionEntity {
         this.revId = revId;
     }
 
+
+
     public Long getChangeTime() {
         return changeTime;
     }
