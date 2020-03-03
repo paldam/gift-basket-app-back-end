@@ -12,6 +12,7 @@ public class Product {
     private String capacity;
     private Integer price;
     private String productName;
+    private String productCatalogName;
     private Integer stock;
     private Integer tmpStock;
     private Integer tmpOrdered;
@@ -61,6 +62,17 @@ public class Product {
     public void setPrice(Integer price) {
         this.price = price;
     }
+
+    @Basic
+    @Column(name = "product_catalog_name",nullable = true, length = 300)
+    public String getProductCatalogName() {
+        return productCatalogName;
+    }
+
+    public void setProductCatalogName(String productCatalogName) {
+        this.productCatalogName = productCatalogName;
+    }
+
 
     @Basic
     @Column(name = "product_name", nullable = false, length = 300)
