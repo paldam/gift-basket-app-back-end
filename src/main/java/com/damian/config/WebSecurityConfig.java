@@ -41,7 +41,7 @@ public class WebSecurityConfig {
     }
 
     @Configuration
-    @Order(1)
+    @Order(2)
     public static class ApiWebSecurityHttpBasic0 extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
@@ -61,7 +61,7 @@ public class WebSecurityConfig {
     }
 
     @Configuration
-    @Order(2)
+    @Order(1)
     public static class ApiWebSecurityJWT extends WebSecurityConfigurerAdapter {
 
         private final TokenProvider tokenProvider;
@@ -71,7 +71,7 @@ public class WebSecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.cors().and()
+            http.cors().configurationSource(corsConfigurationSource()).and()
                 .exceptionHandling().authenticationEntryPoint(http401UnauthorizedEntryPoint()).and()
                 .csrf()
                 .disable()
@@ -85,8 +85,9 @@ public class WebSecurityConfig {
                 .antMatchers("/notification").permitAll()
                 .antMatchers("/new_order_notification").permitAll()
                .anyRequest().authenticated()
-                .and().apply(securityConfigurerAdapter())
-            ;
+                .and().apply(securityConfigurerAdapter());
+
+
         }
 
         private JWTConfigurer securityConfigurerAdapter() {
@@ -104,6 +105,18 @@ public class WebSecurityConfig {
         public Http401UnauthorizedEntryPoint http401UnauthorizedEntryPoint() {
             return new Http401UnauthorizedEntryPoint();
         }
+
+        @Bean
+        CorsConfigurationSource corsConfigurationSource() {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowCredentials(true);
+            config.addAllowedOrigin("*");
+            config.addAllowedHeader("*");
+            config.addAllowedMethod("*");
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", config);
+            return source;
+        }
     }
 
     @Bean
@@ -111,18 +124,7 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
 
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
 }
 
 

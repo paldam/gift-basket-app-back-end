@@ -19,7 +19,7 @@ import java.util.Optional;
 @Service
 public class BasketService {
 
-    private final BasketDao basketDao;
+    private  BasketDao basketDao;
 
     BasketService(BasketDao basketDao) {
         this.basketDao = basketDao;

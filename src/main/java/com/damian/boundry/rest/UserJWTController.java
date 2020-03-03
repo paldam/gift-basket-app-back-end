@@ -25,6 +25,7 @@ import java.util.Optional;
 import static com.damian.config.Constants.ANSI_RESET;
 import static com.damian.config.Constants.ANSI_YELLOW;
 
+@CrossOrigin
 @RestController
 public class UserJWTController {
 
@@ -40,7 +41,7 @@ public class UserJWTController {
         this.userRepository = userRepository;
     }
 
-    @CrossOrigin
+
     @PostMapping("/auth")
     public ResponseEntity authorize(@Valid @RequestBody LoginVM loginVM, HttpServletResponse response) {
         UsernamePasswordAuthenticationToken authenticationToken =
@@ -63,7 +64,6 @@ public class UserJWTController {
         }
     }
 
-    @CrossOrigin
     @PostMapping("/auth_loyalty_program")
     public ResponseEntity authorizeLoyaltyUser(@Valid @RequestBody LoginVM loginVM, HttpServletResponse response) {
         if (loginVM.getUsername().contains("@")) {

@@ -20,6 +20,11 @@ public class BasketSezon {
         this.basketSezonName = basketSezonName;
     }
 
+    public BasketSezon(Integer basketSezonId, String basketSezonName) {
+        this.basketSezonId = basketSezonId;
+        this.basketSezonName = basketSezonName;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "basket_sezon_id", nullable = false)

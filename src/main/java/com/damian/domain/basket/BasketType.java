@@ -11,6 +11,10 @@ public class BasketType {
     public BasketType() {
     }
 
+    public BasketType(Integer basketTypeId) {
+        this.basketTypeId = basketTypeId;
+    }
+
     public BasketType(Integer basketTypeId, String basketTypeName) {
         this.basketTypeId = basketTypeId;
         this.basketTypeName = basketTypeName;
