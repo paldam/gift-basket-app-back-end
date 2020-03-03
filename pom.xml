@@ -210,7 +210,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
             <version>1.4.194</version>
         </dependency>
 
@@ -246,23 +245,34 @@
 
 
             <plugin>
-            <groupId>org.bsc.maven</groupId>
-            <artifactId>maven-processor-plugin</artifactId>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>process</goal>
-                    </goals>
-                    <phase>generate-sources</phase>
-                    <configuration>
-                        <compilerArguments>-AaddGeneratedAnnotation=false</compilerArguments> <!-- suppress java.annotation -->
-                        <processors>
-                            <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-                        </processors>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+
+            <!--<plugin>-->
+            <!--<groupId>org.bsc.maven</groupId>-->
+            <!--<artifactId>maven-processor-plugin</artifactId>-->
+            <!--<executions>-->
+                <!--<execution>-->
+                    <!--<goals>-->
+                        <!--<goal>process</goal>-->
+                    <!--</goals>-->
+                    <!--<phase>generate-sources</phase>-->
+                    <!--<configuration>-->
+                        <!--<compilerArguments>-AaddGeneratedAnnotation=false</compilerArguments> &lt;!&ndash; suppress java.annotation &ndash;&gt;-->
+                        <!--<processors>-->
+                            <!--<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>-->
+                        <!--</processors>-->
+                    <!--</configuration>-->
+                <!--</execution>-->
+            <!--</executions>-->
+        <!--</plugin>-->
 
 
         </plugins>

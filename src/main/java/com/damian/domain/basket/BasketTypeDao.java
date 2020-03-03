@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface BasketTypeDao extends CrudRepository<BasketType,Long> {
     public List<BasketType> findAllBy();
+    public BasketType findByBasketTypeId(int id);
 }

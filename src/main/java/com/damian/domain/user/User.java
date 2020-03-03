@@ -46,7 +46,7 @@ public class User implements Serializable {
     private Set<Authority> authorities = new HashSet<Authority>();
 
     @Basic
-    @Column(name = "isArchival", columnDefinition = "boolean default false")
+    @Column(name = "is_archival", columnDefinition = "boolean default false")
     private Boolean isArchival;
 
     @Basic
