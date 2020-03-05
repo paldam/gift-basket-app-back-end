@@ -82,7 +82,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE user set isArchival = true where id = ?1", nativeQuery = true)
+    @Query(value = "UPDATE user set is_archival = true where id = ?1", nativeQuery = true)
     void markUserAsArchival(Long id);
 }
 
