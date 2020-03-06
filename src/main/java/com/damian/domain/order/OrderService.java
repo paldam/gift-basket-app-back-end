@@ -1,5 +1,6 @@
 package com.damian.domain.order;
 
+import com.damian.boundry.rest.NotificationsController;
 import com.damian.boundry.rest.OrderController;
 import com.damian.domain.basket.Basket;
 import com.damian.domain.basket.BasketDao;
@@ -179,14 +180,14 @@ public class OrderService {
 
     private void pushNotificationForCombinedOrder(Order order) {
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
-        OrderController.emitters.forEach((SseEmitter emitter) -> emit(order, sseEmitterListToRemove, emitter));
-        OrderController.emitters.removeAll(sseEmitterListToRemove);
+        NotificationsController.emitters.forEach((SseEmitter emitter) -> emit(order, sseEmitterListToRemove, emitter));
+        NotificationsController.emitters.removeAll(sseEmitterListToRemove);
     }
 
     private void pushNotificationForNewOrder(Order order) {
         List<SseEmitter> sseEmitterListToRemove = new ArrayList<>();
-        OrderController.newOrderEmitters.forEach((SseEmitter newOrderEmitter) -> emit(order, sseEmitterListToRemove, newOrderEmitter));
-        OrderController.newOrderEmitters.removeAll(sseEmitterListToRemove);
+        NotificationsController.newOrderEmitters.forEach((SseEmitter newOrderEmitter) -> emit(order, sseEmitterListToRemove, newOrderEmitter));
+        NotificationsController.newOrderEmitters.removeAll(sseEmitterListToRemove);
     }
 
     private void emit(Order order, List<SseEmitter> sseEmitterListToRemove, SseEmitter emitter) {
@@ -286,10 +287,11 @@ public class OrderService {
         Page<Order> orderList;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
         if (orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
+
             orderList =
                 orderDao
-                    .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
-                        .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
+                  .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
+                    .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
         } else {
             if (!orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
                 orderList =
@@ -315,6 +317,7 @@ public class OrderService {
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<DbFile> dbFileDtoList = dbFileDao.findAll();
         orderList.forEach(order -> {
+
             List<DbFile> result;
             result = dbFileDtoList
                 .stream().filter(data -> order.getOrderId().equals(data.getOrderId())).collect(Collectors.toList());

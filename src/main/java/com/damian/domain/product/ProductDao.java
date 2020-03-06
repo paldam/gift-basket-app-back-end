@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @Transactional
@@ -23,7 +24,9 @@ public interface ProductDao extends CrudRepository<Product, Long> {
         "product_suppliers.supplier_id= ?1 AND products.is_archival = 0;", nativeQuery = true)
     public List<Product> findBySupplier_SupplierId(Integer id);
 
-    @Query(value = "SELECT * FROM products WHERE is_archival != 1 or is_archival = null", nativeQuery = true)
+    @Query(value =
+        "SELECT distinct p FROM Product p  JOIN FETCH p.suppliers s LEFT JOIN FETCH p.productSubType pst LEFT " +
+            "JOIN FETCH pst.productType ")
     public List<Product> findAllWithoutDeleted();
 
     @Transactional

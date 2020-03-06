@@ -34,8 +34,7 @@ import java.util.*;
 @CrossOrigin
 @RestController
 public class OrderController {
-    public static final List<SseEmitter> emitters = Collections.synchronizedList( new ArrayList<>());
-    public static final List<SseEmitter> newOrderEmitters = Collections.synchronizedList( new ArrayList<>());
+
 
     @Autowired
     private EntityManagerFactory factory;
@@ -248,28 +247,12 @@ public class OrderController {
         }
     }
 
-    @Transactional
     @GetMapping(value = "/order/compute_loytaly_points", produces = "text/plain;charset=UTF-8")
     ResponseEntity computeLoyaltyProgramPoints() {
         orderService.computeLoyaltyProgramPoints();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/notification", method = RequestMethod.GET)
-    public SseEmitter stream() {
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        emitters.add(emitter);
-        emitter.onCompletion(() -> emitters.remove(emitter));
-        return emitter;
-    }
-
-    @RequestMapping(path = "/new_order_notification", method = RequestMethod.GET)
-    public SseEmitter streamNewOrderEmit() {
-        SseEmitter newOrderEmitter = new SseEmitter(Long.MAX_VALUE);
-        newOrderEmitters.add(newOrderEmitter);
-        newOrderEmitter.onCompletion(() -> newOrderEmitters.remove(newOrderEmitter));
-        return newOrderEmitter;
-    }
 
     @PostMapping("/orders")
     ResponseEntity createOrUpdateOrder(@RequestBody Order order){

@@ -5,14 +5,12 @@ import com.damian.domain.customer.Customer;
 import com.damian.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
+
 
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
