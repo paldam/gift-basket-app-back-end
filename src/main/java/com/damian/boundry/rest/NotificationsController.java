@@ -7,17 +7,19 @@ import com.damian.domain.user.UserRepository;
 import com.damian.security.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin
 @RestController
 public class NotificationsController {
+    public static final List<SseEmitter> emitters = Collections.synchronizedList( new ArrayList<>());
+    public static final List<SseEmitter> newOrderEmitters = Collections.synchronizedList( new ArrayList<>());
 
     private NotificationDao notificationDao;
     private UserRepository userRepository;
@@ -66,4 +68,21 @@ public class NotificationsController {
         }
         return new ResponseEntity<>("Oznaczono jako przeczytane", HttpStatus.OK);
     }
+
+    @RequestMapping(path = "/notification", method = RequestMethod.GET)
+    public SseEmitter stream() {
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        emitters.add(emitter);
+        emitter.onCompletion(() -> emitters.remove(emitter));
+        return emitter;
+    }
+
+    @RequestMapping(path = "/new_order_notification", method = RequestMethod.GET)
+    public SseEmitter streamNewOrderEmit() {
+        SseEmitter newOrderEmitter = new SseEmitter(Long.MAX_VALUE);
+        newOrderEmitters.add(newOrderEmitter);
+        newOrderEmitter.onCompletion(() -> newOrderEmitters.remove(newOrderEmitter));
+        return newOrderEmitter;
+    }
+
 }
