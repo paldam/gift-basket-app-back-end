@@ -26,7 +26,7 @@ public interface ProductDao extends CrudRepository<Product, Long> {
 
     @Query(value =
         "SELECT distinct p FROM Product p  JOIN FETCH p.suppliers s LEFT JOIN FETCH p.productSubType pst LEFT " +
-            "JOIN FETCH pst.productType ")
+            "JOIN FETCH pst.productType  WHERE p.isArchival=0")
     public List<Product> findAllWithoutDeleted();
 
     @Transactional
