@@ -79,7 +79,7 @@ public class Order implements Serializable {
         this.userName = userName;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "customer_id")
     public Customer getCustomer() {
@@ -90,7 +90,7 @@ public class Order implements Serializable {
         this.customer = customer;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     public List<OrderItem> getOrderItems() {
         return orderItems;
@@ -150,7 +150,7 @@ public class Order implements Serializable {
         this.deliveryDate = deliveryDate;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "delivery_type")
     public DeliveryType getDeliveryType() {
@@ -161,7 +161,7 @@ public class Order implements Serializable {
         this.deliveryType = deliveryType;
     }
 
-    @ManyToOne
+   @ManyToOne(fetch = FetchType.LAZY)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "order_status_id")
     public OrderStatus getOrderStatus() {
@@ -192,7 +192,7 @@ public class Order implements Serializable {
         this.cod = cod;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "address_id")
     public Address getAddress() {
@@ -223,7 +223,7 @@ public class Order implements Serializable {
         this.contactPerson = contactPerson;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "production_user")
     public User getProductionUser() {

@@ -22,6 +22,13 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     @Query(value = "SELECT o  FROM Order o" + " JOIN FETCH o.orderItems oi JOIN fetch oi.basket " + " JOIN  fetch  o.customer c " + "join fetch o.address " + "join fetch o.orderStatus", countQuery = " select count(o) from Order o JOIN  o.orderItems join o.customer join o.address")
     public Page<Order> findAllFetchJoin(Pageable pageable);
 
+    @Query(value = "SELECT o  FROM Order o")
+    public List<Order> findAllFetchJoin2();
+
+    @Query(value = "SELECT o  FROM Order o JOIN FETCH o.deliveryType join  fetch o.orderStatus join  fetch o" +
+        ".productionUser pu join  fetch  pu.authorities")
+    public List<Order> findAllFetchJoin3();
+
     public List<Order> findAllByOrderByOrderIdDesc();
 
     public List<Order> findAllByOrderStatus_OrderStatusId(Integer i);

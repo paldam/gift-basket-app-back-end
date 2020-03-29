@@ -59,7 +59,9 @@ public class OrderController {
 
     @GetMapping(value = "/order/{id}")
     ResponseEntity<Order> getOrder(@PathVariable Long id) {
-        return Optional.ofNullable(orderDao.findByOrderId(id)).map(order -> ResponseEntity.ok().body(order)).orElseGet(() -> ResponseEntity.notFound().build());
+        return Optional.ofNullable(orderDao.findByOrderId(id))
+            .map(order -> ResponseEntity.ok().body(order))
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/orders")
@@ -189,6 +191,8 @@ public class OrderController {
                                                      defaultValue = "1") int sortingDirection, @RequestParam(value =
         "orderStatusFilterList", required = false) List<Integer> orderStatusFilterList, @RequestParam(value =
         "orderYearsFilterList", required = false) List<Integer> orderYearsFilterList) {
+
+
         if (orderStatusFilterList == null) {
             orderStatusFilterList = new ArrayList<>();
         }

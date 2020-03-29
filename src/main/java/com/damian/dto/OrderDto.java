@@ -34,7 +34,7 @@ public class OrderDto {
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
                     String additionalInformation, Date deliveryDate, Integer weekOfYear, DeliveryType deliveryType,
-                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId,
                     Integer additionalSale, User user) {
         this.orderId = orderId;
         this.orderFvNumber = orderFvNumber;
@@ -47,7 +47,7 @@ public class OrderDto {
         this.orderStatus = orderStatus;
         this.orderTotalAmount = orderTotalAmount;
         this.dbFileId = dbFileId;
-        this.orderItems = orderItems;
+        //this.orderItems = orderItems;
         this.additionalSale = additionalSale;
         this.productionUser = user;
     }
@@ -74,7 +74,7 @@ public class OrderDto {
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
                     String additionalInformation, Date deliveryDate, Integer weekOfYear, DeliveryType deliveryType,
-                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId,
                     Integer additionalSale, User user, User loyaltyUser, Boolean isAllreadyComputedPoints) {
         this.orderId = orderId;
         this.orderFvNumber = orderFvNumber;
@@ -87,7 +87,6 @@ public class OrderDto {
         this.orderStatus = orderStatus;
         this.orderTotalAmount = orderTotalAmount;
         this.dbFileId = dbFileId;
-        this.orderItems = orderItems;
         this.additionalSale = additionalSale;
         this.productionUser = user;
         this.loyaltyUser = loyaltyUser;

@@ -77,7 +77,7 @@ public class Customer {
         this.additionalInformation = additionalInformation;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     public Company getCompany() {
         return company;

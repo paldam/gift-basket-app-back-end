@@ -114,7 +114,7 @@ public class Product {
         this.tmpOrdered = tmpOrdered;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "product_suppliers", joinColumns = {@JoinColumn(name = "id")},  //
         inverseJoinColumns = {@JoinColumn(name = "supplier_id")})
     public Set<Supplier> getSuppliers() {

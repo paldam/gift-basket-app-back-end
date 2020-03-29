@@ -10,6 +10,11 @@ public class FileDto {
     public FileDto() {
     }
 
+    public FileDto(Long fileId,Long orderId) {
+        this.fileId = fileId;
+        this.orderId = orderId;
+    }
+
     public FileDto(DbFile dbFile) {
         this.fileId = dbFile.getFileId();
         this.orderId = dbFile.getOrderId();

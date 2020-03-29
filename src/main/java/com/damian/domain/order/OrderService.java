@@ -13,6 +13,7 @@ import com.damian.domain.prize.PointsDao;
 import com.damian.domain.product.ProductDao;
 import com.damian.domain.user.User;
 import com.damian.domain.user.UserRepository;
+import com.damian.dto.FileDto;
 import com.damian.dto.OrderDto;
 import com.damian.domain.order.exceptions.OrderStatusException;
 import com.damian.security.SecurityUtils;
@@ -22,9 +23,16 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
 
 @Service
 public class OrderService {
@@ -32,7 +40,8 @@ public class OrderService {
     private static final int ORDER_STATUS_ID_NOWE = 1;
     private static final int ORDER_STATUS_ID_W_TRAKCIE_REALIZACJI = 6;
     private static final int ORDER_STATUS_ID_USUNIETE = 99;
-
+    @PersistenceContext
+    private EntityManager em;
     private final OrderDao orderDao;
     private final CustomerDao customerDao;
     private final AddressDao addressDao;
@@ -252,7 +261,7 @@ public class OrderService {
         List<Order> orderList = orderDao.findByCustomerId(id);
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<DbFile> dbFileDtoList = dbFileDao.findAll();
-        List<OrderItem> oredrItemsList = new ArrayList<>();
+
         orderList.forEach(order -> {
             List<DbFile> result;
             result = dbFileDtoList.stream()
@@ -266,7 +275,7 @@ public class OrderService {
             orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(),
                 order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(),
                 order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(),
-                fileIdTmp, oredrItemsList, order.getAdditionalSale(), order.getProductionUser()));
+                fileIdTmp, order.getAdditionalSale(), order.getProductionUser()));
         });
         return orderDtoList;
     }
@@ -281,44 +290,43 @@ public class OrderService {
         return ordersList;
     }
 
+
+
     public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection,
                                         List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Page<Order> orderList;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
-        if (orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
+        //Page<Order> orderList;
 
-            orderList =
-                orderDao
-                  .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
-                    .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
-        } else {
-            if (!orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
-                orderList =
-                    orderDao
-                        .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
-                            .and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray)
-                                .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
-            } else if (orderStatusFilterArray.isEmpty() && !orderYearsFilterList.isEmpty()) {
-                orderList =
-                    orderDao
-                        .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
-                            .and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
-                                .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
-            } else {
-                orderList =
-                    orderDao
-                        .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
-                            .and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
-                                .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))
-                                .and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray))), pageable);
-            }
-        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
+
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Order> query = cb.createQuery(Order.class);
+        Root<Order> orders = query.from(Order.class);
+        Fetch<Order,Customer> yFetch = orders.fetch(Order_.customer, JoinType.INNER);
+        yFetch.fetch(Customer_.company, JoinType.LEFT);
+
+        orders.fetch(Order_.orderStatus,JoinType.INNER);
+        orders.fetch(Order_.deliveryType,JoinType.INNER);
+        orders.fetch(Order_.productionUser,JoinType.LEFT);
+
+        query.select(orders);
+        TypedQuery<Order> typedQuery = em.createQuery(query);
+        List<Order> orderList= typedQuery
+            .setFirstResult(0)
+            .setMaxResults(3500)
+            .getResultList();
+
+
+
+
+
         List<OrderDto> orderDtoList = new ArrayList<>();
-        List<DbFile> dbFileDtoList = dbFileDao.findAll();
+        List<FileDto> dbFileDtoList = dbFileDao.findAllFileDto();
         orderList.forEach(order -> {
 
-            List<DbFile> result;
+            List<FileDto> result;
             result = dbFileDtoList
                 .stream().filter(data -> order.getOrderId().equals(data.getOrderId())).collect(Collectors.toList());
             Long fileIdTmp;
@@ -330,11 +338,71 @@ public class OrderService {
             orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(),
                 order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(),
                 order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(),
-                fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(),
+                fileIdTmp, order.getAdditionalSale(), order.getProductionUser(),
                 order.getLoyaltyUser(), order.getAllreadyComputedPoints()));
         });
-        return new OrderPageRequest(orderDtoList, orderList.getTotalElements());
+       // return new OrderPageRequest(orderDtoList, orderList.getTotalElements());
+        return new OrderPageRequest(orderDtoList, 2500);
     }
+
+
+//    public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection,
+//                                        List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList) {
+//        Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
+//        Page<Order> orderList;
+//
+//
+//
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
+//        if (orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
+//
+//            orderList =
+//                orderDao
+//                  .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
+//                    .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
+//        } else {
+//            if (!orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
+//                orderList =
+//                    orderDao
+//                        .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
+//                            .and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray)
+//                                .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
+//            } else if (orderStatusFilterArray.isEmpty() && !orderYearsFilterList.isEmpty()) {
+//                orderList =
+//                    orderDao
+//                        .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
+//                            .and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
+//                                .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
+//            } else {
+//                orderList =
+//                    orderDao
+//                        .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
+//                            .and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
+//                                .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))
+//                                .and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray))), pageable);
+//            }
+//        }
+//        List<OrderDto> orderDtoList = new ArrayList<>();
+//        List<DbFile> dbFileDtoList = dbFileDao.findAll();
+//        orderList.forEach(order -> {
+//
+//            List<DbFile> result;
+//            result = dbFileDtoList
+//                .stream().filter(data -> order.getOrderId().equals(data.getOrderId())).collect(Collectors.toList());
+//            Long fileIdTmp;
+//            if (result.size() > 0) {
+//                fileIdTmp = result.get(0).getFileId();
+//            } else {
+//                fileIdTmp = 0L;
+//            }
+//            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(),
+//                order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(),
+//                order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(),
+//                fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(),
+//                order.getLoyaltyUser(), order.getAllreadyComputedPoints()));
+//        });
+//        return new OrderPageRequest(orderDtoList, orderList.getTotalElements());
+//    }
 
     private void performOrderWithNewCustomer(Order order) {
         if (order.getAddress().getAddressId() == null) {
@@ -373,7 +441,7 @@ public class OrderService {
             orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(),
                 order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(),
                 order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(),
-                fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser()));
+                fileIdTmp, order.getAdditionalSale(), order.getProductionUser()));
         });
         return orderDtoList;
     }
