@@ -52,6 +52,22 @@ public class BasketController {
         return new ResponseEntity<>(savedBasket, HttpStatus.CREATED);
     }
 
+    @PostMapping("/baskets_seasons/add")
+    ResponseEntity<BasketSezon> createBasketSeason(@RequestBody BasketSezon basketSezon) {
+
+        Optional<BasketSezon> optBasketSezon = basketSezonDao.findByBasketSezonName(basketSezon.getBasketSezonName());
+
+       if( optBasketSezon.isPresent()) {
+           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+       }else{
+           BasketSezon savedBasketSezon = basketSezonDao.save(basketSezon);
+           return new ResponseEntity<>(savedBasketSezon, HttpStatus.CREATED);
+       }
+
+
+
+    }
+
     @PostMapping("/baskets")
     ResponseEntity<Basket> createBasketWithImg(@RequestPart("basketimage") MultipartFile[] basketMultipartFiles, @RequestPart("basketobject") Basket basket) {
         Basket savedBasket = basketService.addBasketWithImg(basket, basketMultipartFiles);
