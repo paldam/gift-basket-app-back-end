@@ -1,0 +1,15 @@
+INSERT INTO kosze.products_types(type_name) VALUES ('s³odycze');
+INSERT INTO kosze.products_types(type_name) VALUES ('alkochol');
+
+INSERT INTO kosze.products(product_name,capacity,price,stock,product_type) VALUES ('kinder bueno','100ml',12,99,1);
+INSERT INTO kosze.products(product_name,capacity,price,stock,product_type) VALUES ('bols','500ml',19,99,2);
+INSERT INTO kosze.products(product_name,capacity,price,stock,product_type) VALUES ('merci','100ml',8,99,1);
+
+INSERT INTO kosze.basket_types(basket_type_name) VALUES ('ofertowy');
+INSERT INTO kosze.basket_types(basket_type_name) VALUES ('tymczasowy');
+
+INSERT INTO kosze.baskets(basket_name,basket_type) VALUES ('pierwszy_kosz',1);
+INSERT INTO kosze.baskets(basket_name,basket_type) VALUES ('drugi_kosz',2);
+INSERT INTO kosze.baskets(basket_name,basket_type) VALUES ('trzeci_kosz',1);
+
+drop TABLE user_authority,user,authority,basket_items,baskets,basket_types,products,products_types;
