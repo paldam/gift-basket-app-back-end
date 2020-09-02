@@ -4,6 +4,7 @@ import com.damian.domain.basket.Basket;
 import com.damian.domain.basket.BasketDao;
 import com.damian.domain.product.*;
 import com.damian.security.UserPermissionDeniedException;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,13 +58,13 @@ public class ProductsController {
 
     @GetMapping(value = "/products/types", produces = "application/json; charset=utf-8")
     ResponseEntity<List<ProductType>> listAllProductTypes() {
-        List<ProductType> typeList = productsTypeDao.findAll();
+        List<ProductType> typeList = productsTypeDao.findAll(Sort.by(Sort.Direction.ASC, "typeName"));
         return new ResponseEntity<>(typeList, HttpStatus.OK);
     }
 
     @GetMapping(value = "/products/sub_types", produces = "application/json; charset=utf-8")
     ResponseEntity<List<ProductSubType>> listAllProductSubTypes() {
-        List<ProductSubType> typeList = productSubTypeDao.findAll();
+        List<ProductSubType> typeList = productSubTypeDao.findAll(Sort.by(Sort.Direction.ASC, "subTypeName"));
         return new ResponseEntity<>(typeList, HttpStatus.OK);
     }
 
