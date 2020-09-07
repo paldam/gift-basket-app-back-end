@@ -1,5 +1,7 @@
 package com.damian.domain.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
@@ -21,6 +23,8 @@ public class Product {
     private ProductSubType productSubType;
     private Date lastStockEditDate;
     private Date lastNumberOfOrderedEditDate;
+    private byte[] productImageData;
+    private Integer isProductImg;
 
     @Basic
     @Column(name = "is_archival")
@@ -153,5 +157,26 @@ public class Product {
 
     public void setLastNumberOfOrderedEditDate(Date lastNumberOfOrderedEditDate) {
         this.lastNumberOfOrderedEditDate = lastNumberOfOrderedEditDate;
+    }
+
+    @JsonIgnore
+    @Basic
+    @Column(name = "image", columnDefinition = "LONGBLOB")
+    public byte[] getProductImageData() {
+        return productImageData;
+    }
+
+    public void setProductImageData(byte[] productImageData) {
+        this.productImageData = productImageData;
+    }
+
+    @Basic
+    @Column(name = "is_product_img", length = 40, columnDefinition = "INT DEFAULT 0")
+    public Integer getIsProductImg() {
+        return isProductImg;
+    }
+
+    public void setIsProductImg(Integer isProductImg) {
+        this.isProductImg = isProductImg;
     }
 }

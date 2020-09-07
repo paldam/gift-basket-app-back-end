@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -17,6 +18,7 @@ public interface ProductDao extends CrudRepository<Product, Long> {
     public List<Product> findAllBy();
     public List<Product> findAllByIsArchivalNot(Integer i);
     public Product findById(Integer id);
+    public Optional<Product> findAllById(Integer id);
     public void deleteById(Integer id);
 
     @Query(value = "SELECT * from products Join product_suppliers  on products.id = product_suppliers.id WHERE " +
@@ -82,4 +84,7 @@ public interface ProductDao extends CrudRepository<Product, Long> {
         "Order o JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b.basketItems bi JOIN bi.product p WHERE o" +
         ".orderId=?1  GROUP BY p.id")
     public List<NumberProductsToChangeStock> numberProductsToChangeStock(Long id);
+
+    @Query(value = "SELECT image FROM products WHERE id=?1", nativeQuery = true)
+    public byte[] getProductImageByBasketId(Long productId);
 }

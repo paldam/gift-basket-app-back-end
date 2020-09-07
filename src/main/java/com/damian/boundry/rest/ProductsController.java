@@ -4,10 +4,17 @@ import com.damian.domain.basket.Basket;
 import com.damian.domain.basket.BasketDao;
 import com.damian.domain.product.*;
 import com.damian.security.UserPermissionDeniedException;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -162,6 +169,37 @@ public class ProductsController {
         productsDao.save(products);
         return new ResponseEntity<>(products, HttpStatus.CREATED);
     }
+
+    @GetMapping("/productimage/{productId}")
+    public ResponseEntity<Resource> getProductImage(@PathVariable Long productId) {
+        byte[] productImage = productService.prepareProductImage(productId);
+        HttpHeaders header = new HttpHeaders();
+        header.setAccessControlExposeHeaders(Collections.singletonList("Content-Disposition"));
+        header.set("Content-Disposition", "attachment; filename=product image");
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType("image/jpeg"))
+            .headers(header)
+            .body(new ByteArrayResource(productImage));
+    }
+
+    @PostMapping("/productwithimg")
+    ResponseEntity<Product> createProductWithImg(@RequestPart("productimage") MultipartFile[] productMultipartFiles,
+                                               @RequestPart("productobject") Product product) {
+        if (product.getTmpOrdered() == null) {
+            product.setTmpOrdered(0);
+        }
+
+        Product savedProduct = productService.addProductWithImg(product, productMultipartFiles);
+        return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/productwithoutimage")
+    ResponseEntity<Product> editProductWithoutImage(@RequestBody Product product) {
+        Product savedProduct = productService.editProductWithoutImage(product);
+        return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+    }
+
+
 
     @PostMapping("/products/resetstates")
     ResponseEntity<?> resetStates() {
