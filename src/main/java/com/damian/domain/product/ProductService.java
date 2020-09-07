@@ -1,9 +1,15 @@
 package com.damian.domain.product;
 
+import com.damian.domain.basket.Basket;
 import com.damian.security.SecurityUtils;
 import com.damian.security.UserPermissionDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -46,4 +52,32 @@ public class ProductService {
             if (values[i] > 0) productDao.addProductToDeliver(ids[i], values[i]);
         }
     }
+
+    public Product editProductWithoutImage(Product product) {
+        Product productTmp =
+            productDao.findAllById(product.getId())
+                .orElseThrow(EntityNotFoundException::new);
+        product.setProductImageData(productTmp.getProductImageData());
+        return productDao.save(product);
+    }
+
+    public Product addProductWithImg(Product product , MultipartFile[] productMultipartFiles) {
+        try {
+            product.setProductImageData(productMultipartFiles[0].getBytes());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        product.setIsProductImg(1);
+        return productDao.save(product);
+    }
+
+    public byte[] prepareProductImage(Long productId) {
+        byte[] productFile = productDao.getProductImageByBasketId(productId);
+        Optional<byte[]> imgOpt = Optional.ofNullable(productFile);
+        if (!imgOpt.isPresent()) {
+            productFile = new byte[0];
+        }
+        return productFile;
+    }
+
 }
