@@ -29,6 +29,13 @@ public class AddressController {
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/customerlastaddr/{id}")
+    ResponseEntity getCustomerLastAddr(@PathVariable Integer id) {
+        return addressDao.findCustomerLastAddr(id)
+            .map(address -> ResponseEntity.ok().body(address))
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/zipcode/{code}")
     ResponseEntity<List<ZipCode>> getCustomerPrimaryAddr(@PathVariable String code) {
         List<ZipCode> cityListBycode = zipCodeDao.findByZipCodeCode(code);

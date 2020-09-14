@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
 
 @Service
 public class OrderProgressService {
@@ -147,6 +149,8 @@ public class OrderProgressService {
                 throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy " +
                     "przygotowanych przez magazyn ");
             }
+
+            System.out.println(ANSI_YELLOW + oi.getQuantity() + " | " + oi.getStateOnLogistics() + ANSI_RESET);
             if (!oi.getQuantity().equals(oi.getStateOnLogistics())) {
                 completeOrderWatch = false;
             }

@@ -50,6 +50,16 @@ public interface AddressDao extends JpaRepository<Address,Long> {
 
 
 
+    @Query(value = "SELECT addresses.* FROM orders join addresses on orders.address_id = addresses.address_id " +
+        "join customers on orders.customer_id = customers.customer_id " +
+        "WHERE customers.customer_id = ?1 ORDER BY orders.order_date DESC LIMIT 1"
+        ,nativeQuery = true)
+    public Optional<Address> findCustomerLastAddr(Integer id);
+
+
+
+
+
 
 
 }
