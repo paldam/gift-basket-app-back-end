@@ -293,12 +293,16 @@ public class OrderService {
                         .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
         } else {
             if (!orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
-                orderList =
-                    orderDao
-                        .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
-                            .and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray)
-                                .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
-            } else if (orderStatusFilterArray.isEmpty() && !orderYearsFilterList.isEmpty()) {
+                if (orderStatusFilterArray.contains(99)) {
+                    orderList =
+                        orderDao.findAll((OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
+                } else {
+                    orderList =
+                        orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
+                }
+            }
+
+            else if (orderStatusFilterArray.isEmpty() && !orderYearsFilterList.isEmpty()) {
                 orderList =
                     orderDao
                         .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
