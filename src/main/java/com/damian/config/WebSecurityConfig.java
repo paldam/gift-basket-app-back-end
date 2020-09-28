@@ -40,28 +40,28 @@ public class WebSecurityConfig {
         WebSecurityConfig.inMemoryPassword = password;
     }
 
+//    @Configuration
+//    @Order(1)
+//    public static class ApiWebSecurityHttpBasic0 extends WebSecurityConfigurerAdapter {
+//        @Override
+//        protected void configure(HttpSecurity http) throws Exception {
+//            http.authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock")
+//                .authenticated().and().httpBasic().and().csrf().disable();
+//        }
+//
+//        @Override
+//        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//
+//            auth.inMemoryAuthentication()
+//                .withUser(inMemoryUsername)
+//                .password(encoder.encode(inMemoryPassword))
+//                .roles("admin");
+//        }
+//    }
+
     @Configuration
-    @Order(1)
-    public static class ApiWebSecurityHttpBasic0 extends WebSecurityConfigurerAdapter {
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock")
-                .authenticated().and().httpBasic().and().csrf().disable();
-        }
-
-        @Override
-        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-            auth.inMemoryAuthentication()
-                .withUser(inMemoryUsername)
-                .password(encoder.encode(inMemoryPassword))
-                .roles("admin");
-        }
-    }
-
-    @Configuration
-    @Order(2)
+   // @Order(2)
     public static class ApiWebSecurityJWT extends WebSecurityConfigurerAdapter {
 
         private final TokenProvider tokenProvider;
