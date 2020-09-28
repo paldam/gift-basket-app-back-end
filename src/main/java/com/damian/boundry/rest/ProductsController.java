@@ -30,9 +30,12 @@ public class ProductsController {
     private ProductService productService;
     private BasketDao basketDao;
     private ProductSubTypeDao productSubTypeDao;
+    private ProductSeasonDao productSeasonDao;
 
-    public ProductsController(ProductSubTypeDao productSubTypeDao, ProductService productService, BasketDao basketDao,
+    public ProductsController(ProductSeasonDao productSeasonDao,ProductSubTypeDao productSubTypeDao,
+                              ProductService productService, BasketDao basketDao,
                               ProductTypeDao productsTypeDao, ProductDao productsDao, SupplierDao supplierDao) {
+        this.productSeasonDao = productSeasonDao;
         this.productsTypeDao = productsTypeDao;
         this.productsDao = productsDao;
         this.supplierDao = supplierDao;
@@ -74,6 +77,19 @@ public class ProductsController {
         List<ProductSubType> typeList = productSubTypeDao.findAll(Sort.by(Sort.Direction.ASC, "subTypeName"));
         return new ResponseEntity<>(typeList, HttpStatus.OK);
     }
+
+    @GetMapping(value = "/products/seasons", produces = "application/json; charset=utf-8")
+    ResponseEntity<List<ProductSeason>> listProductSeasons() {
+        List<ProductSeason> seasonList = productSeasonDao.findAll();
+        return new ResponseEntity<>(seasonList, HttpStatus.OK);
+    }
+
+    @PostMapping("/products/seasons")
+    ResponseEntity<ProductSeason> createProductsSeasons(@RequestBody ProductSeason productSeason) {
+        productSeasonDao.save(productSeason);
+        return new ResponseEntity<>(productSeason, HttpStatus.CREATED);
+    }
+
 
     @PostMapping("/products/subtypes")
     ResponseEntity<ProductSubType> createProductsSubTypes(@RequestBody ProductSubType productSubType) {

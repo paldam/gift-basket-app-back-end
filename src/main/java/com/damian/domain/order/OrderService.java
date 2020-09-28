@@ -350,6 +350,7 @@ public class OrderService {
 
     public List<OrderDto> getOrderDtoForCurrentProductionUser() {
         Optional<User> currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
+
         if (currentUser.isPresent()) {
             List<Order> ordersList = orderDao.getAllOrdersByProductionUserId(currentUser.get().getId());
             return getOrderDtoListFromOrderList(ordersList);

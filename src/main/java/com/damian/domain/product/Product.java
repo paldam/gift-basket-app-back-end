@@ -21,6 +21,7 @@ public class Product {
     private Integer isArchival;
     private Set<Supplier> suppliers;
     private ProductSubType productSubType;
+    private ProductSeason productSeason;
     private Date lastStockEditDate;
     private Date lastNumberOfOrderedEditDate;
     private byte[] productImageData;
@@ -127,6 +128,17 @@ public class Product {
 
     public void setSuppliers(Set<Supplier> suppliers) {
         this.suppliers = suppliers;
+    }
+
+
+    @ManyToOne
+    @JoinColumn(name = "product_season_id")
+    public ProductSeason getProductSeason() {
+        return productSeason;
+    }
+
+    public void setProductSeason(ProductSeason productSeason) {
+        this.productSeason = productSeason;
     }
 
     @ManyToOne
