@@ -44,6 +44,12 @@ public class UserController {
         List<User> userList = userRepository.findAll();
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
+    @GetMapping("/users_without_del")
+    ResponseEntity<List<User>> getUserWithoutDel() {
+        List<User> userList = userRepository.getUsersWithoutDel();
+        return new ResponseEntity<>(userList, HttpStatus.OK);
+    }
+
 
     @GetMapping("/program_users")
     ResponseEntity<List<User>> getAllProgramUsers() {

@@ -124,13 +124,19 @@ public class PdfBasketContents {
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(Rectangle.LEFT | Rectangle.TOP | Rectangle.RIGHT);
             table.addCell(cell);
-            float[] columnWidths2 = {6, 2, 2};
+            float[] columnWidths2 = {10};
             PdfPTable table2 = new PdfPTable(columnWidths2);
             table2.setWidthPercentage(100);
             basket.getBasketItems().forEach(basketItems -> {
-                table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getProductCatalogName(), font3)));
-                table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getCapacity(), font3)));
-                table2.addCell(new PdfCellExt(new Phrase(basketItems.getQuantity().toString(), font3)));
+
+                if(basketItems.getProduct().getProductSubType() == null){
+                }else{
+                    if(basketItems.getProduct().getProductSubType().getProductType().getActiveForPdfExport()){
+                        table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getProductCatalogName(), font3)));
+//                        table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getCapacity(), font3)));
+//                        table2.addCell(new PdfCellExt(new Phrase(basketItems.getQuantity().toString(), font3)));
+                    }
+                }
             });
             PdfWriter.getInstance(document, out);
             document.open();

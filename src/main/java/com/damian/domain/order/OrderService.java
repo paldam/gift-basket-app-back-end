@@ -42,10 +42,11 @@ public class OrderService {
     private final UserRepository userRepository;
     private final BasketDao basketDao;
     private final PointsDao pointsDao;
+    private final ZipCodeDao zipCodeDao;
 
     OrderService(BasketDao basketDao, UserRepository userRepository, OrderDao orderDao,
                  CustomCustomerDao customCustomerDao, CustomerDao customerDao, AddressDao addressDao,
-                 ProductDao productDao, DbFileDao dbFileDao, PointsDao pointsDao) {
+                 ProductDao productDao, DbFileDao dbFileDao, PointsDao pointsDao, ZipCodeDao zipCodeDao) {
 
         this.orderDao = orderDao;
         this.customerDao = customerDao;
@@ -56,6 +57,7 @@ public class OrderService {
         this.userRepository = userRepository;
         this.basketDao = basketDao;
         this.pointsDao = pointsDao;
+        this.zipCodeDao = zipCodeDao;
     }
 
     @Transactional
@@ -80,6 +82,11 @@ public class OrderService {
         } else {
             performOrderWithNewCustomer(order);
         }
+
+        assignProvince(order.getAddress());
+
+
+
         pushNotificationForNewOrder(order);
     }
 
@@ -152,6 +159,8 @@ public class OrderService {
             orderDao.saveAndFlush(order);
         }
     }
+
+
 
     @Transactional
     public void cancelOrder(Order order) {
@@ -282,41 +291,21 @@ public class OrderService {
     }
 
     public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection,
-                                        List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList) {
+                                        List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList,List<Integer> orderProductionUserFilterList, List<Integer> orderWeeksUserFilterList, List<String> provinces) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Order> orderList;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
-        if (orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
-            orderList =
-                orderDao
-                    .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
-                        .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)), pageable);
-        } else {
-            if (!orderStatusFilterArray.isEmpty() && orderYearsFilterList.isEmpty()) {
-                if (orderStatusFilterArray.contains(99)) {
-                    orderList =
-                        orderDao.findAll((OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
-                } else {
-                    orderList =
-                        orderDao.findAll(OrderSpecyficationJPA.getOrderWithoutdeleted().and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
-                }
-            }
 
-            else if (orderStatusFilterArray.isEmpty() && !orderYearsFilterList.isEmpty()) {
-                orderList =
-                    orderDao
-                        .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
-                            .and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
-                                .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))), pageable);
-            } else {
-                orderList =
-                    orderDao
-                        .findAll(OrderSpecyficationJPA.getOrderWithoutdeleted()
-                            .and(OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
-                                .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))
-                                .and(OrderSpecyficationJPA.getOrderWithFilter(orderStatusFilterArray))), pageable);
-            }
-        }
+        orderList =
+                                orderDao
+                                   .findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
+                                           .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))
+                                           .and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList))
+                                           .and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList))
+                                           .and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces))
+                                           .and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray))), pageable);
+
+
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<DbFile> dbFileDtoList = dbFileDao.findAll();
         orderList.forEach(order -> {
@@ -356,6 +345,20 @@ public class OrderService {
             return getOrderDtoListFromOrderList(ordersList);
         } else {
             throw new AccessDeniedException("Access Denied");
+        }
+    }
+
+    private void assignProvince(Address address) {
+        if (address.getZipCode().isEmpty()) {
+            address.setProvince(null);
+        } else {
+            List<ZipCode> zipTmp = zipCodeDao.findByZipCodeCode(address.getZipCode());
+            if (zipTmp.isEmpty()) {
+                address.setProvince(null);
+            } else {
+                address.setProvince(zipTmp.get(0).getProvince());
+                addressDao.save(address);
+            }
         }
     }
 

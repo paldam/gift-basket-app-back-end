@@ -7,10 +7,11 @@ import java.util.List;
 @Entity
 @Table(name = "products_types")
 public class ProductType {
+
     private Integer typeId;
     private String typeName;
     private List<ProductSubType> subTypeList;
-
+    private Boolean isActiveForPdfExport;
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -33,8 +34,8 @@ public class ProductType {
         this.typeName = typeName;
     }
 
-@JsonIgnore
-    @OneToMany(mappedBy="productType")
+    @JsonIgnore
+    @OneToMany(mappedBy = "productType")
     public List<ProductSubType> getSubTypeList() {
         return subTypeList;
     }
@@ -43,28 +44,15 @@ public class ProductType {
         this.subTypeList = subTypeList;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ProductType that = (ProductType) o;
-
-        if (typeId != null ? !typeId.equals(that.typeId) : that.typeId != null) return false;
-        if (typeName != null ? !typeName.equals(that.typeName) : that.typeName != null) return false;
-
-        return true;
+    @Basic
+    @Column(name = "is_active_for_pdf_export", nullable = false, length = 40, columnDefinition = "true")
+    public Boolean getActiveForPdfExport() {
+        return isActiveForPdfExport;
     }
 
-    @Override
-    public int hashCode() {
-        int result = typeId != null ? typeId.hashCode() : 0;
-        result = 31 * result + (typeName != null ? typeName.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "ProductType{" + "typeId=" + typeId + ", typeName='" + typeName + '\'' + '}';
+    public void setActiveForPdfExport(Boolean activeForPdfExport) {
+        isActiveForPdfExport = activeForPdfExport;
     }
 }
+
+

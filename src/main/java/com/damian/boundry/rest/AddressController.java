@@ -1,11 +1,9 @@
 package com.damian.boundry.rest;
 
-import com.damian.domain.customer.Address;
-import com.damian.domain.customer.ZipCode;
-import com.damian.domain.customer.AddressDao;
-import com.damian.domain.customer.ZipCodeDao;
+import com.damian.domain.customer.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
@@ -16,10 +14,12 @@ public class AddressController {
 
     private final ZipCodeDao zipCodeDao;
     private final AddressDao addressDao;
+    private final AddresService addresService;
 
-    public AddressController(AddressDao addressDao, ZipCodeDao zipCodeDao) {
+    public AddressController(AddressDao addressDao, ZipCodeDao zipCodeDao, AddresService addresService) {
         this.addressDao = addressDao;
         this.zipCodeDao = zipCodeDao;
+        this.addresService = addresService;
     }
 
     @GetMapping("/customerprimaryaddr/{id}")
@@ -34,6 +34,13 @@ public class AddressController {
         return addressDao.findCustomerLastAddr(id)
             .map(address -> ResponseEntity.ok().body(address))
             .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+   @Transactional
+    @GetMapping("/cuss")
+    ResponseEntity get22() {
+       addresService.convertZipCode2();
+       return null;
     }
 
     @GetMapping("/zipcode/{code}")

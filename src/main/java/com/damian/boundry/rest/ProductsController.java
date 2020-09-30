@@ -103,6 +103,26 @@ public class ProductsController {
         return new ResponseEntity<>(productType, HttpStatus.CREATED);
     }
 
+    @GetMapping("/products/types/inactive")
+    ResponseEntity<List<ProductType>> getInactiveProductsTypes() {
+        List<ProductType> productType = productsTypeDao.findInactive();
+        return new ResponseEntity<>(productType, HttpStatus.CREATED);
+    }
+
+
+    @GetMapping("/products/types/inactive/{id}")
+    ResponseEntity<?> setInactiveProductsTypes(@PathVariable Integer id) {
+        productsTypeDao.setInactive(id);
+        return new ResponseEntity<>(null, HttpStatus.CREATED);
+    }
+
+
+    @GetMapping("/products/types/active/{id}")
+    ResponseEntity<?> setActiveProductsTypes(@PathVariable Integer id) {
+        productsTypeDao.setActive(id);
+        return new ResponseEntity<>(null, HttpStatus.CREATED);
+    }
+
     @DeleteMapping(value = "/products/types/{id}")
     ResponseEntity<?> deleteProductsTypes(@PathVariable Integer id) {
         return  productsTypeDao.findByTypeId(id)
