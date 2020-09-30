@@ -8,7 +8,10 @@ public class ZipCode {
 
     @EmbeddedId
     private ZipCodeCompositeKey zipCode;
-    private String province;
+    @ManyToOne
+    @JoinColumn(name = "province_id")
+    private Province province;
+    private String provinceName;
 
     public ZipCodeCompositeKey getZipCode() {
         return zipCode;
@@ -18,16 +21,22 @@ public class ZipCode {
         this.zipCode = zipCode;
     }
 
-    @Basic
-    @Column(name = "province", length = 300)
-    public String getProvince() {
+    public Province getProvince() {
         return province;
     }
 
-    public void setProvince(String province) {
+    public void setProvince(Province province) {
         this.province = province;
     }
 
+    @Basic
+    @Column(name = "province", length = 300)
+    public String getProvinceName() {
+        return provinceName;
+    }
 
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
+    }
 }
 

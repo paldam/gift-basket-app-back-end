@@ -25,6 +25,7 @@ public class Basket {
     private byte[] basketImageData;
     private Integer isBasketImg;
     private Date lastStockEditDate;
+    private String imgNumber;
 
     public Basket() {
     }
@@ -181,6 +182,17 @@ public class Basket {
 
     public void setIsBasketImg(Integer isBasketImg) {
         this.isBasketImg = isBasketImg;
+    }
+
+
+    @Basic
+    @Column(name = "img_number", length = 200)
+    public String getImgNumber() {
+        return imgNumber;
+    }
+
+    public void setImgNumber(String imgNumber) {
+        this.imgNumber = imgNumber;
     }
 
     @Override

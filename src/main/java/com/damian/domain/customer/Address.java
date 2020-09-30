@@ -1,6 +1,11 @@
 package com.damian.domain.customer;
 
+import com.damian.domain.order.OrderStatus;
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
+
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
 @Table(name = "addresses")
@@ -13,6 +18,7 @@ public class Address {
     private String contactPerson;
     private String phoneNumber;
     private String additionalInformation;
+    private Province province;
 
     public Address() {
     }
@@ -67,6 +73,16 @@ public class Address {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
+    }
+    
+    @ManyToOne
+    @JoinColumn(name = "province_id")
+    public Province getProvince() {
+        return province;
+    }
+
+    public void setProvince(Province province) {
+        this.province = province;
     }
 
     @Basic

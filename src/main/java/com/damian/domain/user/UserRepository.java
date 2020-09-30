@@ -23,6 +23,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u FROM User u join u.authorities a where a.name ='punkty' ")
     List<User> getAllProgramUser();
 
+    @Query("select u FROM User u  where u.isArchival =false ")
+    List<User> getUsersWithoutDel();
+
+
     @EntityGraph(attributePaths = "authorities")
     Optional<User> findOneWithAuthoritiesByLogin(String login);
 

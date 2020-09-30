@@ -199,15 +199,29 @@ public class OrderController {
         @RequestParam(value = "orderBy", required = false) String orderBy,
         @RequestParam(value = "sortingDirection", required = false, defaultValue = "1") int sortingDirection,
         @RequestParam(value = "orderStatusFilterList", required = false) List<Integer> orderStatusFilterList,
-        @RequestParam(value = "orderYearsFilterList", required = false) List<Integer> orderYearsFilterList) {
+        @RequestParam(value = "orderYearsFilterList", required = false) List<Integer> orderYearsFilterList,
+        @RequestParam(value = "orderProductionUserFilterList", required = false) List<Integer> orderProductionUserFilterList,
+        @RequestParam(value = "orderWeeksFilterList", required = false) List<Integer> orderWeeksFilterList,
+        @RequestParam(value = "provinces", required = false) List<String> provinces
+        ) {
+
         if (orderStatusFilterList == null) {
             orderStatusFilterList = new ArrayList<>();
         }
         if (orderYearsFilterList == null) {
             orderYearsFilterList = new ArrayList<>();
         }
+        if (orderProductionUserFilterList == null) {
+            orderProductionUserFilterList = new ArrayList<>();
+        }
+        if (orderWeeksFilterList == null) {
+            orderWeeksFilterList = new ArrayList<>();
+        }
+
+
+
         OrderPageRequest orderDtoList = orderService.getOrderDao(page, size, text, orderBy, sortingDirection,
-            orderStatusFilterList, orderYearsFilterList);
+            orderStatusFilterList, orderYearsFilterList,orderProductionUserFilterList,orderWeeksFilterList,provinces);
         return new ResponseEntity<>(orderDtoList, HttpStatus.OK);
     }
 
