@@ -52,6 +52,9 @@ public class FtpService {
             } else {
                 tmpImgPathAndName = spacePrefixForPrize + imgName + ".jpg";
             }
+
+            System.out.println("path: " + tmpImgPathAndName);
+
             ftpClient.storeFile(tmpImgPathAndName, image);
             ftpClient.logout();
         } catch (IOException ex) {

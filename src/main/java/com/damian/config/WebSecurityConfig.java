@@ -83,7 +83,7 @@ public class WebSecurityConfig {
                 .antMatchers("/auth_loyalty_program").permitAll()
                 .antMatchers("/program_users/resetpassword/*").permitAll()
                 .antMatchers("/notification").permitAll()
-                .antMatchers("/new_order_notification").permitAll()
+                .antMatchers("/new_order_notification","/extbaskets","/basketsextlist","/basket_ext_stock").permitAll()
                .anyRequest().authenticated()
                 .and().apply(securityConfigurerAdapter());
 

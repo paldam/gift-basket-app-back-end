@@ -40,7 +40,7 @@ public class BasketExtService {
         Basket savedBasket = basketDao.save(externalBasket);
         InputStream basketImgtoStore = new ByteArrayInputStream(basket.getBasketImg());
         try {
-            ftpService.sendFileViaFtp(basketImgtoStore, savedBasket.getBasketId().toString(), FtpSpace.PRIZES);
+            ftpService.sendFileViaFtp(basketImgtoStore, savedBasket.getBasketId().toString(), FtpSpace.BASKETEXT);
         } catch (FtpConnectionException ioe) {
             basketDao.delete(savedBasket);
             throw new FtpConnectionException("Problem z połaczeniem FTP");
