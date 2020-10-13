@@ -10,10 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -32,13 +31,20 @@ public class NotificationsController {
 
     @GetMapping("/notificationslist")
     ResponseEntity<List<Notification>> getNotificationsForCurrentUser() {
+
+        System.out.println("notificationslist ....");
         Optional<User> userTmp = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
+        System.out.println("user ....xx" + userTmp.get().getLogin());
         List<Notification> notificationList;
         if (userTmp.isPresent()) {
             notificationList = notificationDao.getNotificationByUser((userTmp.get().getId().intValue()));
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        System.out.println(dateFormat.format(date));
+        System.out.println("OK...." + userTmp.get().getLogin());
         return new ResponseEntity<>(notificationList, HttpStatus.OK);
     }
 

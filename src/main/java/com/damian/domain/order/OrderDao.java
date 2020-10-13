@@ -106,7 +106,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
         "allready_computed_points = false and order_date > '2019.09.10'", nativeQuery = true)
     public List<Order> findAllOrderForLoyaltyProgram();
 
-    @Query(value = "SELECT * FROM orders WHERE production_user = ?1 and  order_status_id !=99 ORDER BY order_date " +
+    @Query(value = "SELECT * FROM orders WHERE production_user = ?1 and  order_status_id !=99 and order_date > '2020.06.01'  ORDER BY order_date " +
         "DESC", nativeQuery = true)
     public List<Order> getAllOrdersByProductionUserId(Long id);
 

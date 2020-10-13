@@ -15,6 +15,7 @@ public interface NotificationDao extends JpaRepository<Notification, Long> {
         "user_id = ?1 ORDER  by notification_date DESC", nativeQuery = true)
     List<Notification> getNotificationByUser(Integer userId);
 
+
     @Transactional
     @Modifying
     @Query(value = "INSERT into notifications (notification_text,user_id,wasRead,order_id)  values (?1,?2,0,?3) ",
