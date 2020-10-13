@@ -60,6 +60,11 @@ public class OrderService {
         this.zipCodeDao = zipCodeDao;
     }
 
+
+
+
+
+
     @Transactional
     public void createOrUpdateOrder(Order order) throws OrderStatusException {
         if (!Objects.isNull(order.getOrderId())) {
@@ -87,7 +92,7 @@ public class OrderService {
 
 
 
-        pushNotificationForNewOrder(order);
+       // pushNotificationForNewOrder(order);
     }
 
     private void performChangeOrderStatusOperation(Order order) throws OrderStatusException {
@@ -131,8 +136,8 @@ public class OrderService {
         } else {
             performOrderWithNewCustomer(order);
         }
-        pushNotificationForCombinedOrder(order);
-        pushNotificationForNewOrder(order);
+       // pushNotificationForCombinedOrder(order);
+       // pushNotificationForNewOrder(order);
     }
 
     private void performOrderCustomerFromDB(Order order) {
