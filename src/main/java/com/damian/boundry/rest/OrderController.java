@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -272,7 +273,7 @@ public class OrderController {
     @PostMapping("/orders")
     ResponseEntity createOrUpdateOrder(@RequestBody Order order){
         try {
-            orderService.createOrUpdateOrder(order);
+            orderService.createOrUpdateOrder(order,null);
             return new ResponseEntity<>(order, HttpStatus.CREATED);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());
@@ -289,7 +290,7 @@ public class OrderController {
     ResponseEntity copyOrderFromExistingOne(@RequestBody Order order,
                                             @PathVariable Long originOrderIdCopy){
         Order originOrder = orderDao.findByOrderId(originOrderIdCopy);
-        notificationService.saveNotifications(order, originOrder);
+       // notificationService.saveNotifications(order, originOrder);
         try {
             orderService.createOrderFromCopy(order);
             return new ResponseEntity<>(order, HttpStatus.CREATED);
@@ -297,15 +298,15 @@ public class OrderController {
             return ResponseEntity.badRequest().body(oEx.getMessage());
         }
     }
-
+    @Transactional( propagation = Propagation.SUPPORTS,readOnly = true )
     @PostMapping(value = "/order/status/{id}/{statusId}", produces = "text/plain;charset=UTF-8")
     ResponseEntity changeOrderStatus(@PathVariable Long id, @PathVariable Integer statusId){
         Order updatingOrder = orderDao.findByOrderId(id);
-        OrderStatus updatingOrderNewStatus = new OrderStatus();
-        updatingOrderNewStatus.setOrderStatusId(statusId);
-        updatingOrder.setOrderStatus(updatingOrderNewStatus);
+        //OrderStatus updatingOrderNewStatus = new OrderStatus();
+        //updatingOrderNewStatus.setOrderStatusId(statusId);
+        //updatingOrder.setOrderStatus(updatingOrderNewStatus);
         try {
-            orderService.createOrUpdateOrder(updatingOrder);
+            orderService.createOrUpdateOrder(updatingOrder,statusId);
             return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (OrderStatusException oEx) {
             return ResponseEntity.badRequest().body(oEx.getMessage());

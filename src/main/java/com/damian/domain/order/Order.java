@@ -257,6 +257,28 @@ public class Order implements Serializable {
         isAllreadyComputedPoints = allreadyComputedPoints;
     }
 
+    public Order() {
+    }
 
-
+    public Order(Order order){
+        this.orderFvNumber = order.orderFvNumber;
+        this.userName = order.userName;
+        this.customer = order.customer;
+        this.orderItems = order.orderItems;
+        this.orderDate = order.orderDate;
+        this.additionalInformation = order.additionalInformation;
+        this.textToCard = order.textToCard;
+        this.deliveryDate = order.deliveryDate;
+        this.weekOfYear = order.weekOfYear;
+        this.deliveryType = order.deliveryType;
+        this.orderStatus = order.orderStatus;
+        this.orderTotalAmount = order.orderTotalAmount;
+        this.cod = order.cod;
+        this.address = order.address;
+        this.additionalSale = order.additionalSale;
+        this.contactPerson = order.contactPerson;
+        this.productionUser = order.productionUser;
+        this.loyaltyUser = order.loyaltyUser;
+        this.isAllreadyComputedPoints = order.isAllreadyComputedPoints;
+    }
 }
