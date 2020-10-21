@@ -22,9 +22,12 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
 
 @Service
 public class OrderService {
@@ -32,7 +35,6 @@ public class OrderService {
     private static final int ORDER_STATUS_ID_NOWE = 1;
     private static final int ORDER_STATUS_ID_W_TRAKCIE_REALIZACJI = 6;
     private static final int ORDER_STATUS_ID_USUNIETE = 99;
-
     private final OrderDao orderDao;
     private final CustomerDao customerDao;
     private final AddressDao addressDao;
@@ -44,10 +46,7 @@ public class OrderService {
     private final PointsDao pointsDao;
     private final ZipCodeDao zipCodeDao;
 
-    OrderService(BasketDao basketDao, UserRepository userRepository, OrderDao orderDao,
-                 CustomCustomerDao customCustomerDao, CustomerDao customerDao, AddressDao addressDao,
-                 ProductDao productDao, DbFileDao dbFileDao, PointsDao pointsDao, ZipCodeDao zipCodeDao) {
-
+    OrderService(BasketDao basketDao, UserRepository userRepository, OrderDao orderDao, CustomCustomerDao customCustomerDao, CustomerDao customerDao, AddressDao addressDao, ProductDao productDao, DbFileDao dbFileDao, PointsDao pointsDao, ZipCodeDao zipCodeDao) {
         this.orderDao = orderDao;
         this.customerDao = customerDao;
         this.addressDao = addressDao;
@@ -60,13 +59,8 @@ public class OrderService {
         this.zipCodeDao = zipCodeDao;
     }
 
-
-
-
-
-
     @Transactional
-    public void createOrUpdateOrder(Order order) throws OrderStatusException {
+    public void createOrUpdateOrder(Order order, Integer statusId) throws OrderStatusException {
         if (!Objects.isNull(order.getOrderId())) {
             //TODO
             if (order.getOrderStatus().getOrderStatusId() == ORDER_STATUS_ID_W_TRAKCIE_REALIZACJI) {
@@ -76,41 +70,40 @@ public class OrderService {
             if (order.getOrderStatus().getOrderStatusId() == ORDER_STATUS_ID_NOWE) {
                 order.getOrderItems().forEach(orderItem -> orderItem.setQuantityFromSurplus(0));
             }
-            performChangeOrderStatusOperation(order);
+            performChangeOrderStatusOperation(order, statusId);
         } else {
             order.getOrderItems().forEach(orderItem -> orderItem.setQuantityFromSurplus(0));
             order.setAllreadyComputedPoints(false);
         }
-
         if (order.getCustomer().getCustomerId() != null) {
             performOrderCustomerFromDB(order);
         } else {
             performOrderWithNewCustomer(order);
         }
-
         assignProvince(order.getAddress());
-
-
-
-       // pushNotificationForNewOrder(order);
+        // pushNotificationForNewOrder(order);
     }
 
-    private void performChangeOrderStatusOperation(Order order) throws OrderStatusException {
-        Order orderPrevState = orderDao.findByOrderId(order.getOrderId());
-        Integer prevOrderStatus = orderPrevState.getOrderStatus().getOrderStatusId();
-        Integer newOrderStatus = order.getOrderStatus().getOrderStatusId();
+    private void performChangeOrderStatusOperation(Order order, Integer statusId) throws OrderStatusException {
+        Integer prevOrderStatus = order.getOrderStatus().getOrderStatusId();
+        Integer newOrderStatus;
+        if(statusId ==null){
+            newOrderStatus = order.getOrderStatus().getOrderStatusId();
+        }else{
+            newOrderStatus = statusId;
+            order.setOrderStatus(new OrderStatus(statusId));
+        }
 
         if (prevOrderStatus == ORDER_STATUS_ID_NOWE && newOrderStatus == ORDER_STATUS_ID_W_TRAKCIE_REALIZACJI) {
             changeStockStatusNoweToWtrakcie(order);
         }
         if (prevOrderStatus == ORDER_STATUS_ID_W_TRAKCIE_REALIZACJI && newOrderStatus == ORDER_STATUS_ID_NOWE) {
+            System.out.println(ANSI_YELLOW + "zmiana na nowe" + ANSI_RESET);
             Order currentStateOfOrder = orderDao.findByOrderId(order.getOrderId());
             List<OrderItem> orderItemsTmp = currentStateOfOrder.getOrderItems();
             for (OrderItem orderItem : orderItemsTmp) {
-                if (orderItem.getStateOnProduction() > 0 || orderItem.getStateOnLogistics() > 0
-                    || orderItem.getStateOnWarehouse() > 0) {
-                    throw new OrderStatusException("brak możliwości zmiany statusu z 'w trakcie realizacji' na " +
-                        "'nowy'" + " z powodu rozpoczęcia realizacji");
+                if (orderItem.getStateOnProduction() > 0 || orderItem.getStateOnLogistics() > 0 || orderItem.getStateOnWarehouse() > 0) {
+                    throw new OrderStatusException("brak możliwości zmiany statusu z 'w trakcie realizacji' na " + "'nowy'" + " z powodu rozpoczęcia realizacji");
                 }
             }
             changeStockStatusWtrakcieToNowe(order);
@@ -122,22 +115,21 @@ public class OrderService {
             int specificBasketQuantity = orderItem.getQuantity();
             orderItem.getBasket().getBasketItems().forEach(basketItems -> {
                 int numberOfProductsInOneSpecifiedBasket = basketItems.getQuantity();
-                productDao.updateStockTmpMinus(basketItems.getProduct().getId(),
-                    (long) (specificBasketQuantity * numberOfProductsInOneSpecifiedBasket));
+                productDao.updateStockTmpMinus(basketItems.getProduct().getId(), (long) (specificBasketQuantity * numberOfProductsInOneSpecifiedBasket));
             });
         });
     }
 
     @Transactional
-    public void createOrderFromCopy(Order order) throws OrderStatusException{
+    public void createOrderFromCopy(Order order) throws OrderStatusException {
         order.getOrderItems().forEach(orderItem -> orderItem.setQuantityFromSurplus(0));
         if (order.getCustomer().getCustomerId() != null) {
             performOrderCustomerFromDB(order);
         } else {
             performOrderWithNewCustomer(order);
         }
-       // pushNotificationForCombinedOrder(order);
-       // pushNotificationForNewOrder(order);
+        // pushNotificationForCombinedOrder(order);
+        // pushNotificationForNewOrder(order);
     }
 
     private void performOrderCustomerFromDB(Order order) {
@@ -165,8 +157,6 @@ public class OrderService {
         }
     }
 
-
-
     @Transactional
     public void cancelOrder(Order order) {
         Order currOrder = orderDao.findByOrderId(order.getOrderId());
@@ -174,19 +164,15 @@ public class OrderService {
             currOrder.setOrderStatus(new OrderStatus(ORDER_STATUS_ID_USUNIETE));
         } else if (currOrder.getOrderStatus().getOrderStatusId() == ORDER_STATUS_ID_W_TRAKCIE_REALIZACJI) {
             currOrder.setOrderStatus(new OrderStatus(ORDER_STATUS_ID_USUNIETE));
-            order.getOrderItems().forEach(orderItem -> basketDao
-                .addBasketToStock(orderItem.getBasket().getBasketId(), orderItem.getStateOnProduction()));
+            order.getOrderItems().forEach(orderItem -> basketDao.addBasketToStock(orderItem.getBasket().getBasketId(), orderItem.getStateOnProduction()));
             order.getOrderItems().forEach(orderItem -> orderItem.getBasket().getBasketItems().forEach(basketItems -> {
-                productDao.updateStock(basketItems.getProduct().getId(),
-                    orderItem.getStateOnWarehouse() * basketItems.getQuantity());
+                productDao.updateStock(basketItems.getProduct().getId(), orderItem.getStateOnWarehouse() * basketItems.getQuantity());
             }));
             currOrder.getOrderItems().forEach(orderItem -> {
                 int specificBasketQuantity = orderItem.getQuantity();
                 orderItem.getBasket().getBasketItems().forEach(basketItems -> {
                     int numberOfProductsInOneSpecifiedBasket = basketItems.getQuantity();
-                    productDao.updateStockTmpMinus(basketItems.getProduct().getId(),
-                        (long) (specificBasketQuantity * numberOfProductsInOneSpecifiedBasket) -
-                            (orderItem.getStateOnWarehouse() * basketItems.getQuantity()));
+                    productDao.updateStockTmpMinus(basketItems.getProduct().getId(), (long) (specificBasketQuantity * numberOfProductsInOneSpecifiedBasket) - (orderItem.getStateOnWarehouse() * basketItems.getQuantity()));
                 });
             });
         }
@@ -224,6 +210,7 @@ public class OrderService {
         order.getOrderItems().forEach(orderItem -> {
             int specificBasketQuantity = orderItem.getQuantity();
             Basket specificBasket = basketDao.findByBasketId(orderItem.getBasket().getBasketId());
+            System.out.println(specificBasketQuantity);
             if (specificBasketQuantity <= specificBasket.getStock()) {
                 orderItem.setQuantityFromSurplus(specificBasketQuantity);
                 orderItem.setStateOnWarehouse(specificBasketQuantity);
@@ -232,8 +219,7 @@ public class OrderService {
             } else {
                 orderItem.getBasket().getBasketItems().forEach(basketItems -> {
                     int numberOfProductsInOneSpecifiedBasket = basketItems.getQuantity();
-                    productDao.updateStockTmpAdd(basketItems.getProduct().getId(),
-                        (specificBasketQuantity * numberOfProductsInOneSpecifiedBasket));
+                    productDao.updateStockTmpAdd(basketItems.getProduct().getId(), (specificBasketQuantity * numberOfProductsInOneSpecifiedBasket));
                 });
             }
         });
@@ -244,8 +230,7 @@ public class OrderService {
         for (Order order : orderListByIds) {
             if (!SecurityUtils.isCurrentUserInRole("admin")) {
                 if (order.getOrderStatus().getOrderStatusId() != ORDER_STATUS_ID_NOWE) {
-                    throw new OrderStatusException("Nie można zmienić  lub przydzielić produkcji do zamówienia o " +
-                        "statusie innym niż NOWE");
+                    throw new OrderStatusException("Nie można zmienić  lub przydzielić produkcji do zamówienia o " + "statusie innym niż NOWE");
                 }
             }
         }
@@ -255,10 +240,7 @@ public class OrderService {
     public List<OrderDto> getOrderStats() {
         List<Order> orderList = orderDao.findAllWithoutDeleted();
         List<OrderDto> orderDtoList = new ArrayList<>();
-        orderList.forEach(order -> orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(),
-            order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(),
-            order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(),
-            null, order.getOrderItems(), order.getAdditionalSale(), order.getAddress())));
+        orderList.forEach(order -> orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), null, order.getOrderItems(), order.getAdditionalSale(), order.getAddress())));
         return orderDtoList;
     }
 
@@ -269,18 +251,14 @@ public class OrderService {
         List<OrderItem> oredrItemsList = new ArrayList<>();
         orderList.forEach(order -> {
             List<DbFile> result;
-            result = dbFileDtoList.stream()
-                    .filter(data -> order.getOrderId().equals(data.getOrderId())).collect(Collectors.toList());
+            result = dbFileDtoList.stream().filter(data -> order.getOrderId().equals(data.getOrderId())).collect(Collectors.toList());
             Long fileIdTmp;
             if (result.size() > 0) {
                 fileIdTmp = result.get(0).getFileId();
             } else {
                 fileIdTmp = 0L;
             }
-            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(),
-                order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(),
-                order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(),
-                fileIdTmp, oredrItemsList, order.getAdditionalSale(), order.getProductionUser()));
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, oredrItemsList, order.getAdditionalSale(), order.getProductionUser()));
         });
         return orderDtoList;
     }
@@ -295,39 +273,23 @@ public class OrderService {
         return ordersList;
     }
 
-    public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection,
-                                        List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList,List<Integer> orderProductionUserFilterList, List<Integer> orderWeeksUserFilterList, List<String> provinces) {
+    public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection, List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList, List<Integer> orderProductionUserFilterList, List<Integer> orderWeeksUserFilterList, List<String> provinces) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Order> orderList;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
-
-        orderList =
-                                orderDao
-                                   .findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
-                                           .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))
-                                           .and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList))
-                                           .and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList))
-                                           .and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces))
-                                           .and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray))), pageable);
-
-
+        orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)).and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList)).and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList)).and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces)).and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray))), pageable);
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<DbFile> dbFileDtoList = dbFileDao.findAll();
         orderList.forEach(order -> {
             List<DbFile> result;
-            result = dbFileDtoList
-                .stream().filter(data -> order.getOrderId().equals(data.getOrderId())).collect(Collectors.toList());
+            result = dbFileDtoList.stream().filter(data -> order.getOrderId().equals(data.getOrderId())).collect(Collectors.toList());
             Long fileIdTmp;
             if (result.size() > 0) {
                 fileIdTmp = result.get(0).getFileId();
             } else {
                 fileIdTmp = 0L;
             }
-            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(),
-                order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(),
-                order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(),
-                fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(),
-                order.getLoyaltyUser(), order.getAllreadyComputedPoints()));
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(), order.getLoyaltyUser(), order.getAllreadyComputedPoints()));
         });
         return new OrderPageRequest(orderDtoList, orderList.getTotalElements());
     }
@@ -344,7 +306,6 @@ public class OrderService {
 
     public List<OrderDto> getOrderDtoForCurrentProductionUser() {
         Optional<User> currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
-
         if (currentUser.isPresent()) {
             List<Order> ordersList = orderDao.getAllOrdersByProductionUserId(currentUser.get().getId());
             return getOrderDtoListFromOrderList(ordersList);
@@ -372,19 +333,14 @@ public class OrderService {
         List<DbFile> dbFileDtoList = dbFileDao.findAll();
         ordersList.forEach(order -> {
             List<DbFile> result;
-            result =
-                dbFileDtoList.stream().filter(data -> order.getOrderId().equals(data.getOrderId()))
-                    .collect(Collectors.toList());
+            result = dbFileDtoList.stream().filter(data -> order.getOrderId().equals(data.getOrderId())).collect(Collectors.toList());
             Long fileIdTmp;
             if (result.size() > 0) {
                 fileIdTmp = result.get(0).getFileId();
             } else {
                 fileIdTmp = 0L;
             }
-            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(),
-                order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(),
-                order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(),
-                fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser()));
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser()));
         });
         return orderDtoList;
     }
@@ -397,12 +353,7 @@ public class OrderService {
             for (OrderItem oi : order.getOrderItems()) {
                 BasketSezon bs = oi.getBasket().getBasketSezon();
                 if (bs != null) {
-                    PointScheme scheme =
-                        pointScheme.stream()
-                            .filter(pointScheme1 -> bs.getBasketSezonId()
-                                .equals(pointScheme1.getBasketSezon().getBasketSezonId()))
-                            .findAny()
-                            .orElse(null);
+                    PointScheme scheme = pointScheme.stream().filter(pointScheme1 -> bs.getBasketSezonId().equals(pointScheme1.getBasketSezon().getBasketSezonId())).findAny().orElse(null);
                     if (scheme != null) {
                         Double stepA = (oi.getBasket().getBasketTotalPrice().doubleValue() / 100) * oi.getQuantity();
                         Double stepB = (stepA / scheme.getStep().doubleValue()) * scheme.getPoints().doubleValue();
