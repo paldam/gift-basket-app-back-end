@@ -91,6 +91,13 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
 
     @Transactional
     @Modifying
+    @Query(value = "update orders set paid = ?2  WHERE order_id  = ?1", nativeQuery = true)
+    void changePaymentStatus(Long orderId, Integer status);
+
+
+
+    @Transactional
+    @Modifying
     @Query(value = "update orders set production_user =  ?2  WHERE order_id IN  ?1", nativeQuery = true)
     public void assignOrdersToSpecifiedProduction(List<Integer> ordersIds, Long productionId);
 
@@ -150,7 +157,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p,(sum(oi.quantity*bi.quantity)-sum(oi.stateOnWarehouse *bi.quantity)),p" +
         ".lastNumberOfOrderedEditDate) FROM Order o JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b" +
         ".basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId=1 OR o.orderStatus.orderStatusId=6) AND" +
-        " o.deliveryDate >= ?1 AND o.deliveryDate <= ?2  GROUP BY p.id")
+        " o.deliveryDate >= ?1 AND o.deliveryDate <= ?2 AND o.paid =1  GROUP BY p.id")
     public List<ProductToOrder> findProductToOrder2(Date startDate, Date endDate);
 
 

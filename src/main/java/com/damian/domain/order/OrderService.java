@@ -74,6 +74,7 @@ public class OrderService {
         } else {
             order.getOrderItems().forEach(orderItem -> orderItem.setQuantityFromSurplus(0));
             order.setAllreadyComputedPoints(false);
+            order.setPaid(false);
         }
         if (order.getCustomer().getCustomerId() != null) {
             performOrderCustomerFromDB(order);
@@ -273,11 +274,12 @@ public class OrderService {
         return ordersList;
     }
 
-    public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection, List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList, List<Integer> orderProductionUserFilterList, List<Integer> orderWeeksUserFilterList, List<String> provinces) {
+    public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection, List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList, List<Integer> orderProductionUserFilterList, List<Integer> orderWeeksUserFilterList, List<String> provinces, List<Integer> deliveryTypeList) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Order> orderList;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
-        orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)).and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList)).and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList)).and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces)).and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray))), pageable);
+        orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)).and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList)).and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList)).and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces)).and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray).and(OrderSpecyficationJPA.getOrderWithDeliveryTypeFilter(deliveryTypeList)))), pageable);
+       // orderList.get().forEach(order -> order.setOrderItems(null));
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<DbFile> dbFileDtoList = dbFileDao.findAll();
         orderList.forEach(order -> {
@@ -289,7 +291,7 @@ public class OrderService {
             } else {
                 fileIdTmp = 0L;
             }
-            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(), order.getLoyaltyUser(), order.getAllreadyComputedPoints()));
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(), order.getLoyaltyUser(), order.getAllreadyComputedPoints(),order.getPaid()));
         });
         return new OrderPageRequest(orderDtoList, orderList.getTotalElements());
     }

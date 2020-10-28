@@ -203,7 +203,9 @@ public class OrderController {
         @RequestParam(value = "orderYearsFilterList", required = false) List<Integer> orderYearsFilterList,
         @RequestParam(value = "orderProductionUserFilterList", required = false) List<Integer> orderProductionUserFilterList,
         @RequestParam(value = "orderWeeksFilterList", required = false) List<Integer> orderWeeksFilterList,
-        @RequestParam(value = "provinces", required = false) List<String> provinces
+        @RequestParam(value = "provinces", required = false) List<String> provinces,
+        @RequestParam(value = "deliveryTypeFilterList", required = false) List<Integer> deliveryTypeList
+
         ) {
 
         if (orderStatusFilterList == null) {
@@ -219,10 +221,16 @@ public class OrderController {
             orderWeeksFilterList = new ArrayList<>();
         }
 
+        if (deliveryTypeList == null) {
+            deliveryTypeList = new ArrayList<>();
+        }
+
+
+
 
 
         OrderPageRequest orderDtoList = orderService.getOrderDao(page, size, text, orderBy, sortingDirection,
-            orderStatusFilterList, orderYearsFilterList,orderProductionUserFilterList,orderWeeksFilterList,provinces);
+            orderStatusFilterList, orderYearsFilterList,orderProductionUserFilterList,orderWeeksFilterList,provinces,deliveryTypeList);
         return new ResponseEntity<>(orderDtoList, HttpStatus.OK);
     }
 
@@ -298,7 +306,7 @@ public class OrderController {
             return ResponseEntity.badRequest().body(oEx.getMessage());
         }
     }
-    @Transactional( propagation = Propagation.SUPPORTS,readOnly = true )
+
     @PostMapping(value = "/order/status/{id}/{statusId}", produces = "text/plain;charset=UTF-8")
     ResponseEntity changeOrderStatus(@PathVariable Long id, @PathVariable Integer statusId){
         Order updatingOrder = orderDao.findByOrderId(id);
@@ -312,6 +320,14 @@ public class OrderController {
             return ResponseEntity.badRequest().body(oEx.getMessage());
         }
     }
+
+    @PostMapping(value = "/order/paymentstatus/{id}/{status}", produces = "text/plain;charset=UTF-8")
+    ResponseEntity changePaymentStatus(@PathVariable Long id, @PathVariable Integer status){
+
+        orderDao.changePaymentStatus(id,status);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
 
     @PostMapping(value = "/order/progress/{id}", produces = "text/plain;charset=UTF-8")
     ResponseEntity changeOrderProgress(@PathVariable Long id, @RequestBody List<OrderItem> orderItems){
