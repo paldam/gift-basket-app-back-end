@@ -49,6 +49,7 @@ public class Order implements Serializable {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User loyaltyUser;
     private Boolean isAllreadyComputedPoints;
+    private Boolean isPaid;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -255,6 +256,16 @@ public class Order implements Serializable {
 
     public void setAllreadyComputedPoints(Boolean allreadyComputedPoints) {
         isAllreadyComputedPoints = allreadyComputedPoints;
+    }
+
+    @Basic
+    @Column(name = "paid", columnDefinition = "boolean default false")
+    public Boolean getPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(Boolean paid) {
+        isPaid = paid;
     }
 
     public Order() {

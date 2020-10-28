@@ -31,6 +31,7 @@ public class OrderDto {
     private User productionUser;
     private User loyaltyUser;
     private Boolean isAllreadyComputedPoints;
+    private Boolean isPaid;
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
                     String additionalInformation, Date deliveryDate, Integer weekOfYear, DeliveryType deliveryType,
@@ -92,6 +93,29 @@ public class OrderDto {
         this.productionUser = user;
         this.loyaltyUser = loyaltyUser;
         this.isAllreadyComputedPoints = isAllreadyComputedPoints;
+    }
+
+    public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
+                    String additionalInformation, Date deliveryDate, Integer weekOfYear, DeliveryType deliveryType,
+                    OrderStatus orderStatus, Integer orderTotalAmount, Long dbFileId, List<OrderItem> orderItems,
+                    Integer additionalSale, User user, User loyaltyUser, Boolean isAllreadyComputedPoints, boolean isPaid) {
+        this.orderId = orderId;
+        this.orderFvNumber = orderFvNumber;
+        this.customer = customer;
+        this.orderDate = orderDate;
+        this.additionalInformation = additionalInformation;
+        this.deliveryDate = deliveryDate;
+        this.weekOfYear = weekOfYear;
+        this.deliveryType = deliveryType;
+        this.orderStatus = orderStatus;
+        this.orderTotalAmount = orderTotalAmount;
+        this.dbFileId = dbFileId;
+        this.orderItems = orderItems;
+        this.additionalSale = additionalSale;
+        this.productionUser = user;
+        this.loyaltyUser = loyaltyUser;
+        this.isAllreadyComputedPoints = isAllreadyComputedPoints;
+        this.isPaid = isPaid;
     }
 
     public Long getOrderId() {
@@ -228,5 +252,13 @@ public class OrderDto {
 
     public void setAllreadyComputedPoints(Boolean allreadyComputedPoints) {
         isAllreadyComputedPoints = allreadyComputedPoints;
+    }
+
+    public Boolean getPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(Boolean paid) {
+        isPaid = paid;
     }
 }

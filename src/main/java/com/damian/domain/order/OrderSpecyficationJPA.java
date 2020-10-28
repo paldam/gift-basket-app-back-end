@@ -23,6 +23,19 @@ public class OrderSpecyficationJPA {
         }
     }
 
+    public static Specification<Order> getOrderWithDeliveryTypeFilter(List<Integer> deliveryTypeList) {
+        if (deliveryTypeList.isEmpty()) {
+            return getOrdersForSpecyficEmptyFilterList();
+        } else {
+            return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
+                Join<Order, DeliveryType> orderDeliveryTypJoin = root.join(Order_.deliveryType);
+                Expression<Integer> orderExpression = orderDeliveryTypJoin.get(DeliveryType_.deliveryTypeId);
+                Predicate orderPredicate = orderExpression.in(deliveryTypeList);
+                return orderPredicate;
+            };
+        }
+    }
+
     public static Specification<Order> getOrderWithProductionUserFilter(List<Integer> productionUserList) {
         if (productionUserList.isEmpty()) {
             return getOrdersForSpecyficEmptyFilterList();
