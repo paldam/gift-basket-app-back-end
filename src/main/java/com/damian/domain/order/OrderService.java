@@ -123,6 +123,7 @@ public class OrderService {
 
     @Transactional
     public void createOrderFromCopy(Order order) throws OrderStatusException {
+        order.setPaid(false);
         order.getOrderItems().forEach(orderItem -> orderItem.setQuantityFromSurplus(0));
         if (order.getCustomer().getCustomerId() != null) {
             performOrderCustomerFromDB(order);
