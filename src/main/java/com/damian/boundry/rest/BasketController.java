@@ -189,7 +189,7 @@ public class BasketController {
         return new ResponseEntity<>(basketExt, HttpStatus.CREATED);
     }
 
-    @GetMapping("/basketsextlist")
+    @GetMapping(value = "/basketsextlist",produces = "application/json; charset=utf-8")
     ResponseEntity<List<BasketExt>> getBasketsExtList() {
         List<Basket> basketList = basketDao.findALLExportBasket();
         List<BasketExt> basketExtList = new ArrayList<>();
@@ -224,7 +224,7 @@ public class BasketController {
         return new ResponseEntity<>(basketId, HttpStatus.OK);
     }
 
-    @GetMapping("/extbaskets")
+    @GetMapping(value = "/extbaskets",produces = "application/json; charset=utf-8" )
     ResponseEntity<List<Basket>> getBasketsForExternalPartner() {
         List<Basket> basketList = basketDao.findAllBasketForExternalPartner();
         return new ResponseEntity<>(basketList, HttpStatus.OK);
