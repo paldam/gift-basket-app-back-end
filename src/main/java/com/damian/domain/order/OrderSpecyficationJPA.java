@@ -10,9 +10,16 @@ import java.util.List;
 
 public class OrderSpecyficationJPA {
 
+    private static Specification<Order> getOrdersForSpecyficEmptyFilterList(){
+        return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
+            Join<Order, OrderStatus> orderStatusJoin = root.join(Order_.orderStatus);
+            return criteriaBuilder.notEqual(orderStatusJoin.get(OrderStatus_.orderStatusId), 500);
+        };
+    }
+
     public static Specification<Order> getOrderWithOrderStatusFilter(List<Integer> orderStatus) {
         if (orderStatus.isEmpty()) {
-            return getOrdersForSpecyficEmptyFilterList();
+            return Specification.where(null);
         } else {
             return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
                 Join<Order, OrderStatus> orderStatusJoin = root.join(Order_.orderStatus);
@@ -25,7 +32,7 @@ public class OrderSpecyficationJPA {
 
     public static Specification<Order> getOrderWithDeliveryTypeFilter(List<Integer> deliveryTypeList) {
         if (deliveryTypeList.isEmpty()) {
-            return getOrdersForSpecyficEmptyFilterList();
+            return Specification.where(null);
         } else {
             return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
                 Join<Order, DeliveryType> orderDeliveryTypJoin = root.join(Order_.deliveryType);
@@ -38,7 +45,7 @@ public class OrderSpecyficationJPA {
 
     public static Specification<Order> getOrderWithProductionUserFilter(List<Integer> productionUserList) {
         if (productionUserList.isEmpty()) {
-            return getOrdersForSpecyficEmptyFilterList();
+            return Specification.where(null);
         } else {
             return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
                 Join<Order, User> orderStatusJoin = root.join(Order_.productionUser);
@@ -52,7 +59,7 @@ public class OrderSpecyficationJPA {
 
     public static Specification<Order> getOrderWithWeeksFilter(List<Integer> orderWeeksUserFilterList) {
         if (orderWeeksUserFilterList.isEmpty()) {
-            return getOrdersForSpecyficEmptyFilterList();
+            return Specification.where(null);
         } else {
             return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
                 Expression<Integer> orderExpression = root.get(Order_.weekOfYear);
@@ -64,7 +71,7 @@ public class OrderSpecyficationJPA {
 
     public static Specification<Order> getOrderWithProvincesFilter(List<String> provincesList) {
         if (provincesList.isEmpty()) {
-            return getOrdersForSpecyficEmptyFilterList();
+            return Specification.where(null);
         } else {
             return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
 
@@ -82,7 +89,7 @@ public class OrderSpecyficationJPA {
 
     public static Specification<Order> getOrderWithOrderYearsFilter(List<Integer> orderYears) {
         if (orderYears.isEmpty()) {
-            return getOrdersForSpecyficEmptyFilterList();
+            return Specification.where(null);
         } else {
             return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
                 Expression<Integer> yearFromDate = criteriaBuilder.function("YEAR", Integer.class, root.get(Order_.orderDate));
@@ -91,12 +98,7 @@ public class OrderSpecyficationJPA {
         }
     }
 
-    private static Specification<Order> getOrdersForSpecyficEmptyFilterList(){
-        return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
-            Join<Order, OrderStatus> orderStatusJoin = root.join(Order_.orderStatus);
-            return criteriaBuilder.notEqual(orderStatusJoin.get(OrderStatus_.orderStatusId), 99);
-        };
-    }
+
 
     public static Specification<Order> getOrderWithoutdeleted() {
         return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
