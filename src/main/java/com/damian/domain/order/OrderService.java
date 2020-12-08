@@ -279,8 +279,17 @@ public class OrderService {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Order> orderList;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
-        orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)).and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList)).and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList)).and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces)).and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray).and(OrderSpecyficationJPA.getOrderWithDeliveryTypeFilter(deliveryTypeList)))), pageable);
-       // orderList.get().forEach(order -> order.setOrderItems(null));
+
+        System.out.println("DAM");
+        System.out.println(orderStatusFilterArray.toString());
+        if(orderStatusFilterArray.isEmpty()){ //todo
+            orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)).and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList)).and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList)).and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces)).and(OrderSpecyficationJPA.getOrderWithDeliveryTypeFilter(deliveryTypeList)).and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(Arrays.asList(1,5,6)))), pageable);
+        }else{
+            orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)).and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList)).and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList)).and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces)).and(OrderSpecyficationJPA.getOrderWithDeliveryTypeFilter(deliveryTypeList)).and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray))), pageable);
+
+        }
+
+        //       // orderList.get().forEach(order -> order.setOrderItems(null));
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<DbFile> dbFileDtoList = dbFileDao.findAll();
         orderList.forEach(order -> {
