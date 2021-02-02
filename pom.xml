@@ -255,24 +255,24 @@
             </plugin>
 
 
-            <!--<plugin>-->
-            <!--<groupId>org.bsc.maven</groupId>-->
-            <!--<artifactId>maven-processor-plugin</artifactId>-->
-            <!--<executions>-->
-                <!--<execution>-->
-                    <!--<goals>-->
-                        <!--<goal>process</goal>-->
-                    <!--</goals>-->
-                    <!--<phase>generate-sources</phase>-->
-                    <!--<configuration>-->
-                        <!--<compilerArguments>-AaddGeneratedAnnotation=false</compilerArguments> &lt;!&ndash; suppress java.annotation &ndash;&gt;-->
-                        <!--<processors>-->
-                            <!--<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>-->
-                        <!--</processors>-->
-                    <!--</configuration>-->
-                <!--</execution>-->
-            <!--</executions>-->
-        <!--</plugin>-->
+            <plugin>
+            <groupId>org.bsc.maven</groupId>
+            <artifactId>maven-processor-plugin</artifactId>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>process</goal>
+                    </goals>
+                    <phase>generate-sources</phase>
+                    <configuration>
+                        <compilerArguments>-AaddGeneratedAnnotation=false</compilerArguments> <!-- suppress java.annotation -->
+                        <processors>
+                            <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+                        </processors>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
 
 
         </plugins>

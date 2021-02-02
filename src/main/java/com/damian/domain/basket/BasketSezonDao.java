@@ -8,6 +8,6 @@ public interface BasketSezonDao extends CrudRepository<BasketSezon,Long> {
     public List<BasketSezon> findAllBy();
     public BasketSezon findByBasketSezonId(Integer id);
     public Optional<BasketSezon> findByBasketSezonName(String name);
-    public List<BasketSezon> findByIsActiveTrue();
+
 
 }
