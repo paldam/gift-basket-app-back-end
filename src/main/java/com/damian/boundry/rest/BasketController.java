@@ -57,7 +57,7 @@ public class BasketController {
 
         Optional<BasketSezon> optBasketSezon = basketSezonDao.findByBasketSezonName(basketSezon.getBasketSezonName());
 
-       if( optBasketSezon.isPresent()) {
+       if(basketSezon.getBasketSezonId() == null && optBasketSezon.isPresent()) {
            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
        }else{
            BasketSezon savedBasketSezon = basketSezonDao.save(basketSezon);
