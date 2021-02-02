@@ -8,6 +8,7 @@ public class BasketSezon {
 
     private Integer basketSezonId;
     private String basketSezonName;
+    private Boolean isActive;
 
     public BasketSezon() {
     }
@@ -44,5 +45,16 @@ public class BasketSezon {
 
     public void setBasketSezonName(String basketSezonName) {
         this.basketSezonName = basketSezonName;
+    }
+
+
+    @Basic
+    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }
