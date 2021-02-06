@@ -80,12 +80,17 @@ public class ProductsController {
 
     @GetMapping(value = "/products/seasons", produces = "application/json; charset=utf-8")
     ResponseEntity<List<ProductSeason>> listProductSeasons() {
-        List<ProductSeason> seasonList = productSeasonDao.findAll();
+        List<ProductSeason> seasonList = productSeasonDao.findByIsActiveTrue();
         return new ResponseEntity<>(seasonList, HttpStatus.OK);
     }
 
     @PostMapping("/products/seasons")
     ResponseEntity<ProductSeason> createProductsSeasons(@RequestBody ProductSeason productSeason) {
+
+        if(productSeason.getIsActive() == null) {
+            productSeason.setIsActive(true);
+        }
+
         productSeasonDao.save(productSeason);
         return new ResponseEntity<>(productSeason, HttpStatus.CREATED);
     }

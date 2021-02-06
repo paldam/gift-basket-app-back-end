@@ -4,6 +4,7 @@ import com.damian.boundry.rest.NotificationsController;
 import com.damian.boundry.rest.OrderController;
 import com.damian.domain.basket.Basket;
 import com.damian.domain.basket.BasketDao;
+import com.damian.domain.basket.BasketItems;
 import com.damian.domain.basket.BasketSezon;
 import com.damian.domain.customer.*;
 import com.damian.domain.order_file.DbFile;
@@ -11,6 +12,7 @@ import com.damian.domain.order_file.DbFileDao;
 import com.damian.domain.prize.PointScheme;
 import com.damian.domain.prize.PointsDao;
 import com.damian.domain.product.ProductDao;
+import com.damian.domain.product.ProductStock;
 import com.damian.domain.user.User;
 import com.damian.domain.user.UserRepository;
 import com.damian.dto.OrderDto;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.swing.text.StyledEditorKit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -378,6 +381,41 @@ public class OrderService {
             order.setAllreadyComputedPoints(true);
             orderDao.save(order);
         }
+    }
+
+    public List<Order> findOrderWithFullProductAvailability() {
+        List<Order> orderWithFullProductAvailability = new ArrayList<>();
+        List<ProductStock> tmpLocalProductsStock;
+        List<ProductStock> tmpProductsStock = new ArrayList<>();
+        boolean isProductAvailableWatch = true;
+        outerloop:
+        for (Order order : orderDao.findAllOrderNplus1(1)) {
+            tmpLocalProductsStock = tmpProductsStock;
+            for (OrderItem orderItem : order.getOrderItems()) {
+                for (BasketItems basketItems : orderItem.getBasket().getBasketItems()) {
+                    ProductStock ps = tmpLocalProductsStock.stream().filter(productStock -> productStock.getProductId().equals(basketItems.getProduct().getId())).findAny().orElse(null);
+                    if (ps == null) {  // nie ma produktu w buforze
+                        if (basketItems.getProduct().getStock() >= orderItem.getQuantity() * basketItems.getQuantity()) {  // jesli danego produktu na stanie jest wiecej niz potrzeba
+                            tmpLocalProductsStock.add(new ProductStock(basketItems.getProduct().getId(), basketItems.getProduct().getStock() - (orderItem.getQuantity() * basketItems.getQuantity())));
+                        } else {
+                            continue outerloop;
+                        }
+                    } else {  // jest produkt w buforze
+                        if (ps.getStock() >= orderItem.getQuantity() * basketItems.getQuantity()) {  // jesli danego produktu na stanie jest wiecej niz potrzeba
+                            ps.setStock(ps.getStock() - (orderItem.getQuantity() * basketItems.getQuantity()));
+                        } else {
+                            continue outerloop;
+                        }
+                    }
+                }
+            }
+            tmpProductsStock = tmpLocalProductsStock;
+            orderWithFullProductAvailability.add(order);
+        }
+
+
+
+        return orderWithFullProductAvailability;
     }
 }
 

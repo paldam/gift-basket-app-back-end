@@ -67,6 +67,12 @@ public class OrderController {
         return new ResponseEntity<>(ordersList, HttpStatus.OK);
     }
 
+    @GetMapping("/orders/full_product_availability")
+    ResponseEntity<List<Order>> getOrdersWithFullProductAvailability() {
+        List<Order> ordersList = orderService.findOrderWithFullProductAvailability();
+        return new ResponseEntity<>(ordersList, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/orderhistory/{id}")
     ResponseEntity<List<Order>> getOrderHistory(@PathVariable Long id) {
         AuditReader auditReader = AuditReaderFactory.get(factory.createEntityManager());

@@ -35,6 +35,14 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
         nativeQuery = true)
     public Optional<List<Order>> findAllTodaysOrders();
 
+
+    @Query(value = "SELECT * FROM orders Join order_items ON orders.order_id = order_items.order_id JOIN baskets " +
+        "On order_items.basket_id = baskets.basket_id JOin basket_items ON basket_items.basket_id = baskets.basket_id JOIN Products ON basket_items.product_id = products.id  where orders.order_status_id = ?1", nativeQuery = true)
+    public List<Order> findAllOrderNplus1(Integer orderStatus );
+
+
+
+
     @Query(value = "SELECT * FROM orders Join order_items on orders.order_id = order_items.order_id where order_items" +
         ".order_item_id = ?1  ", nativeQuery = true)
     public Order findOrderByOrderItemId(Long orderItemId);

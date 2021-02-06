@@ -123,7 +123,7 @@ public class FileController {
     @RequestMapping(value = "/order/multipdf", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<InputStreamResource> getMultiPdf(@RequestParam("ordersIdList") List<Long> ordersToPrintList) throws IOException {
         orderService.getOrderListFromIdList(ordersToPrintList);
-        ByteArrayInputStream pdf = PdfGenerator.generatePdf(orderService.getOrderListFromIdList(ordersToPrintList));
+        ByteArrayInputStream pdf = PdfGenerator.generatePdf(orderService.getOrderListFromIdList(ordersToPrintList),PdfType.ORDER_SUMMARY);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=order.pdf");
         return ResponseEntity.ok()
@@ -135,7 +135,7 @@ public class FileController {
     @RequestMapping(value = "/order/multideliverypdf", method = RequestMethod.POST, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<InputStreamResource> getMultiDeliveryPdf(@RequestParam("ordersIdList") List<Long> ordersToPrintList) throws IOException {
         orderService.getOrderListFromIdList(ordersToPrintList);
-        ByteArrayInputStream pdf = PdfMultiDeliveryConfirmation.generateMultiPdf(orderService.getOrderListFromIdList(ordersToPrintList));
+        ByteArrayInputStream pdf = PdfGenerator.generatePdf(orderService.getOrderListFromIdList(ordersToPrintList),PdfType.CONFIRMATION_OF_DELIVERY);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=order.pdf");
         return ResponseEntity.ok()
@@ -147,7 +147,7 @@ public class FileController {
     @RequestMapping(value = "/order/deliverypdf/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<InputStreamResource> getDeliveryPdf(@PathVariable Long id) throws IOException {
         Order orderToGenerate = orderDao.findByOrderId(id);
-        ByteArrayInputStream pdf = PdfDeliveryConfirmation.generatePdf(orderToGenerate);
+        ByteArrayInputStream pdf = PdfGenerator.generatePdf(Collections.singletonList(orderToGenerate),PdfType.CONFIRMATION_OF_DELIVERY);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=order.pdf");
         return ResponseEntity.ok()
@@ -161,7 +161,7 @@ public class FileController {
         Order orderToGenerate = orderDao.findByOrderId(id);
         orderToGenerate.setOrderItems(orderItems);
 
-        ByteArrayInputStream pdf = PdfDeliveryConfirmation.generatePdf(orderToGenerate);
+        ByteArrayInputStream pdf = PdfGenerator.generatePdf(Collections.singletonList(orderToGenerate),PdfType.CONFIRMATION_OF_DELIVERY);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=order.pdf");
         return ResponseEntity.ok()

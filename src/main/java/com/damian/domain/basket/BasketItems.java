@@ -10,6 +10,7 @@ public class BasketItems {
     private Integer basketItemsId;
     private Product product;
     private Integer quantity;
+    private Integer position;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,5 +41,15 @@ public class BasketItems {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    @Basic
+    @Column(name = "position", nullable = false)
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }
