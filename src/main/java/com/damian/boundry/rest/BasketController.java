@@ -60,6 +60,10 @@ public class BasketController {
        if(basketSezon.getBasketSezonId() == null && optBasketSezon.isPresent()) {
            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
        }else{
+
+           if(basketSezon.getIsActive() == null) {
+               basketSezon.setIsActive(true);
+           }
            BasketSezon savedBasketSezon = basketSezonDao.save(basketSezon);
            return new ResponseEntity<>(savedBasketSezon, HttpStatus.CREATED);
        }
@@ -100,7 +104,7 @@ public class BasketController {
 
     @GetMapping("/baskets_seasons")
     ResponseEntity<List<BasketSezon>> getBasketsSeasons() {
-        List<BasketSezon> basketList = basketSezonDao.findAllBy();
+        List<BasketSezon> basketList = basketSezonDao.findByIsActiveTrue();
         return new ResponseEntity<>(basketList, HttpStatus.OK);
     }
 

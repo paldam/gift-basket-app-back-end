@@ -8,6 +8,7 @@ public class ProductSeason {
 
     private Integer productSeasonId;
     private String productSeasonName;
+    private Boolean isActive;
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -28,5 +29,15 @@ public class ProductSeason {
 
     public void setProductSeasonName(String productSeasonName) {
         this.productSeasonName = productSeasonName;
+    }
+
+    @Basic
+    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean active) {
+        isActive = active;
     }
 }

@@ -10,6 +10,7 @@ public class BasketSezon {
     private String basketSezonName;
     private Boolean isActive;
 
+
     public BasketSezon() {
     }
 
@@ -50,11 +51,11 @@ public class BasketSezon {
 
     @Basic
     @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
-    public Boolean getActive() {
+    public Boolean getIsActive() {
         return isActive;
     }
 
-    public void setActive(Boolean active) {
+    public void setIsActive(Boolean active) {
         isActive = active;
     }
 }

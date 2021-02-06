@@ -49,7 +49,7 @@ public class PdfGenerator {
         orderDaoin = this.orderDao;
     }
 
-    public static ByteArrayInputStream generatePdf(List<Order> orderToPrint) throws IOException {
+    public static ByteArrayInputStream generatePdf(List<Order> orderToPrint, PdfType pdfType) throws IOException {
 
 
 
@@ -107,9 +107,17 @@ public class PdfGenerator {
                 BaseFont helvetica4 = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
                 Font font4=new Font(helvetica4,10,Font.NORMAL,GrayColor.BLACK);
 
+                Font font15 = new Font(helvetica, 10, Font.NORMAL, GrayColor.GRAY);
 
 
-
+                if(pdfType.equals(PdfType.CONFIRMATION_OF_DELIVERY)){
+                    PdfPCell cell0 = new PdfPCell(new Phrase("Potwierdzenie odbioru", font2));
+                    cell0.setColspan(10);
+                    cell0.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell0.setBorder(Rectangle.BOTTOM);
+                    cell0.setMinimumHeight(30);
+                    table.addCell(cell0);
+                }
 
 
                 PdfPCell cell01 = new PdfPCell(new Phrase("Klient imię i nazwisko:",font));
@@ -408,53 +416,84 @@ public class PdfGenerator {
 
                 //row10
 
-                PdfPCell cell26 = new PdfPCell(new Phrase("Produkcja: ",font));
-                cell26.setColspan(4);
-                cell26.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell26.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
-                table3.addCell(cell26);
+                if(pdfType.equals(PdfType.ORDER_SUMMARY)){
+                    PdfPCell cell26 = new PdfPCell(new Phrase("Produkcja: ",font));
+                    cell26.setColspan(4);
+                    cell26.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell26.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                    table3.addCell(cell26);
 
-                PdfPCell cell27 = new PdfPCell(new Phrase("Ostatnia zmiana: ",font));
-                cell27.setColspan(3);
-                cell27.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell27.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
-                table3.addCell(cell27);
+                    PdfPCell cell27 = new PdfPCell(new Phrase("Ostatnia zmiana: ",font));
+                    cell27.setColspan(3);
+                    cell27.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell27.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                    table3.addCell(cell27);
 
 
-                PdfPCell cell27a = new PdfPCell(new Phrase("Wystawione przez: ",font));
-                cell27a.setColspan(3);
-                cell27a.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell27a.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
-                table3.addCell(cell27a);
+                    PdfPCell cell27a = new PdfPCell(new Phrase("Wystawione przez: ",font));
+                    cell27a.setColspan(3);
+                    cell27a.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell27a.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                    table3.addCell(cell27a);
 
-                //row11
+                    //row11
 
-                String productionTmp = "";
+                    String productionTmp = "";
 
-                if (order.getProductionUser() == null){
-                    productionTmp = "brak";
-                }else{
-                    productionTmp = order.getProductionUser().getLogin();
+                    if (order.getProductionUser() == null){
+                        productionTmp = "brak";
+                    }else{
+                        productionTmp = order.getProductionUser().getLogin();
+                    }
+
+                    PdfPCell cell28 = new PdfPCell(new Phrase(productionTmp,font2));
+                    cell28.setColspan(4);
+                    cell28.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell28.setBorder(Rectangle.LEFT | Rectangle.BOTTOM |Rectangle.RIGHT);
+                    cell28.setMinimumHeight(33);
+                    table3.addCell(cell28);
+
+                    PdfPCell cell29 = new PdfPCell(new Phrase(""));
+                    cell29.setColspan(3);
+                    cell29.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell29.setBorder(Rectangle.LEFT |Rectangle.BOTTOM | Rectangle.RIGHT);
+                    table3.addCell(cell29);
+
+                    PdfPCell cell30 = new PdfPCell(new Phrase(order.getUserName(),font2));
+                    cell30.setColspan(3);
+                    cell30.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell30.setBorder(Rectangle.LEFT |Rectangle.BOTTOM | Rectangle.RIGHT);
+                    table3.addCell(cell30);
                 }
 
-                PdfPCell cell28 = new PdfPCell(new Phrase(productionTmp,font2));
-                cell28.setColspan(4);
-                cell28.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell28.setBorder(Rectangle.LEFT | Rectangle.BOTTOM |Rectangle.RIGHT);
-                cell28.setMinimumHeight(33);
-                table3.addCell(cell28);
 
-                PdfPCell cell29 = new PdfPCell(new Phrase(""));
-                cell29.setColspan(3);
-                cell29.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell29.setBorder(Rectangle.LEFT |Rectangle.BOTTOM | Rectangle.RIGHT);
-                table3.addCell(cell29);
+                if(pdfType.equals(PdfType.CONFIRMATION_OF_DELIVERY)){
+                    PdfPCell cell27 = new PdfPCell(new Phrase("Potwierdzam odbiór zestawów świątecznych zgodnie z zamówieniem" +
+                        " ", font15));
+                    cell27.setColspan(10);
+                    cell27.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell27.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                    table3.addCell(cell27);
+                    //row11
+                    PdfPCell cell29 = new PdfPCell(new Phrase("", font2));
+                    cell29.setColspan(10);
+                    cell29.setHorizontalAlignment(Element.ALIGN_BOTTOM);
+                    cell29.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                    cell29.setMinimumHeight(60);
+                    table3.addCell(cell29);
+                    PdfPCell cell30 = new PdfPCell(new Phrase("Data", font15));
+                    cell30.setColspan(5);
+                    cell30.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell30.setBorder(Rectangle.LEFT | Rectangle.BOTTOM);
+                    cell30.setMinimumHeight(22);
+                    table3.addCell(cell30);
+                    PdfPCell cell31 = new PdfPCell(new Phrase("Podpis", font15));
+                    cell31.setColspan(5);
+                    cell31.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cell31.setBorder(Rectangle.BOTTOM | Rectangle.RIGHT);
+                    table3.addCell(cell31);
+                }
 
-                PdfPCell cell30 = new PdfPCell(new Phrase(order.getUserName(),font2));
-                cell30.setColspan(3);
-                cell30.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell30.setBorder(Rectangle.LEFT |Rectangle.BOTTOM | Rectangle.RIGHT);
-                table3.addCell(cell30);
 
 
                 document.add(table);
