@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
@@ -20,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
 
 @CrossOrigin
 @RestController
@@ -30,21 +34,38 @@ public class BasketController {
     private BasketDao basketDao;
     private BasketTypeDao basketTypeDao;
     private BasketSezonDao basketSezonDao;
+    private BasketImageDao basketImageDao;
 
-    public BasketController(BasketSezonDao basketSezonDao, BasketService basketService, BasketDao basketDao, BasketTypeDao basketTypeDao, BasketExtService basketExtService) {
+    public BasketController(BasketImageDao basketImageDao ,BasketSezonDao basketSezonDao, BasketService basketService, BasketDao basketDao, BasketTypeDao basketTypeDao, BasketExtService basketExtService) {
         this.basketDao = basketDao;
         this.basketService = basketService;
         this.basketTypeDao = basketTypeDao;
         this.basketExtService = basketExtService;
         this.basketSezonDao = basketSezonDao;
+        this.basketImageDao = basketImageDao;
     }
-
+    
     @GetMapping("/basket/{id}")
     ResponseEntity<Basket> getBaskets(@PathVariable Long id) {
         return basketDao.findById(id)
             .map(basket -> ResponseEntity.ok().body(basket))
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+//    @Transactional
+//    @GetMapping("/reformat")
+//    ResponseEntity<List<Basket>> getAll() {
+//        List<Basket> basketList = basketDao.findAllBy();
+//        basketList.forEach(basket -> {
+//            if (basket.getBasketImageData() != null) {
+//                BasketImage newBasket = new BasketImage(basket.getBasketImageData());
+//                BasketImage savedBasket = basketImageDao.save(newBasket);
+//                basket.setBasketImage(savedBasket);
+//            } else basket.setBasketImage(null);
+//        });
+//        return new ResponseEntity<>( HttpStatus.OK);
+//    }
+
 
     @PostMapping("/basket/add")
     ResponseEntity<Basket> createBasket(@RequestBody Basket basket) {

@@ -92,13 +92,24 @@
         </dependency>
 
 
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate5</artifactId>
+            <version>2.12.1</version>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-envers</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.orm.tooling</groupId>
+            <artifactId>hibernate-enhance-maven-plugin</artifactId>
+            <version>5.4.27.Final</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -241,6 +252,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <profiles>
+                        <profile>dev</profile>
+                    </profiles>
+                </configuration>
             </plugin>
 
 
@@ -249,30 +265,49 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>9</source>
+                    <target>9</target>
                 </configuration>
             </plugin>
 
+            <!--<plugin>-->
+                <!--<groupId>org.hibernate.orm.tooling</groupId>-->
+                <!--<artifactId>hibernate-enhance-maven-plugin</artifactId>-->
+                <!--<version>5.4.27.Final</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<configuration>-->
+                            <!--<enableAssociationManagement>true</enableAssociationManagement>-->
+                            <!--<enableExtendedEnhancement>false</enableExtendedEnhancement>-->
+                            <!--<failOnError>true</failOnError>-->
+                            <!--<enableLazyInitialization>true</enableLazyInitialization>-->
+                        <!--</configuration>-->
+                        <!--<goals>-->
+                            <!--<goal>enhance</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
 
-            <plugin>
-            <groupId>org.bsc.maven</groupId>
-            <artifactId>maven-processor-plugin</artifactId>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>process</goal>
-                    </goals>
-                    <phase>generate-sources</phase>
-                    <configuration>
-                        <compilerArguments>-AaddGeneratedAnnotation=false</compilerArguments> <!-- suppress java.annotation -->
-                        <processors>
-                            <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-                        </processors>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
+
+            <!--<plugin>-->
+            <!--<groupId>org.bsc.maven</groupId>-->
+            <!--<artifactId>maven-processor-plugin</artifactId>-->
+            <!--<executions>-->
+                <!--<execution>-->
+                    <!--<goals>-->
+                        <!--<goal>process</goal>-->
+                    <!--</goals>-->
+                    <!--<phase>generate-sources</phase>-->
+                    <!--<configuration>-->
+                        <!--<compilerArguments>-AaddGeneratedAnnotation=false</compilerArguments> &lt;!&ndash; suppress java.annotation &ndash;&gt;-->
+                        <!--<processors>-->
+                            <!--<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>-->
+                        <!--</processors>-->
+                    <!--</configuration>-->
+                <!--</execution>-->
+            <!--</executions>-->
+        <!--</plugin>-->
 
 
         </plugins>
