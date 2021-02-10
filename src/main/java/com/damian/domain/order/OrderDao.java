@@ -25,6 +25,8 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
 
     public Order findByOrderId(Integer id);
 
+
+    @Query(value = "SELECT o FROM Order o LEFT JOIN FETCH o.address ad LEFT JOIN FETCH o.customer c LEFT JOIN FETCH c.company cp JOIN FETCH o.deliveryType dt JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.basket WHERE o.orderId = ?1")
     public Order findByOrderId(Long id);
 
     public List<Order> findByAddress_AddressId(Long id);

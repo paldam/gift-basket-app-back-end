@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.Objects;
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Audited
 @Table(name = "order_items")
@@ -32,7 +33,7 @@ public class OrderItem {
         this.orderItemId = orderItemId;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "basket_id")
     @Audited(targetAuditMode = NOT_AUDITED)
     public Basket getBasket() {

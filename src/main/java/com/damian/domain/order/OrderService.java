@@ -18,6 +18,7 @@ import com.damian.domain.user.UserRepository;
 import com.damian.dto.OrderDto;
 import com.damian.domain.order.exceptions.OrderStatusException;
 import com.damian.security.SecurityUtils;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,6 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
+import javax.swing.*;
 import javax.swing.text.StyledEditorKit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,6 +39,9 @@ import static com.damian.config.Constants.ANSI_YELLOW;
 
 @Service
 public class OrderService {
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     private static final int ORDER_STATUS_ID_NOWE = 1;
     private static final int ORDER_STATUS_ID_W_TRAKCIE_REALIZACJI = 6;
@@ -278,19 +286,26 @@ public class OrderService {
         return ordersList;
     }
 
+
+@Transactional(readOnly = true)
     public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection, List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList, List<Integer> orderProductionUserFilterList, List<Integer> orderWeeksUserFilterList, List<String> provinces, List<Integer> deliveryTypeList) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Order> orderList;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
 
-        System.out.println("DAM");
-        System.out.println(orderStatusFilterArray.toString());
-        if(orderStatusFilterArray.isEmpty()){ //todo
-            orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)).and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList)).and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList)).and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces)).and(OrderSpecyficationJPA.getOrderWithDeliveryTypeFilter(deliveryTypeList)).and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(Arrays.asList(1,5,6)))), pageable);
-        }else{
-            orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)).and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList)).and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList)).and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces)).and(OrderSpecyficationJPA.getOrderWithDeliveryTypeFilter(deliveryTypeList)).and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray))), pageable);
 
-        }
+
+           orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
+             .and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList))
+             .and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList))
+              .and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces))
+             .and(OrderSpecyficationJPA.getOrderWithDeliveryTypeFilter(deliveryTypeList))
+               .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))
+               .and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray))
+           ), pageable);
+
+
+
 
         //       // orderList.get().forEach(order -> order.setOrderItems(null));
         List<OrderDto> orderDtoList = new ArrayList<>();
@@ -308,6 +323,7 @@ public class OrderService {
         });
         return new OrderPageRequest(orderDtoList, orderList.getTotalElements());
     }
+
 
     private void performOrderWithNewCustomer(Order order) {
         if (order.getAddress().getAddressId() == null) {

@@ -20,8 +20,10 @@ import java.util.Optional;
 public class BasketService {
 
     private  BasketDao basketDao;
+    private BasketImageDao basketImageDao;
 
-    BasketService(BasketDao basketDao) {
+    BasketService(BasketImageDao basketImageDao,BasketDao basketDao) {
+        this.basketImageDao = basketImageDao;
         this.basketDao = basketDao;
     }
 
@@ -32,7 +34,9 @@ public class BasketService {
 
     public Basket addBasketWithImg(Basket basket, MultipartFile[] basketMultipartFiles) {
         try {
-            basket.setBasketImageData(basketMultipartFiles[0].getBytes());
+
+            BasketImage savedImage =  basketImageDao.save(new BasketImage(basketMultipartFiles[0].getBytes()));
+            basket.setBasketImage(savedImage);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -45,7 +49,7 @@ public class BasketService {
         Basket basketTmp =
             basketDao.findById(basket.getBasketId())
                 .orElseThrow(EntityNotFoundException::new);
-        basket.setBasketImageData(basketTmp.getBasketImageData());
+        //basket.setBasketImageData(basketTmp.getBasketImageData());
         basket.setBasketProductsPrice(computeTotalProductsPriceInBasket(basket));
         return basketDao.save(basket);
     }
@@ -122,34 +126,20 @@ public class BasketService {
             orderItem.getBasket().getBasketId(), orderItem.getQuantity()));
     }
 
+
+
     public BasketPageRequest getBasketsPage(int page, int size, String text, String orderBy, int sortingDirection,
                                             boolean onlyArchival, List<Integer> basketSeasonFilter) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Basket> basketPage;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
-        if (!onlyArchival) {
-            if (basketSeasonFilter.size() == 0) {
-                basketPage = basketDao
-                    .findAll(BasketSpecyficationJpa.getBasketsWithSearchFilter(text)
-                        .and(BasketSpecyficationJpa.getWithoutDeleted()), pageable);
-            } else {
+
+
                 basketPage = basketDao
                     .findAll(BasketSpecyficationJpa.getBasketsWithSearchFilter(text)
                         .and(BasketSpecyficationJpa.getOrderWithSeasons(basketSeasonFilter)
-                            .and(BasketSpecyficationJpa.getWithoutDeleted())), pageable);
-            }
-        } else {
-            if (basketSeasonFilter.isEmpty()) {
-                basketPage = basketDao
-                    .findAll(BasketSpecyficationJpa.getBasketsWithSearchFilter(text)
-                        .and(BasketSpecyficationJpa.getOnlyDeleted()), pageable);
-            } else {
-                basketPage =
-                    basketDao.findAll(BasketSpecyficationJpa.getBasketsWithSearchFilter(text)
-                        .and(BasketSpecyficationJpa.getOnlyDeleted())
-                        .and(BasketSpecyficationJpa.getOrderWithSeasons(basketSeasonFilter)), pageable);
-            }
-        }
+                            .and(BasketSpecyficationJpa.getWithoutDeleted(onlyArchival))), pageable);
+
         return new BasketPageRequest(basketPage.getContent(), basketPage.getTotalElements());
     }
 }
