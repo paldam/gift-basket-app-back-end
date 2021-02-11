@@ -17,7 +17,7 @@ public interface BasketDao extends CrudRepository<Basket, Long>, JpaSpecificatio
 
     public Basket findByBasketId(Long basketId);
 
-    @Query(value = "SELECT b FROM Basket b LEFT JOIN FETCH b.basketItems bi left join FETCH  bi.product p LEFT JOIN FETCH p.productSeason ps LEFT JOIN FETCH p.productSubType pst LEFT JOIN FETCH p.suppliers  WHERE b.basketId= ?1")
+    @Query(value = "SELECT b FROM Basket b LEFT JOIN FETCH b.basketItems bi LEFT JOIN FETCH b.basketSezon bs left join FETCH  bi.product p LEFT JOIN FETCH p.productSeason ps LEFT JOIN FETCH p.productSubType pst LEFT JOIN FETCH p.suppliers  WHERE b.basketId= ?1")
     public Optional<Basket> findById(Long basketId);
 
     @Query(value = "SELECT data FROM baskets WHERE basket_id=?1", nativeQuery = true)

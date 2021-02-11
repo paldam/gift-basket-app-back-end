@@ -1,6 +1,7 @@
 package com.damian.boundry.rest;
 
 import com.damian.domain.audit.OrderAuditedRevisionEntity;
+import com.damian.domain.basket.BasketDao;
 import com.damian.domain.notification.NotificationService;
 import com.damian.domain.order.*;
 import com.damian.domain.order.exceptions.OrderStatusException;
@@ -44,9 +45,13 @@ public class OrderController {
     private OrderStatusDao orderStatusDao;
     private NotificationService notificationService;
     private OrderProgressService orderProgressService;
+    private OrderItemDao orderItemDao;
+    private BasketDao basketDao;
 
-    OrderController(NotificationService notificationService, OrderDao orderDao, OrderService orderService,
+    OrderController(BasketDao basketDao, OrderItemDao orderItemDao,NotificationService notificationService, OrderDao orderDao, OrderService orderService,
                     OrderStatusDao orderStatusDao,OrderProgressService orderProgressService) {
+        this.basketDao = basketDao;
+        this.orderItemDao= orderItemDao;
         this.orderDao = orderDao;
         this.orderService = orderService;
         this.orderStatusDao = orderStatusDao;
@@ -60,6 +65,7 @@ public class OrderController {
             .map(order -> ResponseEntity.ok().body(order))
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
 
     @GetMapping("/orders")
     ResponseEntity<List<Order>> getOrders() {
@@ -437,6 +443,13 @@ public class OrderController {
     public ResponseEntity<InputStreamResource> getBasketProductsPdf(@RequestBody List<OrderItemsDto> orderItemsDto ,
                                                                     @PathVariable Long orderId) throws IOException {
         Order order = orderDao.findByOrderId(orderId);
+
+
+        orderItemsDto.forEach(orderItemsDto1 -> {
+            orderItemsDto1.setBasket(basketDao.findById(orderItemsDto1.getBasket().getBasketId()).get());
+        });
+
+
         ByteArrayInputStream bis = PdfOrderProductCustom.generateBasketsProductsCustomListPdf(orderItemsDto,order);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=produkty_zamowienia.pdf");

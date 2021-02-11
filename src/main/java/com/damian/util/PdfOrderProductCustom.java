@@ -2,6 +2,7 @@ package com.damian.util;
 
 import com.damian.domain.basket.Basket;
 import com.damian.domain.order.Order;
+import com.damian.domain.order.OrderItem;
 import com.damian.dto.OrderItemsDto;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
@@ -10,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +28,8 @@ public class PdfOrderProductCustom {
         Document document = new Document();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
+
+
             BaseFont helvetica = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
             Font font = new Font(helvetica, 7, Font.NORMAL, GrayColor.GRAY);
             BaseFont helvetica1 = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
