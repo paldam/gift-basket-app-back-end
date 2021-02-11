@@ -1,5 +1,6 @@
 package com.damian.domain.basket;
 
+import com.damian.domain.order.Order;
 import com.damian.dto.BasketDto;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -7,12 +8,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 public interface BasketDao extends CrudRepository<Basket, Long>, JpaSpecificationExecutor<Basket> {
 
     public List<Basket> findAllBy();
     public List<Basket> findAllByOrderByBasketIdDesc();
+
     public Basket findByBasketId(Long basketId);
+
+    @Query(value = "SELECT b FROM Basket b LEFT JOIN FETCH b.basketItems bi left join FETCH  bi.product  WHERE b.basketId= ?1")
+    public Optional<Basket> findById(Long basketId);
 
     @Query(value = "SELECT data FROM baskets WHERE basket_id=?1", nativeQuery = true)
     public byte[] getBasketImageByBasketId(Long basketId);
