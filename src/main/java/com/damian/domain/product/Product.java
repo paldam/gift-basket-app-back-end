@@ -120,7 +120,7 @@ public class Product {
         this.tmpOrdered = tmpOrdered;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "product_suppliers", joinColumns = {@JoinColumn(name = "id")},  //
         inverseJoinColumns = {@JoinColumn(name = "supplier_id")})
     public Set<Supplier> getSuppliers() {
@@ -132,7 +132,7 @@ public class Product {
     }
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_season_id")
     public ProductSeason getProductSeason() {
         return productSeason;
@@ -142,7 +142,7 @@ public class Product {
         this.productSeason = productSeason;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_sub_type_id")
     public ProductSubType getProductSubType() {
         return productSubType;
