@@ -69,7 +69,7 @@ public class Basket {
         this.basketId = basketId;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "basket_type")
     public BasketType getBasketType() {
         return basketType;
@@ -79,7 +79,7 @@ public class Basket {
         this.basketType = basketType;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "basket_sezon")
     public BasketSezon getBasketSezon() {
         return basketSezon;
