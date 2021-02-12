@@ -5,11 +5,10 @@ import com.damian.dto.NumberOfBasketOrderedByDate;
 import com.damian.dto.ProductToCollectOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.QueryHint;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +24,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
 
     public Order findByOrderId(Integer id);
 
-
+    @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
     @Query(value = "SELECT o FROM Order o LEFT JOIN FETCH o.address ad LEFT JOIN FETCH o.customer c LEFT JOIN FETCH c.company cp JOIN FETCH o.deliveryType dt JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.basket WHERE o.orderId = ?1")
     public Order findByOrderId(Long id);
 
@@ -43,14 +42,12 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
         "On order_items.basket_id = baskets.basket_id JOin basket_items ON basket_items.basket_id = baskets.basket_id JOIN Products ON basket_items.product_id = products.id  where orders.order_status_id = ?1", nativeQuery = true)
     public List<Order> findAllOrderNplus1(Integer orderStatus );
 
-
-
-
     @Query(value = "SELECT * FROM orders Join order_items on orders.order_id = order_items.order_id where order_items" +
         ".order_item_id = ?1  ", nativeQuery = true)
     public Order findOrderByOrderItemId(Long orderItemId);
 
-    @Query(value = "SELECT o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH o.customer c LEFT JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.deliveryType dte LEFT JOIN FETCH c.company LEFT JOIN FETCH o.productionUser pu WHERE c.customerId = ?1")
+    @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
+    @Query(value = "SELECT distinct o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH o.customer c LEFT JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.deliveryType dte LEFT JOIN FETCH c.company LEFT JOIN FETCH o.productionUser pu WHERE c.customerId = ?1")
     public List<Order> findByCustomerId(Integer id);
 
     @Query(value = "Select REV from orders_audit where (order_id = (SELECT order_id FROM `orders_audit` WHERE REV = " +

@@ -5,13 +5,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
-
 @Repository
 @Transactional
 public interface ProductDao extends CrudRepository<Product, Long> , JpaSpecificationExecutor<Product> {
@@ -23,6 +24,8 @@ public interface ProductDao extends CrudRepository<Product, Long> , JpaSpecifica
     public Optional<Product> findAllById(Integer id);
     public void deleteById(Integer id);
 
+
+    @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") }) // tip to don't pass distinct to sql
     @Query(value = "SELECT  DISTINCT p   FROM Product p LEFT JOIN FETCH p.productSubType pst left JOIN fetch p.productSeason left Join FETCH p.suppliers LEFT JOIN FETCH pst.productType WHERE p.id =?1")
     public Optional<Product> findOneWithSubTypeProductSeasonSupplierProductType(Integer id);
 
@@ -30,9 +33,11 @@ public interface ProductDao extends CrudRepository<Product, Long> , JpaSpecifica
         "product_suppliers.supplier_id= ?1 AND products.is_archival = 0;", nativeQuery = true)
     public List<Product> findBySupplier_SupplierId(Integer id);
 
+    @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
     @Query(value = "SELECT  DISTINCT p   FROM Product p LEFT JOIN FETCH p.productSubType pst left JOIN fetch p.productSeason left Join FETCH p.suppliers LEFT JOIN FETCH pst.productType WHERE p.isArchival != 1 or p.isArchival = null")
     public List<Product> findAllWithoutDeleted();
 
+    @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
     @Query(value = "SELECT DISTINCT p   FROM Product p LEFT JOIN FETCH p.productSubType pst left JOIN fetch p.productSeason left Join FETCH p.suppliers LEFT JOIN FETCH pst.productType WHERE p.id IN ?1")
     public List<Product> findAllWithoutDeletedByIds(List<Integer> ids, Sort sort);
 
