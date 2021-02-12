@@ -68,10 +68,11 @@ public class ProductsController {
                                                        @RequestParam(value = "orderBy", required = false) String orderBy,
                                                        @RequestParam(value = "sortingDirection", required = false, defaultValue = "1") int sortingDirection,
                                                        @RequestParam(value = "productSubTypeFilter", required = false) List<Integer> productSubTypeFilter,
-                                                       @RequestParam(value = "productSuppliersFilter", required = false) List<Integer> productSuppliersFilter) {
+                                                       @RequestParam(value = "productSuppliersFilter", required = false) List<Integer> productSuppliersFilter,
+                                                        @RequestParam(value = "onlyAvailable", required = false) Boolean onlyAvailable){
 
         ProductPageRequest productPage = productService.getProductsPage(page, size, text, orderBy, sortingDirection
-            , productSubTypeFilter,productSuppliersFilter);
+            , productSubTypeFilter,productSuppliersFilter,onlyAvailable);
         return new ResponseEntity<>(productPage, HttpStatus.OK);
     }
 

@@ -87,7 +87,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductPageRequest getProductsPage(int page, int size, String text, String orderBy, int sortingDirection,
-                                              List<Integer> productSubTypeFilter, List<Integer> productSuppliersFilter) {
+                                              List<Integer> productSubTypeFilter, List<Integer> productSuppliersFilter, Boolean onlyAvailable) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Product> productsPage;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
@@ -96,8 +96,9 @@ public class ProductService {
         productsPage = productDao.findAll(
             ProductSpecificationJpa.getProductWithSearchFilter(text)
             .and(ProductSpecificationJpa.getProductWithSpecType(productSubTypeFilter)
-            .and((ProductSpecificationJpa.getProductWithSpecSupplier(productSuppliersFilter)))), pageable);
-
+            .and(ProductSpecificationJpa.getProductWithSpecSupplier(productSuppliersFilter)
+                .and(ProductSpecificationJpa.getOnlyAvailable(onlyAvailable)
+            ))), pageable);
 
         List<Integer> productsIds = new ArrayList<>();
         List<Product> productListWithFetchJoin = new ArrayList<>(); // tip to avoid pagination in memory
@@ -106,9 +107,7 @@ public class ProductService {
                 productsIds.add(product.getId());
             });
             productListWithFetchJoin = productDao.findAllWithoutDeletedByIds(productsIds, Sort.by(sortDirection, orderBy));
-
         }
-
         return new ProductPageRequest(productListWithFetchJoin, productsPage.getTotalElements());
     }
 }
