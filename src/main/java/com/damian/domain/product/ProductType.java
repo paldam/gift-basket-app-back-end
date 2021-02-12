@@ -1,6 +1,5 @@
 package com.damian.domain.product;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class ProductType {
         this.typeName = typeName;
     }
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "productType")
     public List<ProductSubType> getSubTypeList() {
         return subTypeList;

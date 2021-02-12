@@ -20,7 +20,7 @@ public class ProductSpecificationJpa {
             return Specification.where(null);
         } else {
             return (Specification<Product>) (root, criteriaQuery, criteriaBuilder) -> {
-                Join<Product, ProductSubType> productProductSubTypeJoin = root.join(Product_.productSubType);
+                Join<Product, ProductSubType> productProductSubTypeJoin = root.join(Product_.productSubType,JoinType.LEFT);
                 Expression<Integer> productExpression = productProductSubTypeJoin.get(ProductSubType_.subTypeId);
                 Predicate productSubTypePredicate = productExpression.in(productTypeIds);
                 return productSubTypePredicate;
@@ -33,7 +33,7 @@ public class ProductSpecificationJpa {
             return Specification.where(null);
         } else {
             return (Specification<Product>) (root, criteriaQuery, criteriaBuilder) -> {
-                Join<Product, Supplier> productSupplierJoin = root.join(Product_.suppliers);
+                Join<Product, Supplier> productSupplierJoin = root.join(Product_.suppliers,JoinType.LEFT);
                 Expression<Integer> productExpression = productSupplierJoin.get(Supplier_.supplierId);
                 return productExpression.in(supplierIds);
             };
