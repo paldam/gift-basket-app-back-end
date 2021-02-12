@@ -23,6 +23,9 @@ public interface ProductDao extends CrudRepository<Product, Long> , JpaSpecifica
     public Optional<Product> findAllById(Integer id);
     public void deleteById(Integer id);
 
+    @Query(value = "SELECT p   FROM Product p LEFT JOIN FETCH p.productSubType pst left JOIN fetch p.productSeason left Join FETCH p.suppliers LEFT JOIN FETCH pst.productType WHERE p.id =?1")
+    public Optional<Product> findOneWithSubTypeProductSeasonSupplierProductType(Integer id);
+
     @Query(value = "SELECT * from products Join product_suppliers  on products.id = product_suppliers.id WHERE " +
         "product_suppliers.supplier_id= ?1 AND products.is_archival = 0;", nativeQuery = true)
     public List<Product> findBySupplier_SupplierId(Integer id);

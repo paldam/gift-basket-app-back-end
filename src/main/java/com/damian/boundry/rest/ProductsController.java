@@ -171,9 +171,11 @@ public class ProductsController {
 
     @GetMapping(value = "/products/{id}", produces = "application/json; charset=utf-8")
     ResponseEntity<Product> getProductById(@PathVariable Integer id) {
-        Product product = productsDao.findById(id);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        return productsDao.findOneWithSubTypeProductSeasonSupplierProductType(id)
+            .map(product ->  ResponseEntity.ok().body(product))
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
 
     @GetMapping(value = "/baskets_by_product/{id}", produces = "application/json; charset=utf-8")
     ResponseEntity<List<Basket>> getBasketsByProductId(@PathVariable Integer id) {
