@@ -1,6 +1,8 @@
 package com.damian.domain.product;
 
 import com.damian.dto.NumberProductsToChangeStock;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface ProductDao extends CrudRepository<Product, Long> {
+public interface ProductDao extends CrudRepository<Product, Long> , JpaSpecificationExecutor<Product> {
 
     public List<Product> findAllByOrderByIdDesc();
     public List<Product> findAllBy();
@@ -25,8 +27,11 @@ public interface ProductDao extends CrudRepository<Product, Long> {
         "product_suppliers.supplier_id= ?1 AND products.is_archival = 0;", nativeQuery = true)
     public List<Product> findBySupplier_SupplierId(Integer id);
 
-    @Query(value = "SELECT * FROM products WHERE is_archival != 1 or is_archival = null", nativeQuery = true)
+    @Query(value = "SELECT p   FROM Product p LEFT JOIN FETCH p.productSubType pst left JOIN fetch p.productSeason left Join FETCH p.suppliers LEFT JOIN FETCH pst.productType WHERE p.isArchival != 1 or p.isArchival = null")
     public List<Product> findAllWithoutDeleted();
+
+    @Query(value = "SELECT p   FROM Product p LEFT JOIN FETCH p.productSubType pst left JOIN fetch p.productSeason left Join FETCH p.suppliers LEFT JOIN FETCH pst.productType WHERE p.id IN ?1")
+    public List<Product> findAllWithoutDeletedByIds(List<Integer> ids, Sort sort);
 
     @Transactional
     @Modifying

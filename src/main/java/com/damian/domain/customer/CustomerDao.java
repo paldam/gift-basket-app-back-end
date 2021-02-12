@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface CustomerDao extends JpaRepository<Customer, Long> {
 
     public List<Customer> findAllBy();
+    @Query(value = "SELECT c FROM Customer c left join fetch c.company co where c.customerId =?1")
     public Optional<Customer> findByCustomerId(Integer id);
 
     @Transactional
