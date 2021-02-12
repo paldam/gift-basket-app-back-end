@@ -50,7 +50,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
         ".order_item_id = ?1  ", nativeQuery = true)
     public Order findOrderByOrderItemId(Long orderItemId);
 
-    @Query(value = "SELECT * FROM orders WHERE customer_id = ?1", nativeQuery = true)
+    @Query(value = "SELECT o FROM Order o LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH o.customer c LEFT JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.deliveryType dte LEFT JOIN FETCH c.company LEFT JOIN FETCH o.productionUser pu WHERE c.customerId = ?1")
     public List<Order> findByCustomerId(Integer id);
 
     @Query(value = "Select REV from orders_audit where (order_id = (SELECT order_id FROM `orders_audit` WHERE REV = " +

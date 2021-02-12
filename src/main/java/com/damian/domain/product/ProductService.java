@@ -1,14 +1,19 @@
 package com.damian.domain.product;
 
-import com.damian.domain.basket.Basket;
 import com.damian.security.SecurityUtils;
 import com.damian.security.UserPermissionDeniedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -80,4 +85,30 @@ public class ProductService {
         return productFile;
     }
 
+    @Transactional(readOnly = true)
+    public ProductPageRequest getProductsPage(int page, int size, String text, String orderBy, int sortingDirection,
+                                              List<Integer> productSubTypeFilter, List<Integer> productSuppliersFilter) {
+        Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Page<Product> productsPage;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
+
+
+        productsPage = productDao.findAll(
+            ProductSpecificationJpa.getProductWithSearchFilter(text)
+            .and(ProductSpecificationJpa.getProductWithSpecType(productSubTypeFilter)
+            .and((ProductSpecificationJpa.getProductWithSpecSupplier(productSuppliersFilter)))), pageable);
+
+
+        List<Integer> productsIds = new ArrayList<>();
+        List<Product> productListWithFetchJoin = new ArrayList<>(); // tip to avoid pagination in memory
+        if( productsPage.getTotalElements() != 0) {
+            productsPage.get().forEach(product -> {
+                productsIds.add(product.getId());
+            });
+            productListWithFetchJoin = productDao.findAllWithoutDeletedByIds(productsIds, Sort.by(sortDirection, orderBy));
+
+        }
+
+        return new ProductPageRequest(productListWithFetchJoin, productsPage.getTotalElements());
+    }
 }

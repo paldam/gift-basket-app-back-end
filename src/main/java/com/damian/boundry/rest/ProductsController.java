@@ -60,6 +60,21 @@ public class ProductsController {
         return new ResponseEntity<>(productsList, HttpStatus.OK);
     }
 
+
+    @GetMapping("/productspage")
+    ResponseEntity<ProductPageRequest> getProductsPage(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                       @RequestParam(value = "size") int size,
+                                                       @RequestParam(value = "searchtext", required = false) String text,
+                                                       @RequestParam(value = "orderBy", required = false) String orderBy,
+                                                       @RequestParam(value = "sortingDirection", required = false, defaultValue = "1") int sortingDirection,
+                                                       @RequestParam(value = "productSubTypeFilter", required = false) List<Integer> productSubTypeFilter,
+                                                       @RequestParam(value = "productSuppliersFilter", required = false) List<Integer> productSuppliersFilter) {
+
+        ProductPageRequest productPage = productService.getProductsPage(page, size, text, orderBy, sortingDirection
+            , productSubTypeFilter,productSuppliersFilter);
+        return new ResponseEntity<>(productPage, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/products/supplier", produces = "application/json; charset=utf-8")
     ResponseEntity<List<Supplier>> listAllSuppliers() {
         List<Supplier> supplierList = supplierDao.findAllByOrderBySupplierNameAsc();
