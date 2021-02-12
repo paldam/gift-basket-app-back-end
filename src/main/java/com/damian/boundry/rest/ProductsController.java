@@ -119,6 +119,7 @@ public class ProductsController {
 
     @PostMapping("/products/types")
     ResponseEntity<ProductType> createProductsTypes(@RequestBody ProductType productType) {
+        productType.setActiveForPdfExport(true);
         productsTypeDao.save(productType);
         return new ResponseEntity<>(productType, HttpStatus.CREATED);
     }
