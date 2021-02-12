@@ -49,7 +49,7 @@ public class BasketService {
         Basket basketTmp =
             basketDao.findById(basket.getBasketId())
                 .orElseThrow(EntityNotFoundException::new);
-        //basket.setBasketImageData(basketTmp.getBasketImageData());
+        basket.setBasketImage(basketTmp.getBasketImage());
         basket.setBasketProductsPrice(computeTotalProductsPriceInBasket(basket));
         return basketDao.save(basket);
     }
@@ -139,6 +139,8 @@ public class BasketService {
                     .findAll(BasketSpecyficationJpa.getBasketsWithSearchFilter(text)
                         .and(BasketSpecyficationJpa.getOrderWithSeasons(basketSeasonFilter)
                             .and(BasketSpecyficationJpa.getWithoutDeleted(onlyArchival))), pageable);
+
+
 
         return new BasketPageRequest(basketPage.getContent(), basketPage.getTotalElements());
     }
