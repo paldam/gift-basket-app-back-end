@@ -125,9 +125,8 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
         "DESC", nativeQuery = true)
     public List<Order> getAllOrdersByProductionUserId(Long id);
 
-    @Query(value = "SELECT * FROM orders Join order_items ON orders.order_id = order_items.order_id JOIN baskets " +
-        "On order_items.basket_id = baskets.basket_id where baskets.basket_id = ?1 AND orders.order_date >= ?2 AND " +
-        "orders.order_date <= ?3", nativeQuery = true)
+    @Query(value = "select o from Order o join fetch o.orderStatus os join fetch o.deliveryType dt join fetch  o.orderItems oi join fetch o.customer c join fetch c.company join fetch oi.basket ba " +
+        "where ba.basketId =?1 and o.orderDate >= ?2 AND o.orderDate <=?3  AND  (os.orderStatusId =1 Or os.orderStatusId =6) ")
     public List<Order> findAllOrderByBasketIdAndOrderDate(Long basketId, Date startDate, Date endDate);
 
     @Query(value = "SELECT YEAR(order_date) FROM `orders` WHERE 1 GROUP BY YEAR(order_date) ORDER BY order_date DESC"
@@ -164,7 +163,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
 
     @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p,(sum(oi.quantity*bi.quantity)-sum(oi.stateOnWarehouse *bi.quantity)),p" +
         ".lastNumberOfOrderedEditDate) FROM Order o JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b" +
-        ".basketItems bi JOIN bi.product p WHERE (o.orderStatus.orderStatusId=1 OR o.orderStatus.orderStatusId=6) AND" +
+        ".basketItems bi JOIN bi.product p left join  p.suppliers left join p.productSubType WHERE (o.orderStatus.orderStatusId=1 OR o.orderStatus.orderStatusId=6) AND" +
         " o.deliveryDate >= ?1 AND o.deliveryDate <= ?2 AND o.paid =1  GROUP BY p.id")
     public List<ProductToOrder> findProductToOrder2(Date startDate, Date endDate);
 
