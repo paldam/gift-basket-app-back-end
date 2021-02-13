@@ -1,6 +1,7 @@
 package com.damian.domain.order;
 
 import com.damian.domain.product.ProductToOrder;
+import com.damian.domain.product.ProductToOrderDto;
 import com.damian.dto.NumberOfBasketOrderedByDate;
 import com.damian.dto.ProductToCollectOrder;
 import org.springframework.data.domain.Page;
@@ -155,11 +156,13 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
         true)
     public List<Order> findOrdersByDateRange(Date startDate, Date endDate);
 
-    @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p,sum(oi.quantity*bi.quantity)) FROM Order o " +
-        "JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus" +
-        ".orderStatusId=1 OR o.orderStatus.orderStatusId=6) AND o.deliveryDate >= ?1 AND o.deliveryDate <= ?2  GROUP " +
-        "BY p.id")
-    public List<Order> findProductToOrder(Date startDate, Date endDate);
+    @Query(value = "select p.id as id, p.productName as productName, p.stock as stock, p.tmpOrdered as tmpOrdered," +
+        " p.capacity as capacity , p.lastNumberOfOrderedEditDate as lastNumberOfOrderedEditDate ,s as suppliers, st as productSubType, 0 as valueForDeliver, sum(oi.quantity*bi.quantity) as suma " +
+        "from Order o join o.orderItems oi join oi.basket ba join ba.basketItems bi join bi.product p left join  p.suppliers s " +
+        "LEFT join  p.productSubType st left join fetch  st.productType pt " +
+        "where (o.orderStatus.orderStatusId=1 Or o.orderStatus.orderStatusId=6) AND o.orderDate >= ?1 AND o.orderDate <=?2 GROUP BY p.id")
+    public List<ProductToOrderDto> findProductToOrder(Date startDate, Date endDate);
+
 
     @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p,(sum(oi.quantity*bi.quantity)-sum(oi.stateOnWarehouse *bi.quantity)),p" +
         ".lastNumberOfOrderedEditDate) FROM Order o JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b" +
@@ -168,16 +171,14 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     public List<ProductToOrder> findProductToOrder2(Date startDate, Date endDate);
 
 
+    @Query(value = "select p.id as id, p.productName as productName, p.stock as stock, p.tmpOrdered as tmpOrdered," +
+        " p.capacity as capacity , p.lastNumberOfOrderedEditDate as lastNumberOfOrderedEditDate ,s as suppliers, st as productSubType, 0 as valueForDeliver, sum(oi.quantity*bi.quantity) as suma " +
+        "from Order o join o.orderItems oi join oi.basket ba join ba.basketItems bi join bi.product p left join  p.suppliers s " +
+        "LEFT join  p.productSubType st left join fetch  st.productType pt " +
+        "where (o.orderStatus.orderStatusId != 99)  AND o.orderDate >= ?1 AND o.orderDate <=?2 GROUP BY p.id")
+    public List<ProductToOrderDto> findProductToOrderWithoutDeletedOrderByOrderDate(Date startDate, Date endDate);
 
-    @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p,sum(oi.quantity*bi.quantity)) FROM Order o " +
-        "JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus" +
-        ".orderStatusId != 99) AND o.deliveryDate >= ?1 AND o.deliveryDate <=  ?2  GROUP BY p.id")
-    public List<ProductToOrder> findProductToOrderWithoutDeletedOrderByDeliveryDate(Date startDate, Date endDate);
 
-    @Query(value = "SELECT NEW com.damian.domain.product.ProductToOrder(p,sum(oi.quantity*bi.quantity)) FROM Order o " +
-        "JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b.basketItems bi JOIN bi.product p WHERE (o.orderStatus" +
-        ".orderStatusId != 99) AND o.orderDate  >= ?1  AND o.orderDate <= ?2  GROUP BY p.id")
-    public List<ProductToOrder> findProductToOrderWithoutDeletedOrderByOrderDate(Date startDate, Date endDate);
 
     @Query(value = "SELECT NEW com.damian.dto.ProductToCollectOrder(p.productName,sum(oi.quantity*bi.quantity),p" +
         ".capacity) FROM Order o JOIN o.orderItems oi " + "JOIN oi.basket b " + "JOIN b.basketItems bi JOIN bi" +
