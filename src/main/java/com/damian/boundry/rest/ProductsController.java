@@ -90,7 +90,7 @@ public class ProductsController {
 
     @GetMapping(value = "/products/sub_types", produces = "application/json; charset=utf-8")
     ResponseEntity<List<ProductSubType>> listAllProductSubTypes() {
-        List<ProductSubType> typeList = productSubTypeDao.findAll(Sort.by(Sort.Direction.ASC, "subTypeName"));
+        List<ProductSubType> typeList = productSubTypeDao.findallWithProductType();
         return new ResponseEntity<>(typeList, HttpStatus.OK);
     }
 

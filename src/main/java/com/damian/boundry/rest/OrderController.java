@@ -5,7 +5,7 @@ import com.damian.domain.basket.BasketDao;
 import com.damian.domain.notification.NotificationService;
 import com.damian.domain.order.*;
 import com.damian.domain.order.exceptions.OrderStatusException;
-import com.damian.domain.product.ProductToOrder;
+import com.damian.domain.product.ProductToOrderDto;
 import com.damian.dto.NumberOfBasketOrderedByDate;
 import com.damian.dto.OrderDto;
 import com.damian.dto.OrderItemsDto;
@@ -150,28 +150,19 @@ public class OrderController {
     }
 
     @GetMapping("/orders/products_to_order/daterange")
-    ResponseEntity<List<ProductToOrder>> getProductsToOrder(
+    ResponseEntity<List<ProductToOrderDto>> getProductsToOrder(
         @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
         @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        List<ProductToOrder> productToOrderList = orderDao.findProductToOrder2(startDate, endDate);
-        return new ResponseEntity<>(productToOrderList, HttpStatus.OK);
-    }
-
-    @GetMapping("/orders/products_to_order_without_deleted_by_delivery_date/daterange")
-    ResponseEntity<List<ProductToOrder>> getProductsToOrderWithoutDeletedByDeliveryDate(
-        @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        endDate = setEndOfDay(endDate);
-        List<ProductToOrder> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByDeliveryDate(startDate, endDate);
+        List<ProductToOrderDto> productToOrderList = orderDao.findProductToOrder(startDate,endDate);
         return new ResponseEntity<>(productToOrderList, HttpStatus.OK);
     }
 
     @GetMapping("/orders/products_to_order_without_deleted_by_order_date/daterange")
-    ResponseEntity<List<ProductToOrder>> getProductsToOrderWithoutDeletedByOrderDate(
+    ResponseEntity<List<ProductToOrderDto>> getProductsToOrderWithoutDeletedByOrderDate(
         @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
         @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         endDate = setEndOfDay(endDate);
-        List<ProductToOrder> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByOrderDate(startDate, endDate);
+        List<ProductToOrderDto> productToOrderList = orderDao.findProductToOrderWithoutDeletedOrderByOrderDate(startDate, endDate);
         return new ResponseEntity<>(productToOrderList, HttpStatus.OK);
     }
 
@@ -236,9 +227,6 @@ public class OrderController {
         if (deliveryTypeList == null) {
             deliveryTypeList = new ArrayList<>();
         }
-
-
-
 
 
         OrderPageRequest orderDtoList = orderService.getOrderDao(page, size, text, orderBy, sortingDirection,
