@@ -19,6 +19,10 @@ public interface CustomerDao extends JpaRepository<Customer, Long> {
     @Query(value = "SELECT distinct c FROM Customer c left join fetch c.company co where c.customerId =?1")
     public Optional<Customer> findByCustomerId(Integer id);
 
+
+    @Query(value = "SELECT distinct c FROM Customer c left join fetch c.company co ")
+    public List<Customer> findAllFetchCompany();
+
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM customers WHERE customer_id = ?1", nativeQuery = true)

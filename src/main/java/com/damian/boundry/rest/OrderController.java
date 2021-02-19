@@ -170,9 +170,16 @@ public class OrderController {
     ResponseEntity<List<Order>> getOrdersByBasket(
         @RequestParam(value = "basketId") Long basketId,
         @RequestParam(value = "startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        @RequestParam(value = "endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+        @RequestParam(value = "isByOrderDate") Boolean isByOrderDate) {
         endDate = setEndOfDay(endDate);
-        List<Order> orderList = orderDao.findAllOrderByBasketIdAndOrderDate(basketId, startDate, endDate);
+        List<Order> orderList = new ArrayList<>();
+        if(isByOrderDate){
+            orderList = orderDao.findAllOrderByBasketIdAndOrderDate(basketId, startDate, endDate);
+        }else{
+            orderList = orderDao.findAllOrderByBasketIdAndDeliveryDate(basketId, startDate, endDate);
+        }
+
         return new ResponseEntity<>(orderList, HttpStatus.OK);
     }
 

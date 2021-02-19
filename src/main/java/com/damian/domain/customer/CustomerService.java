@@ -25,7 +25,7 @@ public class CustomerService {
     }
 
     public List<CustomerAddressDTO> getCustomerWithAddressList() {
-        List<Customer> custList = customerDao.findAllBy();
+        List<Customer> custList = customerDao.findAllFetchCompany();
         List<CustomerAddressDTO> custAddrList = new ArrayList<>();
         custList.forEach(customer -> {
             Address tmpAddr = addressDao
