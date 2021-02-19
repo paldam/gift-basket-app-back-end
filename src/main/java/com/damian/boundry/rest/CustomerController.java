@@ -25,7 +25,7 @@ public class CustomerController {
 
     @GetMapping("/customers")
     ResponseEntity<List<Customer>> getCustomers() {
-        List<Customer> customerList = customerDao.findAllBy();
+        List<Customer> customerList = customerDao.findAllFetchCompany();
         return new ResponseEntity<>(customerList, HttpStatus.OK);
     }
 
