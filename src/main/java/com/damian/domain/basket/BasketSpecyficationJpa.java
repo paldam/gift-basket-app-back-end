@@ -1,16 +1,16 @@
 package com.damian.domain.basket;
 
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.*;
 import java.util.List;
 
+@Transactional(readOnly = true)
 public class BasketSpecyficationJpa {
 
     public static Specification<Basket> getBasketsWithSearchFilter(String likeText) {
-
         return (Specification<Basket>) (root, criteriaQuery, criteriaBuilder) -> {
-
             if(!currentQueryIsCountRecords(criteriaQuery)){
                 root.fetch("basketType");
                 root.fetch("basketSezon");

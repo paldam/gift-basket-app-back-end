@@ -10,6 +10,7 @@ import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 public interface CustomerDao extends JpaRepository<Customer, Long> {
 
     public List<Customer> findAllBy();

@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
+@Transactional(readOnly = true)
 public interface AddressDao extends JpaRepository<Address,Long> {
 
     List<Address> findAll();
@@ -18,6 +18,7 @@ public interface AddressDao extends JpaRepository<Address,Long> {
     @Query(value = "DELETE FROM addresses WHERE address_id = ?1", nativeQuery = true)
     public void deleteByAddressId(Long id);
 
+    @Transactional
     @Modifying
     @Query(value = "DELETE FROM addresses WHERE customer_id = ?1", nativeQuery = true)
     public void deleteByCustomerId(Integer id);

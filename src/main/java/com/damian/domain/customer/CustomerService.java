@@ -36,7 +36,6 @@ public class CustomerService {
         return custAddrList;
     }
 
-    @Transactional
     public ResponseEntity<?> deleteCustomer(Integer customerId) {
         if (existsAtLeastOneCustomerOrders(customerId)) {
             return new ResponseEntity<>("", HttpStatus.FORBIDDEN);

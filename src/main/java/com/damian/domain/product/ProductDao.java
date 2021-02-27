@@ -14,7 +14,7 @@ import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public interface ProductDao extends CrudRepository<Product, Long> , JpaSpecificationExecutor<Product> {
 
     public List<Product> findAllByOrderByIdDesc();

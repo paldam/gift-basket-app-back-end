@@ -15,21 +15,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
     public List<Order> findAllBy();
-
     public List<Order> findAllByOrderByOrderIdDesc();
-
     public List<Order> findAllByOrderStatus_OrderStatusId(Integer i);
-
     public Order findByOrderId(Integer id);
 
-    @Transactional
     @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
     @Query(value = "SELECT o FROM Order o LEFT JOIN FETCH o.productionUser pu LEFT JOIN FETCH o.address ad LEFT JOIN FETCH o.customer c LEFT JOIN FETCH c.company cp JOIN FETCH o.deliveryType dt JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.basket WHERE o.orderId = ?1")
     public Order findByOrderId(Long id);
-
 
     public List<Order> findByAddress_AddressId(Long id);
 
@@ -43,7 +39,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     @Query(value = "SELECT distinct o FROM Order o LEFT JOIN FETCH o.productionUser pu LEFT JOIN FETCH o.address ad" +
         " LEFT JOIN FETCH o.customer c LEFT JOIN FETCH c.company cp JOIN FETCH o.deliveryType dt" +
         " JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.basket WHERE o.orderStatus.orderStatusId= ?1")
-    public List<Order> findAllOrderByOrderId(Integer orderStatus );
+     List<Order> findAllOrderByOrderId(Integer orderStatus );
 
     @Query(value = "SELECT * FROM orders Join order_items on orders.order_id = order_items.order_id where order_items" +
         ".order_item_id = ?1  ", nativeQuery = true)

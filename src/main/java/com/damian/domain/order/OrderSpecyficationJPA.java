@@ -4,18 +4,15 @@ import com.damian.domain.customer.*;
 import com.damian.domain.user.User;
 import com.damian.domain.user.User_;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.util.Calendar;
 import java.util.List;
-
+@Transactional(readOnly = true)
 public class OrderSpecyficationJPA {
-
-
-
-
 
     public static Specification<Order> getOrderWithOrderStatusFilter(List<Integer> orderStatus) {
             return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {

@@ -13,6 +13,8 @@ import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 
+
+@Transactional(readOnly = true)
 public interface BasketDao extends CrudRepository<Basket, Long>, JpaSpecificationExecutor<Basket> {
 
     public List<Basket> findAllBy();

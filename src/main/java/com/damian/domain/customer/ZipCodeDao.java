@@ -2,8 +2,10 @@ package com.damian.domain.customer;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+@Transactional(readOnly = true)
 public interface ZipCodeDao extends JpaRepository<ZipCode,Long> {
 
     public List<ZipCode> findByZipCodeCode(String code);

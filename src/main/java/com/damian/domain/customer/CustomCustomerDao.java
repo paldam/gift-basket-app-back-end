@@ -1,6 +1,7 @@
 package com.damian.domain.customer;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -12,7 +13,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
-
+@Transactional(readOnly = true)
 @Repository
 public class CustomCustomerDao {
 
