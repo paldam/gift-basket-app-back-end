@@ -120,7 +120,7 @@ public class BasketService {
         return PdfBasketContents.generateBasketProductsListCatalogNameVersionPdf(basketToGenerate, img);
     }
 
-    @Transactional
+
     public void addBasketToStock(List<OrderItem> orderItems) {
         orderItems.forEach(orderItem -> basketDao.addBasketToStock(
             orderItem.getBasket().getBasketId(), orderItem.getQuantity()));

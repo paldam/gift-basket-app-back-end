@@ -23,7 +23,6 @@ public class OrderProgressService {
         this.productDao = productDao;
     }
 
-    @Transactional
     public void changeOrderItemProgressOnSpecifiedPhase(
         Integer orderItemId, Long newStateValue, OrdersPreparePhase ordersPreparePhase) throws OrderStatusException {
         OrderItem currentOrderItemState = orderItemDao.findByOrderItemId(orderItemId);
@@ -84,7 +83,6 @@ public class OrderProgressService {
         orderDao.save(orderTmp);
     }
 
-    @Transactional
     public void changeOrderItemProgressOnSpecifiedPhaseByAddValue(
         Integer orderItemId, Long newStateValueToAdd, OrdersPreparePhase ordersPreparePhase) throws OrderStatusException{
         if (newStateValueToAdd < 0) throw new OrderStatusException("Wartość nie może być mniejsza od zera");
@@ -122,7 +120,6 @@ public class OrderProgressService {
         }
     }
 
-    @Transactional
     public void changeOrderProgressByAdmin(Long id, List<OrderItem> orderItemsList) throws OrderStatusException {
         Order updatingOrder = orderDao.findByOrderId(id);
         if (updatingOrder.getOrderStatus().getOrderStatusId() == 1) {
@@ -161,7 +158,7 @@ public class OrderProgressService {
         orderDao.save(updatingOrder);
     }
 
-    @Transactional
+
     public void changeProductsStockWhenWarehouseUpdateOrderProgressByAdmin(Long orderId,
                                                                            List<OrderItem> orderItemsListToChange) {
         List<OrderItem> currentOrderItemsState = orderDao.findByOrderId(orderId).getOrderItems();

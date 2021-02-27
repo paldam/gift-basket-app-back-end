@@ -44,7 +44,7 @@ public class ProductService {
 
     @Transactional
     public void resetProductsState() throws UserPermissionDeniedException {
-        if (SecurityUtils.getCurrentUserLogin().equals("marek") && SecurityUtils.isCurrentUserInRole("admin")) {
+        if (SecurityUtils.getCurrentUserLogin().equals("paldam") && SecurityUtils.isCurrentUserInRole("admin")) {
             productDao.resetDbPrductsStates();
         } else {
             throw new UserPermissionDeniedException("Brak uprawnień do wykonania tego polecenia");

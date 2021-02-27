@@ -1,11 +1,11 @@
 package com.damian.domain.product;
 
 import org.springframework.data.jpa.domain.Specification;
-
+import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.*;
-import javax.swing.text.StyledEditorKit;
 import java.util.List;
 
+@Transactional(readOnly = true)
 public class ProductSpecificationJpa {
 
     public static Specification<Product> getProductWithSearchFilter(String likeText) {

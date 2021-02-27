@@ -24,7 +24,6 @@ public class AddresService {
         this.provinceDao = provinceDao;
     }
 
-    @Transactional
     public void changePrimaryAddr(Long id, Integer customerId) {
         this.addressDao.setAllCustomerAdrressPrimaryNo(customerId);
         this.addressDao.setAddreesAsPrimary(id);

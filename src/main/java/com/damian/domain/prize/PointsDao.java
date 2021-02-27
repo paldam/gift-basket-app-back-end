@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public interface PointsDao extends CrudRepository<PointScheme, Long> {
 
     List<PointScheme> findBy();
