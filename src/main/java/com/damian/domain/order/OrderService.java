@@ -238,6 +238,7 @@ public class OrderService {
         });
     }
 
+    @Transactional
     public void assignOrdersToSpecifiedProduction(List<Integer> ordersIds, Long productionId) throws OrderStatusException {
         List<Order> orderListByIds = orderDao.findByOrderIds(ordersIds);
         for (Order order : orderListByIds) {
@@ -276,7 +277,6 @@ public class OrderService {
         return orderDtoList;
     }
 
-    @Transactional
     public List<Order> getOrderListFromIdList(List<Long> orederIdList) {
         List<Order> ordersList = new ArrayList<>();
         orederIdList.forEach(orderId -> {
@@ -286,12 +286,11 @@ public class OrderService {
         return ordersList;
     }
 
-
+    @Transactional(readOnly = true)
     public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection, List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList, List<Integer> orderProductionUserFilterList, List<Integer> orderWeeksUserFilterList, List<String> provinces, List<Integer> deliveryTypeList) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Order> orderList;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
-
 
 
            orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
@@ -302,9 +301,6 @@ public class OrderService {
                .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))
                .and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray))
            ), pageable);
-
-
-
 
         //       // orderList.get().forEach(order -> order.setOrderItems(null));
         List<OrderDto> orderDtoList = new ArrayList<>();
@@ -375,6 +371,7 @@ public class OrderService {
         return orderDtoList;
     }
 
+    @Transactional
     public void computeLoyaltyProgramPoints() {
         List<PointScheme> pointScheme = pointsDao.findBy();
         List<Order> orderListToComputePoints = orderDao.findAllOrderForLoyaltyProgram();
@@ -397,6 +394,7 @@ public class OrderService {
             orderDao.save(order);
         }
     }
+
 
     public List<Order> findOrderWithFullProductAvailability() {
         List<Order> orderWithFullProductAvailability = new ArrayList<>();

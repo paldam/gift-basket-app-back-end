@@ -15,6 +15,7 @@ public class CompanyService {
         this.companyDao = companyDao;
     }
 
+    @Transactional
     public Company mergeCompany(List<Company> companyList, String newCompaniesName) {
         newCompaniesName = newCompaniesName.replace("\"", "");
         List<Long> companyToChangeIdList = new ArrayList<>();

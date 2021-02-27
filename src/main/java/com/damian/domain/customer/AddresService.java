@@ -34,6 +34,7 @@ public class AddresService {
         return !ordersTmp.isEmpty();
     }
 
+    @Transactional
     public void convertZipCode() {
         List<ZipCode> zipCodes = zipCodeDao.findAll();
         zipCodes.forEach(zipCode -> {
@@ -47,29 +48,18 @@ public class AddresService {
         });
     }
 
+    @Transactional
     public void convertZipCode2() {
-
-
-       List<Address> addressList = addressDao.findAll();
-
-       addressList.forEach(address -> {
-           address.getZipCode();
-
-        List<ZipCode>  zipTmp  =  zipCodeDao.findByZipCodeCode(address.getZipCode());
-
-        if(zipTmp.isEmpty()){
-            address.setProvince(null);
-
-        }else{
-            address.setProvince(zipTmp.get(0).getProvince());
-            addressDao.save(address);
-        }
-
-
-       });
-
-
+        List<Address> addressList = addressDao.findAll();
+        addressList.forEach(address -> {
+            address.getZipCode();
+            List<ZipCode> zipTmp = zipCodeDao.findByZipCodeCode(address.getZipCode());
+            if (zipTmp.isEmpty()) {
+                address.setProvince(null);
+            } else {
+                address.setProvince(zipTmp.get(0).getProvince());
+                addressDao.save(address);
+            }
+        });
     }
-
-
 }
