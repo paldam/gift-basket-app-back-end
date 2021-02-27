@@ -30,7 +30,7 @@ public class NotificationsController {
     }
 
     @GetMapping("/notificationslist")
-    ResponseEntity<List<Notification>> getNotificationsForCurrentUser() {
+    public ResponseEntity<List<Notification>> getNotificationsForCurrentUser() {
 
         System.out.println("notificationslist ....");
         Optional<User> userTmp = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
@@ -49,7 +49,7 @@ public class NotificationsController {
     }
 
     @GetMapping("/notifications/count")
-    ResponseEntity<Long> getNotificationsCount() {
+    public ResponseEntity<Long> getNotificationsCount() {
         Optional<User> currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
         Long notificationsCount;
         if (currentUser.isPresent()) {
@@ -61,7 +61,7 @@ public class NotificationsController {
     }
 
     @GetMapping("/notifications/markasreaded/{id}")
-    ResponseEntity markNotifyAsReaded(@PathVariable Long id) {
+    public ResponseEntity markNotifyAsReaded(@PathVariable Long id) {
         Optional<User> currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
         Long ALL_NOTIFICATIONS = 0L;
         if (id.equals(ALL_NOTIFICATIONS)) {

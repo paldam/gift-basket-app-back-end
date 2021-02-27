@@ -19,7 +19,7 @@ public class DeliveryController {
     }
 
     @GetMapping("/delivery/types")
-    ResponseEntity<List<DeliveryType>> getDeliveryTypes() {
+    public ResponseEntity<List<DeliveryType>> getDeliveryTypes() {
         List<DeliveryType> deliveryTypesList = deliveryTypeDao.findAllBy();
         return new ResponseEntity<>(deliveryTypesList, HttpStatus.OK);
     }

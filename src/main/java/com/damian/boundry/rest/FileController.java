@@ -47,14 +47,14 @@ public class FileController {
 
 
     @GetMapping(value = "/orderfile/{id}")
-    ResponseEntity<List<DbFile>> getFiles(@PathVariable Long id){
+    public ResponseEntity<List<DbFile>> getFiles(@PathVariable Long id){
         List<DbFile> fileList = dbFileDao.findByOrderId(id) ;
         return new ResponseEntity<>(fileList, HttpStatus.OK);
     }
 
 
     @GetMapping(value = "/orderfiledto")
-    ResponseEntity<List<FileDto>> getFilesDto(){
+    public ResponseEntity<List<FileDto>> getFilesDto(){
         List<FileDto> fileDtoList = dbFileService.getFileDto() ;
         return new ResponseEntity<>(fileDtoList, HttpStatus.OK);
     }
