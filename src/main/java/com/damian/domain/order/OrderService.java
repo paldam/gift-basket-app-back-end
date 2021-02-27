@@ -287,7 +287,6 @@ public class OrderService {
     }
 
 
-@Transactional(readOnly = true)
     public OrderPageRequest getOrderDao(int page, int size, String text, String orderBy, int sortingDirection, List<Integer> orderStatusFilterArray, List<Integer> orderYearsFilterList, List<Integer> orderProductionUserFilterList, List<Integer> orderWeeksUserFilterList, List<String> provinces, List<Integer> deliveryTypeList) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Order> orderList;
@@ -403,9 +402,9 @@ public class OrderService {
         List<Order> orderWithFullProductAvailability = new ArrayList<>();
         List<ProductStock> tmpLocalProductsStock;
         List<ProductStock> tmpProductsStock = new ArrayList<>();
-        boolean isProductAvailableWatch = true;
+
         outerloop:
-        for (Order order : orderDao.findAllOrderNplus1(1)) {
+        for (Order order : orderDao.findAllOrderByOrderId(1)) {
             tmpLocalProductsStock = tmpProductsStock;
             for (OrderItem orderItem : order.getOrderItems()) {
                 for (BasketItems basketItems : orderItem.getBasket().getBasketItems()) {
@@ -428,9 +427,6 @@ public class OrderService {
             tmpProductsStock = tmpLocalProductsStock;
             orderWithFullProductAvailability.add(order);
         }
-
-
-
         return orderWithFullProductAvailability;
     }
 }

@@ -36,7 +36,6 @@ public class AddressController {
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-   @Transactional
     @GetMapping("/cuss")
     ResponseEntity get22() {
        addresService.convertZipCode2();

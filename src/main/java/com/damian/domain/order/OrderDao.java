@@ -25,6 +25,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
 
     public Order findByOrderId(Integer id);
 
+    @Transactional
     @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
     @Query(value = "SELECT o FROM Order o LEFT JOIN FETCH o.productionUser pu LEFT JOIN FETCH o.address ad LEFT JOIN FETCH o.customer c LEFT JOIN FETCH c.company cp JOIN FETCH o.deliveryType dt JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.basket WHERE o.orderId = ?1")
     public Order findByOrderId(Long id);
@@ -39,9 +40,10 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     public Optional<List<Order>> findAllTodaysOrders();
 
 
-    @Query(value = "SELECT * FROM orders Join order_items ON orders.order_id = order_items.order_id JOIN baskets " +
-        "On order_items.basket_id = baskets.basket_id JOin basket_items ON basket_items.basket_id = baskets.basket_id JOIN Products ON basket_items.product_id = products.id  where orders.order_status_id = ?1", nativeQuery = true)
-    public List<Order> findAllOrderNplus1(Integer orderStatus );
+    @Query(value = "SELECT distinct o FROM Order o LEFT JOIN FETCH o.productionUser pu LEFT JOIN FETCH o.address ad" +
+        " LEFT JOIN FETCH o.customer c LEFT JOIN FETCH c.company cp JOIN FETCH o.deliveryType dt" +
+        " JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.basket WHERE o.orderStatus.orderStatusId= ?1")
+    public List<Order> findAllOrderByOrderId(Integer orderStatus );
 
     @Query(value = "SELECT * FROM orders Join order_items on orders.order_id = order_items.order_id where order_items" +
         ".order_item_id = ?1  ", nativeQuery = true)
