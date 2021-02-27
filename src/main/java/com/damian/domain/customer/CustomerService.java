@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +29,13 @@ public class CustomerService {
         List<Customer> custList = customerDao.findAllFetchCompany();
         List<CustomerAddressDTO> custAddrList = new ArrayList<>();
         custList.forEach(customer -> {
-            Address tmpAddr = addressDao
-                .findCustomerPrimaryAddrById(customer.getCustomerId())
-                .orElseThrow(EntityNotFoundException::new);
+            Address tmpAddr = addressDao.findCustomerPrimaryAddrById(customer.getCustomerId()).orElseThrow(EntityNotFoundException::new);
             custAddrList.add(new CustomerAddressDTO(customer, tmpAddr));
         });
         return custAddrList;
     }
 
+    @Transactional
     public ResponseEntity<?> deleteCustomer(Integer customerId) {
         if (existsAtLeastOneCustomerOrders(customerId)) {
             return new ResponseEntity<>("", HttpStatus.FORBIDDEN);

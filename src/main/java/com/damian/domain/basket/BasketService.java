@@ -32,6 +32,7 @@ public class BasketService {
         return basketDao.save(basket);
     }
 
+    @Transactional
     public Basket addBasketWithImg(Basket basket, MultipartFile[] basketMultipartFiles) {
         try {
 
@@ -45,6 +46,7 @@ public class BasketService {
         return basketDao.save(basket);
     }
 
+    @Transactional
     public Basket editBasketWithoutImage(Basket basket) {
         Basket basketTmp =
             basketDao.findById(basket.getBasketId())
@@ -92,6 +94,7 @@ public class BasketService {
         return basketFile;
     }
 
+    @Transactional
     public ByteArrayInputStream prepareBasketProductsListPdf(Long id) throws IOException {
         byte[] img = basketDao.getBasketImageByBasketId(id);
         Optional<byte[]> imgOpt = Optional.ofNullable(img);
@@ -106,6 +109,7 @@ public class BasketService {
         return PdfBasketContents.generateBasketProductsListPdf(basketToGenerate, img);
     }
 
+    @Transactional
     public ByteArrayInputStream prepareBasketProductsListCatalogNameVersionPdf(Long id) throws IOException {
         byte[] img = basketDao.getBasketImageByBasketId(id);
         Optional<byte[]> imgOpt = Optional.ofNullable(img);
@@ -120,7 +124,7 @@ public class BasketService {
         return PdfBasketContents.generateBasketProductsListCatalogNameVersionPdf(basketToGenerate, img);
     }
 
-
+    @Transactional
     public void addBasketToStock(List<OrderItem> orderItems) {
         orderItems.forEach(orderItem -> basketDao.addBasketToStock(
             orderItem.getBasket().getBasketId(), orderItem.getQuantity()));

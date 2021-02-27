@@ -42,7 +42,6 @@ public class ProductService {
         productDao.addProductToDeliver(productId, addValue);
     }
 
-    @Transactional
     public void resetProductsState() throws UserPermissionDeniedException {
         if (SecurityUtils.getCurrentUserLogin().equals("paldam") && SecurityUtils.isCurrentUserInRole("admin")) {
             productDao.resetDbPrductsStates();
@@ -58,6 +57,7 @@ public class ProductService {
         }
     }
 
+    @Transactional
     public Product editProductWithoutImage(Product product) {
         Product productTmp =
             productDao.findAllById(product.getId())
@@ -66,6 +66,7 @@ public class ProductService {
         return productDao.save(product);
     }
 
+    @Transactional
     public Product addProductWithImg(Product product , MultipartFile[] productMultipartFiles) {
         try {
             product.setProductImageData(productMultipartFiles[0].getBytes());
