@@ -52,21 +52,6 @@ public class BasketController {
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-//    @Transactional
-//    @GetMapping("/reformat")
-//    ResponseEntity<List<Basket>> getAll() {
-//        List<Basket> basketList = basketDao.findAllBy();
-//        basketList.forEach(basket -> {
-//            if (basket.getBasketImageData() != null) {
-//                BasketImage newBasket = new BasketImage(basket.getBasketImageData());
-//                BasketImage savedBasket = basketImageDao.save(newBasket);
-//                basket.setBasketImage(savedBasket);
-//            } else basket.setBasketImage(null);
-//        });
-//        return new ResponseEntity<>( HttpStatus.OK);
-//    }
-
-
     @PostMapping("/basket/add")
     public ResponseEntity<Basket> createBasket(@RequestBody Basket basket) {
         Basket savedBasket = basketService.addBasket(basket);

@@ -38,7 +38,7 @@ public interface ProductDao extends CrudRepository<Product, Long> , JpaSpecifica
     public List<Product> findAllWithoutDeleted();
 
     @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
-    @Query(value = "SELECT DISTINCT p   FROM Product p LEFT JOIN FETCH p.productSubType pst left JOIN fetch p.productSeason left Join FETCH p.suppliers LEFT JOIN FETCH pst.productType WHERE p.id IN ?1")
+    @Query(value = "SELECT DISTINCT p   FROM Product p LEFT JOIN FETCH p.productSubType pst left JOIN fetch p.productSeason left Join FETCH p.suppliers LEFT JOIN FETCH pst.productType WHERE p.id IN ?1 AND p.isArchival = 0")
     public List<Product> findAllWithoutDeletedByIds(List<Integer> ids, Sort sort);
 
     @Transactional

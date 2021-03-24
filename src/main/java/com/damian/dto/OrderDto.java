@@ -7,10 +7,14 @@ import com.damian.domain.order.OrderItem;
 import com.damian.domain.order.OrderStatus;
 import com.damian.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.util.Date;
 import java.util.List;
 
+@Builder
+@AllArgsConstructor
 public class OrderDto {
 
     private Long orderId;
@@ -32,6 +36,9 @@ public class OrderDto {
     private User loyaltyUser;
     private Boolean isAllreadyComputedPoints;
     private Boolean isPaid;
+
+    public OrderDto() {
+    }
 
     public OrderDto(Long orderId, String orderFvNumber, Customer customer, Date orderDate,
                     String additionalInformation, Date deliveryDate, Integer weekOfYear, DeliveryType deliveryType,

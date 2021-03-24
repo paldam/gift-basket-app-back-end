@@ -42,7 +42,6 @@ public class OrderService {
 
     @PersistenceContext
     EntityManager entityManager;
-
     private static final int ORDER_STATUS_ID_NOWE = 1;
     private static final int ORDER_STATUS_ID_W_TRAKCIE_REALIZACJI = 6;
     private static final int ORDER_STATUS_ID_USUNIETE = 99;
@@ -71,6 +70,7 @@ public class OrderService {
     }
 
     @Transactional
+
     public void createOrUpdateOrder(Order order, Integer statusId) throws OrderStatusException {
         if (!Objects.isNull(order.getOrderId())) {
             //TODO
@@ -96,15 +96,18 @@ public class OrderService {
         // pushNotificationForNewOrder(order);
     }
 
+
+
     private void performChangeOrderStatusOperation(Order order, Integer statusId) throws OrderStatusException {
         Integer prevOrderStatus = order.getOrderStatus().getOrderStatusId();
         Integer newOrderStatus;
-        if(statusId ==null){
+        if (statusId == null) {
             newOrderStatus = order.getOrderStatus().getOrderStatusId();
-        }else{
+        } else {
             newOrderStatus = statusId;
             order.setOrderStatus(new OrderStatus(statusId));
         }
+
 
         if (prevOrderStatus == ORDER_STATUS_ID_NOWE && newOrderStatus == ORDER_STATUS_ID_W_TRAKCIE_REALIZACJI) {
             changeStockStatusNoweToWtrakcie(order);
@@ -291,21 +294,23 @@ public class OrderService {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Order> orderList;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
+         orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList).and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList)).and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList)).and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces)).and(OrderSpecyficationJPA.getOrderWithDeliveryTypeFilter(deliveryTypeList)).and(OrderSpecyficationJPA.getOrderWithSearchFilter(text)).and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray))), pageable);
 
 
-           orderList = orderDao.findAll((OrderSpecyficationJPA.getOrderWithOrderYearsFilter(orderYearsFilterList)
-             .and(OrderSpecyficationJPA.getOrderWithProductionUserFilter(orderProductionUserFilterList))
-             .and(OrderSpecyficationJPA.getOrderWithWeeksFilter(orderWeeksUserFilterList))
-              .and(OrderSpecyficationJPA.getOrderWithProvincesFilter(provinces))
-             .and(OrderSpecyficationJPA.getOrderWithDeliveryTypeFilter(deliveryTypeList))
-               .and(OrderSpecyficationJPA.getOrderWithSearchFilter(text))
-               .and(OrderSpecyficationJPA.getOrderWithOrderStatusFilter(orderStatusFilterArray))
-           ), pageable);
+          
 
-        //       // orderList.get().forEach(order -> order.setOrderItems(null));
+        List<Long> ids = orderList
+            .get()
+            .map(Order::getOrderId)
+            .collect(Collectors.toList());
+
+        List<Order> orderWithCollections = new ArrayList<>();
+        if(ids.size() > 0){
+            orderWithCollections = orderDao.findAllOrderWithCollectionsByIds(ids,Sort.by(sortDirection, orderBy));
+        }
         List<OrderDto> orderDtoList = new ArrayList<>();
         List<DbFile> dbFileDtoList = dbFileDao.findAll();
-        orderList.forEach(order -> {
+        orderWithCollections.forEach(order -> {
             List<DbFile> result;
             result = dbFileDtoList.stream().filter(data -> order.getOrderId().equals(data.getOrderId())).collect(Collectors.toList());
             Long fileIdTmp;
@@ -314,11 +319,12 @@ public class OrderService {
             } else {
                 fileIdTmp = 0L;
             }
-            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(), order.getLoyaltyUser(), order.getAllreadyComputedPoints(),order.getPaid()));
+
+            orderDtoList.add(new OrderDto(order.getOrderId(), order.getOrderFvNumber(), order.getCustomer(), order.getOrderDate(), order.getAdditionalInformation(), order.getDeliveryDate(), order.getWeekOfYear(), order.getDeliveryType(), order.getOrderStatus(), order.getOrderTotalAmount(), fileIdTmp, order.getOrderItems(), order.getAdditionalSale(), order.getProductionUser(), order.getLoyaltyUser(), order.getAllreadyComputedPoints(), order.getPaid()));
         });
+
         return new OrderPageRequest(orderDtoList, orderList.getTotalElements());
     }
-
 
     private void performOrderWithNewCustomer(Order order) {
         if (order.getAddress().getAddressId() == null) {
@@ -395,12 +401,10 @@ public class OrderService {
         }
     }
 
-
     public List<Order> findOrderWithFullProductAvailability() {
         List<Order> orderWithFullProductAvailability = new ArrayList<>();
         List<ProductStock> tmpLocalProductsStock;
         List<ProductStock> tmpProductsStock = new ArrayList<>();
-
         outerloop:
         for (Order order : orderDao.findAllOrderByOrderId(1)) {
             tmpLocalProductsStock = tmpProductsStock;

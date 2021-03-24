@@ -88,30 +88,21 @@ public class OrderSpecyficationJPA {
     public static Specification<Order> getOrderWithOrderYearsFilter(List<Integer> orderYears) {
         return (Specification<Order>) (root, criteriaQuery, criteriaBuilder) -> {
 
-            if(!currentQueryIsCountRecords(criteriaQuery)){
-                Fetch<Order, Customer> orderCustomerJoin = root.fetch(Order_.customer,JoinType.LEFT);
-                orderCustomerJoin.fetch("company",JoinType.LEFT);
-                root.fetch("orderStatus", JoinType.LEFT);
-                root.fetch("orderItems", JoinType.LEFT).fetch("basket",JoinType.LEFT);
-                root.fetch("productionUser", JoinType.LEFT);
-                root.fetch("deliveryType", JoinType.LEFT);
-                root.fetch("loyaltyUser", JoinType.LEFT);
-                root.fetch("address",JoinType.LEFT);
-
-            }
-
-
-
-
-
-          //  root.fetch("customer", JoinType.LEFT);
-
-
-
+//            if(!currentQueryIsCountRecords(criteriaQuery)){
+//                Fetch<Order, Customer> orderCustomerJoin = root.fetch(Order_.customer,JoinType.LEFT);
+//                orderCustomerJoin.fetch("company",JoinType.LEFT);
+//                root.fetch("orderStatus", JoinType.LEFT);
+//                root.fetch("orderItems", JoinType.LEFT).fetch("basket",JoinType.LEFT);
+//                root.fetch("productionUser", JoinType.LEFT);
+//                root.fetch("deliveryType", JoinType.LEFT);
+//                root.fetch("loyaltyUser", JoinType.LEFT);
+//                root.fetch("address",JoinType.LEFT);
+//
+//            }
 
             Expression<Integer> yearFromDate = criteriaBuilder.function("YEAR", Integer.class, root.get(Order_.orderDate));
             if (orderYears.isEmpty()) {
-                orderYears.add(Calendar.getInstance().get(Calendar.YEAR) - 1);
+                orderYears.add(Calendar.getInstance().get(Calendar.YEAR));
             }
             return yearFromDate.in(orderYears);
         };

@@ -10,6 +10,7 @@ public interface ProductToOrderDto {
     public  Integer getStock();
     public  Integer getTmpOrdered();
     public  String getCapacity();
+    public Integer getPrice();
     public Date getLastNumberOfOrderedEditDate();
     public List<SupplierDto> getSuppliers();
    public ProductSubTypeDto getProductSubType();

@@ -1,6 +1,5 @@
 package com.damian.domain.basket;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -32,6 +31,8 @@ public class Basket {
     private Integer isBasketImg;
     private Date lastStockEditDate;
     private String imgNumber;
+
+
 
     public Basket() {
     }
@@ -69,7 +70,7 @@ public class Basket {
         this.basketId = basketId;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "basket_type")
     public BasketType getBasketType() {
         return basketType;
@@ -79,7 +80,7 @@ public class Basket {
         this.basketType = basketType;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "basket_sezon")
     public BasketSezon getBasketSezon() {
         return basketSezon;
@@ -169,17 +170,6 @@ public class Basket {
         this.isAvailable = isAvailable;
     }
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "basket_image_id")
-    public BasketImage getBasketImage() {
-        return basketImage;
-    }
-
-    public void setBasketImage(BasketImage basketImage) {
-        this.basketImage = basketImage;
-    }
-
     @Column(name = "is_basket_img", length = 40, columnDefinition = "INT DEFAULT 0")
     public Integer getIsBasketImg() {
         return isBasketImg;
@@ -201,5 +191,14 @@ public class Basket {
     }
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "basket_image_id")
+    public BasketImage getBasketImage() {
+        return basketImage;
+    }
+
+    public void setBasketImage(BasketImage basketImage) {
+        this.basketImage = basketImage;
+    }
 }
         
