@@ -27,6 +27,14 @@ public class ProductSpecificationJpa {
         }
     }
 
+    public static Specification<Product> getNonArchival() {
+
+            return (Specification<Product>) (root, criteriaQuery, criteriaBuilder) -> {
+                Predicate productNonArch = criteriaBuilder.equal((root.get(Product_.isArchival)), 0);
+                return productNonArch;
+            };
+    }
+
     public static Specification<Product> getProductWithSpecType(List<Integer> productTypeIds) {
         if (productTypeIds.isEmpty()) {
             return Specification.where(null);

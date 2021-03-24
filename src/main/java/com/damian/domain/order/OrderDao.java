@@ -132,11 +132,11 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     public List<Order> getAllOrdersByProductionUserId(Long id);
 
     @Query(value = "select o from Order o join fetch o.orderStatus os join fetch o.deliveryType dt join fetch  o.orderItems oi join fetch o.customer c join fetch c.company join fetch oi.basket ba " +
-        "where ba.basketId =?1 and o.deliveryDate >= ?2 AND o.deliveryDate <=?3  AND  (os.orderStatusId =1 Or os.orderStatusId =6) ")
+        "where ba.basketId =?1 and o.deliveryDate >= ?2 AND o.deliveryDate <=?3  AND  os.orderStatusId != 99 ")
     public List<Order> findAllOrderByBasketIdAndDeliveryDate(Long basketId, Date startDate, Date endDate);
 
     @Query(value = "select o from Order o join fetch o.orderStatus os join fetch o.deliveryType dt left join fetch  o.orderItems oi left join fetch o.customer c left join fetch c.company left join fetch oi.basket ba " +
-        "where ba.basketId =?1 and o.orderDate >= ?2 AND o.orderDate <=?3  AND  (os.orderStatusId =1 Or os.orderStatusId =6) ")
+        "where ba.basketId =?1 and o.orderDate >= ?2 AND o.orderDate <=?3  AND  os.orderStatusId != 99  ")
     public List<Order> findAllOrderByBasketIdAndOrderDate(Long basketId, Date startDate, Date endDate);
 
     @Query(value = "select new com.damian.dto.NumberOfBasketOrderedByDate(b.basketId,b.basketName,sum(oi.quantity)," +

@@ -99,6 +99,7 @@ public class ProductService {
             .and(ProductSpecificationJpa.getProductWithSpecType(productSubTypeFilter)
             .and(ProductSpecificationJpa.getProductWithSpecSupplier(productSuppliersFilter)
                 .and(ProductSpecificationJpa.getOnlyAvailable(onlyAvailable)
+                    .and(ProductSpecificationJpa.getNonArchival())
             ))), pageable);
 
         List<Integer> productsIds = new ArrayList<>();
