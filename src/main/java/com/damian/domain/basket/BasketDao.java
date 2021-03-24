@@ -23,7 +23,7 @@ public interface BasketDao extends CrudRepository<Basket, Long>, JpaSpecificatio
     public Basket findByBasketId(Long basketId);
 
     @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
-    @Query(value = "SELECT distinct b FROM Basket b LEFT JOIN FETCH b.basketItems bi LEFT JOIN FETCH b.basketSezon bs left join FETCH  bi.product p LEFT JOIN FETCH p.productSeason ps LEFT JOIN FETCH p.productSubType pst LEFT JOIN FETCH p.suppliers  WHERE b.basketId= ?1")
+    @Query(value = "SELECT distinct b FROM Basket b LEFT JOIN FETCH b.basketItems bi LEFT JOIN FETCH b.basketType bt LEFT JOIN FETCH b.basketSezon bs left join FETCH  bi.product p LEFT JOIN FETCH p.productSeason ps LEFT JOIN FETCH p.productSubType pst LEFT JOIN FETCH p.suppliers  WHERE b.basketId= ?1")
     public Optional<Basket> findById(Long basketId);
 
     @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })

@@ -6,6 +6,7 @@ import com.damian.dto.NumberOfBasketOrderedByDate;
 import com.damian.dto.ProductToCollectOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,12 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
         " LEFT JOIN FETCH o.customer c LEFT JOIN FETCH c.company cp JOIN FETCH o.deliveryType dt" +
         " JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.basket WHERE o.orderStatus.orderStatusId= ?1")
      List<Order> findAllOrderByOrderId(Integer orderStatus );
+
+    @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
+    @Query(value = "SELECT distinct o FROM Order o LEFT JOIN FETCH o.productionUser pu LEFT JOIN FETCH o.address ad" +
+        " LEFT JOIN FETCH o.customer c LEFT JOIN FETCH c.company cp JOIN FETCH o.deliveryType dt" +
+        " JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.basket b left Join fetch b.basketSezon bs LEFT JOIN FETCH b.basketType bt WHERE o.orderId IN ?1")
+    List<Order> findAllOrderWithCollectionsByIds(List<Long> ids, Sort sort);
 
     @Query(value = "SELECT * FROM orders Join order_items on orders.order_id = order_items.order_id where order_items" +
         ".order_item_id = ?1  ", nativeQuery = true)
@@ -134,12 +141,12 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
 
     @Query(value = "select new com.damian.dto.NumberOfBasketOrderedByDate(b.basketId,b.basketName,sum(oi.quantity)," +
         "count(o.orderId)) FROM Order o JOIN  o.orderStatus os JOIN o.orderItems oi JOIN oi.basket b  where " + "o.orderDate >= ?1 and o" +
-        ".orderDate <= ?2  AND  (os.orderStatusId =1 Or os.orderStatusId =6) group by b.basketName")
+        ".orderDate <= ?2  AND  os.orderStatusId != 99 group by b.basketName")
     public List<NumberOfBasketOrderedByDate> getNumberOfBasketOrderedFilteredByOrderDate(Date startDate, Date endDate);
 
     @Query(value = "select new com.damian.dto.NumberOfBasketOrderedByDate(b.basketId,b.basketName,sum(oi.quantity)," +
         "count(o.orderId)) FROM Order o JOIN o.orderItems oi JOIN oi.basket b  where " + "o.deliveryDate >= ?1  and  " +
-        "o.deliveryDate <= ?2 and (o.orderStatus =1 Or o.orderStatus =6) group by b.basketName")
+        "o.deliveryDate <= ?2 and  o.orderStatus != 99  group by b.basketName")
     public List<NumberOfBasketOrderedByDate> getNumberOfBasketOrdered(Date startDate, Date endDate);
 
 
@@ -171,7 +178,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     public List<Order> findOrdersByDateRange(Date startDate, Date endDate);
 
     @Query(value = "select p.id as id, p.productName as productName, p.stock as stock, p.tmpOrdered as tmpOrdered," +
-        " p.capacity as capacity , p.lastNumberOfOrderedEditDate as lastNumberOfOrderedEditDate ,s as suppliers, st as productSubType, 0 as valueForDeliver, sum(oi.quantity*bi.quantity) as suma " +
+        " p.capacity as capacity , p.lastNumberOfOrderedEditDate as lastNumberOfOrderedEditDate ,s as suppliers, st as productSubType, 0 as valueForDeliver, (sum(oi.quantity*bi.quantity)-sum(oi.stateOnWarehouse *bi.quantity)) as suma " +
         "from Order o join o.orderItems oi join oi.basket ba join ba.basketItems bi join bi.product p left join  p.suppliers s " +
         "LEFT join  p.productSubType st left join fetch  st.productType pt " +
         "where (o.orderStatus.orderStatusId=1 Or o.orderStatus.orderStatusId=6) AND o.orderDate >= ?1 AND o.orderDate <=?2 GROUP BY p.id")
@@ -186,7 +193,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
 
 
     @Query(value = "select p.id as id, p.productName as productName, p.stock as stock, p.tmpOrdered as tmpOrdered," +
-        " p.capacity as capacity , p.lastNumberOfOrderedEditDate as lastNumberOfOrderedEditDate ,s as suppliers, st as productSubType, 0 as valueForDeliver, sum(oi.quantity*bi.quantity) as suma " +
+        " p.capacity as capacity ,p.price as price, p.lastNumberOfOrderedEditDate as lastNumberOfOrderedEditDate ,s as suppliers, st as productSubType, 0 as valueForDeliver, sum(oi.quantity*bi.quantity) as suma " +
         "from Order o join o.orderItems oi join oi.basket ba join ba.basketItems bi join bi.product p left join  p.suppliers s " +
         "LEFT join  p.productSubType st left join fetch  st.productType pt " +
         "where (o.orderStatus.orderStatusId != 99)  AND o.orderDate >= ?1 AND o.orderDate <=?2 GROUP BY p.id")

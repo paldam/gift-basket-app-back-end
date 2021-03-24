@@ -58,8 +58,11 @@ public class BasketService {
 
     private Integer computeTotalProductsPriceInBasket(Basket basket) {
         int totalProductsPriceInBasket = 0;
-        for (BasketItems bi : basket.getBasketItems()) {
-            totalProductsPriceInBasket += bi.getProduct().getPrice() * bi.getQuantity();
+
+        if(basket.getBasketItems() != null) {
+            for (BasketItems bi : basket.getBasketItems()) {
+                totalProductsPriceInBasket += bi.getProduct().getPrice() * bi.getQuantity();
+            }
         }
         return totalProductsPriceInBasket;
     }
