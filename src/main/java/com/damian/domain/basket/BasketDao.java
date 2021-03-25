@@ -30,8 +30,6 @@ public interface BasketDao extends CrudRepository<Basket, Long>, JpaSpecificatio
     @Query(value = "SELECT distinct bi.basketImage FROM Basket b join b.basketImage bi WHERE b.basketId=?1")
     public byte[] getBasketImageByBasketId(Long basketId);
 
-
-
     @Query(value = "SELECT NEW com.damian.dto.BasketDto(b) FROM Basket b WHERE b.basketType.basketTypeId != 99 AND b" +
         ".basketType.basketTypeId != 999")
     public List<BasketDto> findBasketDto();

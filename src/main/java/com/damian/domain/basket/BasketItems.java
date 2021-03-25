@@ -1,7 +1,6 @@
 package com.damian.domain.basket;
 
 import com.damian.domain.product.Product;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 
@@ -25,7 +24,7 @@ public class BasketItems {
         this.basketItemsId = basketItemsId;
     }
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     public Product getProduct() {
         return product;
