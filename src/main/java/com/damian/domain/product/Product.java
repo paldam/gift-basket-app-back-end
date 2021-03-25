@@ -2,14 +2,13 @@ package com.damian.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
+
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@ToString
 @Table(name = "products")
 public class Product {
 
@@ -72,7 +71,7 @@ public class Product {
     }
 
     @Basic
-    @Column(name = "product_catalog_name",nullable = true, length = 300)
+    @Column(name = "product_catalog_name", nullable = true, length = 300)
     public String getProductCatalogName() {
         return productCatalogName;
     }
@@ -80,7 +79,6 @@ public class Product {
     public void setProductCatalogName(String productCatalogName) {
         this.productCatalogName = productCatalogName;
     }
-
 
     @Basic
     @Column(name = "product_name", nullable = false, length = 300)
@@ -132,7 +130,6 @@ public class Product {
     public void setSuppliers(Set<Supplier> suppliers) {
         this.suppliers = suppliers;
     }
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_season_id")
@@ -193,5 +190,19 @@ public class Product {
 
     public void setIsProductImg(Integer isProductImg) {
         this.isProductImg = isProductImg;
+    }
+
+    @Override
+    public int hashCode() {
+        return 13;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        Product other = (Product) obj;
+        return id != null && id.equals(other.getId());
     }
 }

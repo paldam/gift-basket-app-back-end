@@ -1,16 +1,10 @@
 package com.damian.domain.basket;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.hibernate.annotations.BatchSize;
+import com.damian.domain.product.Product;
 
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-
-
+import java.util.Set;
 
 @Entity
 @Table(name = "baskets")
@@ -20,7 +14,7 @@ public class Basket {
     private String basketName;
     private BasketSezon basketSezon;
     private BasketType basketType;
-    private List<BasketItems> basketItems;
+    private Set<BasketItems> basketItems;
     private Integer basketTotalPrice;
     private Integer basketProductsPrice;
     private String season;
@@ -92,11 +86,11 @@ public class Basket {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "basket_id", referencedColumnName = "basket_id")
-    public List<BasketItems> getBasketItems() {
+    public Set<BasketItems> getBasketItems() {
         return basketItems;
     }
 
-    public void setBasketItems(List<BasketItems> basketItems) {
+    public void setBasketItems(Set<BasketItems> basketItems) {
         this.basketItems = basketItems;
     }
 
@@ -199,6 +193,23 @@ public class Basket {
 
     public void setBasketImage(BasketImage basketImage) {
         this.basketImage = basketImage;
+    }
+
+    @Override
+    public int hashCode() {
+        return 13;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Product other = (Product) obj;
+        return basketId != null && basketId.equals(other.getId());
     }
 }
         
