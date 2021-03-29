@@ -25,7 +25,7 @@ public interface OrderDao extends JpaRepository<Order, Long>, JpaSpecificationEx
     public Order findByOrderId(Integer id);
 
     @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
-    @Query(value = "SELECT o FROM Order o LEFT JOIN FETCH o.productionUser pu LEFT JOIN FETCH o.address ad LEFT JOIN FETCH o.customer c LEFT JOIN FETCH c.company cp JOIN FETCH o.deliveryType dt JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.basket WHERE o.orderId = ?1")
+    @Query(value = "SELECT o FROM Order o LEFT JOIN FETCH o.productionUser pu LEFT JOIN FETCH o.address ad LEFT JOIN FETCH o.customer c LEFT JOIN FETCH c.company cp JOIN FETCH o.deliveryType dt JOIN FETCH o.orderStatus os LEFT JOIN FETCH o.orderItems oi LEFT JOIN FETCH oi.basket ba left join fetch ba.basketSezon bs  WHERE o.orderId = ?1")
     public Order findByOrderId(Long id);
 
     public List<Order> findByAddress_AddressId(Long id);
