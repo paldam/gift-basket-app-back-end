@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "basket_items")
-public class BasketItems {
+public class BasketItems implements Comparable<BasketItems> {
 
     private Integer basketItemsId;
     private Product product;
@@ -53,4 +53,15 @@ public class BasketItems {
     public void setPosition(Integer position) {
         this.position = position;
     }
+
+    @Override
+    public int compareTo(BasketItems o) {
+        if(getPosition().equals(o.getPosition()))
+            return 0;
+        else if(getPosition()<o.getPosition())
+            return -1;
+        else
+            return 1;
+    }
 }
+

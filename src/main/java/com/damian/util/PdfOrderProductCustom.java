@@ -1,8 +1,7 @@
 package com.damian.util;
 
-import com.damian.domain.basket.Basket;
+import com.damian.domain.basket.BasketItems;
 import com.damian.domain.order.Order;
-import com.damian.domain.order.OrderItem;
 import com.damian.dto.OrderItemsDto;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
@@ -11,13 +10,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Locale;
+import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static com.damian.config.Constants.ANSI_RESET;
-import static com.damian.config.Constants.ANSI_YELLOW;
 
 public class PdfOrderProductCustom {
 
@@ -71,6 +67,7 @@ public class PdfOrderProductCustom {
             cell0.setVerticalAlignment(Element.ALIGN_CENTER);
             cell0.setBorder(Rectangle.LEFT | Rectangle.TOP | Rectangle.RIGHT);
             table0.addCell(cell0);
+
             orderItemsDto.forEach(orderItems -> {
                 if (orderItems.getAdded() == true) {
                     float[] columnWidths = {5, 5, 5, 5, 5, 5, 5, 5, 5, 5};
@@ -87,7 +84,8 @@ public class PdfOrderProductCustom {
                     float[] columnWidths2 = {6, 2, 2};
                     PdfPTable table2 = new PdfPTable(columnWidths2);
                     table2.setWidthPercentage(100);
-                    orderItems.getBasket().getBasketItems().forEach(basketItems -> {
+                    prepareSortedListByPosition(orderItems.getBasket().getBasketItems())
+                        .forEach(basketItems -> {
                         table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getProductName(), font3)));
                         table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getCapacity(), font3)));
                         Integer total = (basketItems.getQuantity() * orderItems.getQuantity());
@@ -108,5 +106,15 @@ public class PdfOrderProductCustom {
             Logger.getLogger(PdfGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
         return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    private static List<BasketItems> prepareSortedListByPosition(Set<BasketItems> basketItemsSet) {
+        if(basketItemsSet.isEmpty()){
+            return new ArrayList<>();
+        }else{
+            ArrayList sortedItems = new ArrayList(basketItemsSet);
+            Collections.sort(sortedItems);
+            return sortedItems;
+        }
     }
 }
