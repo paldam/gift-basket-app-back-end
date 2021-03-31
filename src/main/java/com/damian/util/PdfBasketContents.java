@@ -1,20 +1,20 @@
 package com.damian.util;
 
 import com.damian.domain.basket.Basket;
+import com.damian.domain.basket.BasketItems;
 import com.damian.domain.order.Order;
-import com.damian.dto.ProductToCollectOrder;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static com.damian.config.Constants.ANSI_RESET;
-import static com.damian.config.Constants.ANSI_YELLOW;
 
 public class PdfBasketContents {
 
@@ -64,7 +64,9 @@ public class PdfBasketContents {
             float[] columnWidths2 = {6, 2, 2};
             PdfPTable table2 = new PdfPTable(columnWidths2);
             table2.setWidthPercentage(100);
-            basket.getBasketItems().forEach(basketItems -> {
+
+            prepareSortedListByPosition(basket.getBasketItems())
+                .forEach(basketItems -> {
                 table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getProductName(), font3)));
                 table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getCapacity(), font3)));
                 table2.addCell(new PdfCellExt(new Phrase(basketItems.getQuantity().toString(), font3)));
@@ -127,14 +129,13 @@ public class PdfBasketContents {
             float[] columnWidths2 = {10};
             PdfPTable table2 = new PdfPTable(columnWidths2);
             table2.setWidthPercentage(100);
-            basket.getBasketItems().forEach(basketItems -> {
-
-                if(basketItems.getProduct().getProductSubType() == null){
-                }else{
-                    if(basketItems.getProduct().getProductSubType().getProductType().getActiveForPdfExport()){
+            prepareSortedListByPosition(basket.getBasketItems()).forEach(basketItems -> {
+                if (basketItems.getProduct().getProductSubType() == null) {
+                } else {
+                    if (basketItems.getProduct().getProductSubType().getProductType().getActiveForPdfExport()) {
                         table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getProductCatalogName(), font3)));
-//                        table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getCapacity(), font3)));
-//                        table2.addCell(new PdfCellExt(new Phrase(basketItems.getQuantity().toString(), font3)));
+                        //                        table2.addCell(new PdfCellExt(new Phrase(basketItems.getProduct().getCapacity(), font3)));
+                        //                        table2.addCell(new PdfCellExt(new Phrase(basketItems.getQuantity().toString(), font3)));
                     }
                 }
             });
@@ -152,4 +153,15 @@ public class PdfBasketContents {
         }
         return new ByteArrayInputStream(out.toByteArray());
     }
+
+    private static List<BasketItems> prepareSortedListByPosition(Set<BasketItems> basketItemsSet) {
+        if(basketItemsSet.isEmpty()){
+            return new ArrayList<>();
+        }else{
+            ArrayList sortedItems = new ArrayList(basketItemsSet);
+            Collections.sort(sortedItems);
+            return sortedItems;
+        }
+    }
+
 }

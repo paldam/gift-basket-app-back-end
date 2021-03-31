@@ -87,7 +87,6 @@ public class BasketService {
             }
         }
     }
-
     public byte[] prepareBasketImage(Long basketId) {
         byte[] basketFile = basketDao.getBasketImageByBasketId(basketId);
         Optional<byte[]> imgOpt = Optional.ofNullable(basketFile);
@@ -99,33 +98,18 @@ public class BasketService {
 
     @Transactional
     public ByteArrayInputStream prepareBasketProductsListPdf(Long id) throws IOException {
-        byte[] img = basketDao.getBasketImageByBasketId(id);
-        Optional<byte[]> imgOpt = Optional.ofNullable(img);
-        if (!imgOpt.isPresent()) {
-            img = new byte[0];
-        }
-        Optional<Basket> basketToGen = basketDao.findById(id);
-        Basket basketToGenerate = new Basket();
-        if (basketToGen.isPresent()) {
-            basketToGenerate = basketToGen.get();
-        }
-        return PdfBasketContents.generateBasketProductsListPdf(basketToGenerate, img);
+       Basket basketToGenerate = basketDao.findById(id)
+           .orElseThrow(EntityNotFoundException::new);
+        return PdfBasketContents.generateBasketProductsListPdf(basketToGenerate, prepareBasketImage(id));
     }
 
     @Transactional
     public ByteArrayInputStream prepareBasketProductsListCatalogNameVersionPdf(Long id) throws IOException {
-        byte[] img = basketDao.getBasketImageByBasketId(id);
-        Optional<byte[]> imgOpt = Optional.ofNullable(img);
-        if (!imgOpt.isPresent()) {
-            img = new byte[0];
-        }
-        Optional<Basket> basketToGen = basketDao.findById(id);
-        Basket basketToGenerate = new Basket();
-        if (basketToGen.isPresent()) {
-            basketToGenerate = basketToGen.get();
-        }
-        return PdfBasketContents.generateBasketProductsListCatalogNameVersionPdf(basketToGenerate, img);
+        Basket basketToGenerate = basketDao.findById(id).orElseThrow(EntityNotFoundException::new);
+        return PdfBasketContents.generateBasketProductsListCatalogNameVersionPdf(basketToGenerate, prepareBasketImage(id));
     }
+
+
 
     @Transactional
     public void addBasketToStock(List<OrderItem> orderItems) {
