@@ -13,7 +13,6 @@ import java.util.Optional;
 import static com.damian.config.Constants.ANSI_RESET;
 import static com.damian.config.Constants.ANSI_YELLOW;
 
-@Transactional
 @Service
 public class PrizeOrderService {
 

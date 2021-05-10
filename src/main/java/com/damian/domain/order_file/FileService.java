@@ -3,6 +3,7 @@ package com.damian.domain.order_file;
 import com.damian.domain.order.Order;
 import com.damian.domain.order.OrderDao;
 import com.damian.util.PdfGenerator;
+import com.damian.util.PdfType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +26,13 @@ public class FileService {
         Order orderToGenerate = orderDao.findByOrderId(orderId);
         List<Order> orderList = new ArrayList<>();
         orderList.add(orderToGenerate);
-        return PdfGenerator.generatePdf(orderList);
+        return PdfGenerator.generatePdf(orderList, PdfType.ORDER_SUMMARY);
     }
 
     public Optional<ByteArrayInputStream> prepareAllTodayPdfFile() throws IOException {
         Optional<List<Order>> allTodaysOrder = orderDao.findAllTodaysOrders();
         if (allTodaysOrder.isPresent()) {
-            return Optional.of(PdfGenerator.generatePdf(allTodaysOrder.get()));
+            return Optional.of(PdfGenerator.generatePdf(allTodaysOrder.get(),PdfType.ORDER_SUMMARY));
         } else {
             return Optional.empty();
         }

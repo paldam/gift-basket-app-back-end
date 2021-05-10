@@ -73,7 +73,7 @@ public class Notification {
     }
 
     @Basic
-    @Column(name = "was_read")
+    @Column(name = "wasRead")
     public void setWasRead(boolean wasRead) {
         this.wasRead = wasRead;
     }

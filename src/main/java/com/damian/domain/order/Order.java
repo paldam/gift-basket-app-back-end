@@ -4,17 +4,14 @@ import com.damian.domain.customer.Address;
 import com.damian.domain.customer.Customer;
 import com.damian.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
-
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Audited
 @Entity
 @Table(name = "orders")
@@ -23,7 +20,6 @@ public class Order implements Serializable {
     private Long orderId;
     private String orderFvNumber;
     private String userName;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Customer customer;
     private List<OrderItem> orderItems;
     private Date orderDate;
@@ -32,21 +28,17 @@ public class Order implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Europe/Warsaw")
     private Date deliveryDate;
     private Integer weekOfYear;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private DeliveryType deliveryType;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private OrderStatus orderStatus;
     private Integer orderTotalAmount;
     private Integer cod;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Address address;
     private Integer additionalSale;
     private String contactPerson;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User productionUser;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User loyaltyUser;
     private Boolean isAllreadyComputedPoints;
+    private Boolean isPaid;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,7 +71,7 @@ public class Order implements Serializable {
         this.userName = userName;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "customer_id")
     public Customer getCustomer() {
@@ -90,7 +82,7 @@ public class Order implements Serializable {
         this.customer = customer;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
     public List<OrderItem> getOrderItems() {
         return orderItems;
@@ -150,7 +142,7 @@ public class Order implements Serializable {
         this.deliveryDate = deliveryDate;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "delivery_type")
     public DeliveryType getDeliveryType() {
@@ -161,7 +153,7 @@ public class Order implements Serializable {
         this.deliveryType = deliveryType;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "order_status_id")
     public OrderStatus getOrderStatus() {
@@ -192,7 +184,7 @@ public class Order implements Serializable {
         this.cod = cod;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "address_id")
     public Address getAddress() {
@@ -223,7 +215,7 @@ public class Order implements Serializable {
         this.contactPerson = contactPerson;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "production_user")
     public User getProductionUser() {
@@ -234,7 +226,7 @@ public class Order implements Serializable {
         this.productionUser = productionUser;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @Audited(targetAuditMode = NOT_AUDITED)
     @JoinColumn(name = "loyalty_user")
     public User getLoyaltyUser() {
@@ -255,6 +247,38 @@ public class Order implements Serializable {
         isAllreadyComputedPoints = allreadyComputedPoints;
     }
 
+    @Basic
+    @Column(name = "paid", columnDefinition = "boolean default false")
+    public Boolean getPaid() {
+        return isPaid;
+    }
 
+    public void setPaid(Boolean paid) {
+        isPaid = paid;
+    }
 
+    public Order() {
+    }
+
+    public Order(Order order){
+        this.orderFvNumber = order.orderFvNumber;
+        this.userName = order.userName;
+        this.customer = order.customer;
+        this.orderItems = order.orderItems;
+        this.orderDate = order.orderDate;
+        this.additionalInformation = order.additionalInformation;
+        this.textToCard = order.textToCard;
+        this.deliveryDate = order.deliveryDate;
+        this.weekOfYear = order.weekOfYear;
+        this.deliveryType = order.deliveryType;
+        this.orderStatus = order.orderStatus;
+        this.orderTotalAmount = order.orderTotalAmount;
+        this.cod = order.cod;
+        this.address = order.address;
+        this.additionalSale = order.additionalSale;
+        this.contactPerson = order.contactPerson;
+        this.productionUser = order.productionUser;
+        this.loyaltyUser = order.loyaltyUser;
+        this.isAllreadyComputedPoints = order.isAllreadyComputedPoints;
+    }
 }

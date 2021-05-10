@@ -1,13 +1,15 @@
 package com.damian.domain.basket;
 
-import java.util.List;
+import com.damian.domain.product.Product;
+
+import java.util.Set;
 
 public class BasketExt {
 
     private Long basketId;
     private String basketName;
     private BasketType basketType;
-    private List<BasketItems> basketItems;
+    private Set<BasketItems> basketItems;
     private Integer basketTotalPrice;
     private String season;
     private byte[] basketImg;
@@ -55,11 +57,11 @@ public class BasketExt {
         this.basketType = basketType;
     }
 
-    public List<BasketItems> getBasketItems() {
+    public Set<BasketItems> getBasketItems() {
         return basketItems;
     }
 
-    public void setBasketItems(List<BasketItems> basketItems) {
+    public void setBasketItems(Set<BasketItems> basketItems) {
         this.basketItems = basketItems;
     }
 
@@ -119,7 +121,19 @@ public class BasketExt {
         this.basketProductsPrice = basketProductsPrice;
     }
 
+    @Override
+    public int hashCode() {
+        return 13;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        Product other = (Product) obj;
+        return basketId != null && basketId.equals(other.getId());
+    }
 }
 
 

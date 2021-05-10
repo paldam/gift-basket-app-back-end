@@ -33,7 +33,7 @@ public class ProductSubType {
     }
 
 
-    @ManyToOne (fetch = FetchType.EAGER)
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name="product_type_id")
     public ProductType getProductType() {
         return productType;
