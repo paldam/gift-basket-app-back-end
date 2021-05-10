@@ -21,7 +21,7 @@
         <commons-lang.version>3.5</commons-lang.version>
         <spring.version>5.1.5.RELEASE</spring.version>
         <spring.data.jpa>2.1.5.RELEASE</spring.data.jpa>
-        <mysql.version>5.1.40</mysql.version>
+        <mysql.version>8.0.16</mysql.version>
         <jackson.version>2.9.8</jackson.version>
         <javax.servlet.version>3.0.1</javax.servlet.version>
         <slf4j.version>1.7.5</slf4j.version>
