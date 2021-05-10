@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public interface SupplierDao  extends JpaRepository<Supplier,Long> {
 
     Supplier findBySupplierName(String name) ;

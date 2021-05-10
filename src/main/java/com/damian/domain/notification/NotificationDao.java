@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
+@Transactional(readOnly = true)
 public interface NotificationDao extends JpaRepository<Notification, Long> {
 
     @Query(value = "SELECT count(*) FROM notifications where  user_id = ?1 and wasRead = 0", nativeQuery = true)
@@ -14,6 +15,7 @@ public interface NotificationDao extends JpaRepository<Notification, Long> {
     @Query(value = "SELECT id,notification_date,notification_text,user_id,order_id,wasRead FROM notifications where  " +
         "user_id = ?1 ORDER  by notification_date DESC", nativeQuery = true)
     List<Notification> getNotificationByUser(Integer userId);
+
 
     @Transactional
     @Modifying

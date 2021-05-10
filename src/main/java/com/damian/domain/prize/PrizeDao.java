@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public interface PrizeDao extends CrudRepository<Prize, Long> {
 
     List<Prize> findAllBy();

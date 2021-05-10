@@ -20,8 +20,10 @@ import java.util.Optional;
 public class BasketService {
 
     private  BasketDao basketDao;
+    private BasketImageDao basketImageDao;
 
-    BasketService(BasketDao basketDao) {
+    BasketService(BasketImageDao basketImageDao,BasketDao basketDao) {
+        this.basketImageDao = basketImageDao;
         this.basketDao = basketDao;
     }
 
@@ -30,9 +32,12 @@ public class BasketService {
         return basketDao.save(basket);
     }
 
+    @Transactional
     public Basket addBasketWithImg(Basket basket, MultipartFile[] basketMultipartFiles) {
         try {
-            basket.setBasketImageData(basketMultipartFiles[0].getBytes());
+
+            BasketImage savedImage =  basketImageDao.save(new BasketImage(basketMultipartFiles[0].getBytes()));
+            basket.setBasketImage(savedImage);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -41,19 +46,23 @@ public class BasketService {
         return basketDao.save(basket);
     }
 
+    @Transactional
     public Basket editBasketWithoutImage(Basket basket) {
         Basket basketTmp =
             basketDao.findById(basket.getBasketId())
                 .orElseThrow(EntityNotFoundException::new);
-        basket.setBasketImageData(basketTmp.getBasketImageData());
+        basket.setBasketImage(basketTmp.getBasketImage());
         basket.setBasketProductsPrice(computeTotalProductsPriceInBasket(basket));
         return basketDao.save(basket);
     }
 
     private Integer computeTotalProductsPriceInBasket(Basket basket) {
         int totalProductsPriceInBasket = 0;
-        for (BasketItems bi : basket.getBasketItems()) {
-            totalProductsPriceInBasket += bi.getProduct().getPrice() * bi.getQuantity();
+
+        if(basket.getBasketItems() != null) {
+            for (BasketItems bi : basket.getBasketItems()) {
+                totalProductsPriceInBasket += bi.getProduct().getPrice() * bi.getQuantity();
+            }
         }
         return totalProductsPriceInBasket;
     }
@@ -78,7 +87,6 @@ public class BasketService {
             }
         }
     }
-
     public byte[] prepareBasketImage(Long basketId) {
         byte[] basketFile = basketDao.getBasketImageByBasketId(basketId);
         Optional<byte[]> imgOpt = Optional.ofNullable(basketFile);
@@ -88,19 +96,20 @@ public class BasketService {
         return basketFile;
     }
 
+    @Transactional
     public ByteArrayInputStream prepareBasketProductsListPdf(Long id) throws IOException {
-        byte[] img = basketDao.getBasketImageByBasketId(id);
-        Optional<byte[]> imgOpt = Optional.ofNullable(img);
-        if (!imgOpt.isPresent()) {
-            img = new byte[0];
-        }
-        Optional<Basket> basketToGen = basketDao.findById(id);
-        Basket basketToGenerate = new Basket();
-        if (basketToGen.isPresent()) {
-            basketToGenerate = basketToGen.get();
-        }
-        return PdfBasketContents.generateBasketProductsListPdf(basketToGenerate, img);
+       Basket basketToGenerate = basketDao.findById(id)
+           .orElseThrow(EntityNotFoundException::new);
+        return PdfBasketContents.generateBasketProductsListPdf(basketToGenerate, prepareBasketImage(id));
     }
+
+    @Transactional
+    public ByteArrayInputStream prepareBasketProductsListCatalogNameVersionPdf(Long id) throws IOException {
+        Basket basketToGenerate = basketDao.findById(id).orElseThrow(EntityNotFoundException::new);
+        return PdfBasketContents.generateBasketProductsListCatalogNameVersionPdf(basketToGenerate, prepareBasketImage(id));
+    }
+
+
 
     @Transactional
     public void addBasketToStock(List<OrderItem> orderItems) {
@@ -108,34 +117,22 @@ public class BasketService {
             orderItem.getBasket().getBasketId(), orderItem.getQuantity()));
     }
 
+
+
     public BasketPageRequest getBasketsPage(int page, int size, String text, String orderBy, int sortingDirection,
                                             boolean onlyArchival, List<Integer> basketSeasonFilter) {
         Sort.Direction sortDirection = sortingDirection == -1 ? Sort.Direction.ASC : Sort.Direction.DESC;
         Page<Basket> basketPage;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
-        if (!onlyArchival) {
-            if (basketSeasonFilter.size() == 0) {
-                basketPage = basketDao
-                    .findAll(BasketSpecyficationJpa.getBasketsWithSearchFilter(text)
-                        .and(BasketSpecyficationJpa.getWithoutDeleted()), pageable);
-            } else {
+
+
                 basketPage = basketDao
                     .findAll(BasketSpecyficationJpa.getBasketsWithSearchFilter(text)
                         .and(BasketSpecyficationJpa.getOrderWithSeasons(basketSeasonFilter)
-                            .and(BasketSpecyficationJpa.getWithoutDeleted())), pageable);
-            }
-        } else {
-            if (basketSeasonFilter.isEmpty()) {
-                basketPage = basketDao
-                    .findAll(BasketSpecyficationJpa.getBasketsWithSearchFilter(text)
-                        .and(BasketSpecyficationJpa.getOnlyDeleted()), pageable);
-            } else {
-                basketPage =
-                    basketDao.findAll(BasketSpecyficationJpa.getBasketsWithSearchFilter(text)
-                        .and(BasketSpecyficationJpa.getOnlyDeleted())
-                        .and(BasketSpecyficationJpa.getOrderWithSeasons(basketSeasonFilter)), pageable);
-            }
-        }
+                            .and(BasketSpecyficationJpa.getWithoutDeleted(onlyArchival))), pageable);
+
+
+
         return new BasketPageRequest(basketPage.getContent(), basketPage.getTotalElements());
     }
 }

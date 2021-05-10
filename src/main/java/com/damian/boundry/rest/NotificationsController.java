@@ -10,14 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @CrossOrigin
 @RestController
 public class NotificationsController {
+
     public static final List<SseEmitter> emitters = Collections.synchronizedList( new ArrayList<>());
     public static final List<SseEmitter> newOrderEmitters = Collections.synchronizedList( new ArrayList<>());
 
@@ -30,19 +30,26 @@ public class NotificationsController {
     }
 
     @GetMapping("/notificationslist")
-    ResponseEntity<List<Notification>> getNotificationsForCurrentUser() {
+    public ResponseEntity<List<Notification>> getNotificationsForCurrentUser() {
+
+        System.out.println("notificationslist ....");
         Optional<User> userTmp = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
+        System.out.println("user ....xx" + userTmp.get().getLogin());
         List<Notification> notificationList;
         if (userTmp.isPresent()) {
             notificationList = notificationDao.getNotificationByUser((userTmp.get().getId().intValue()));
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        System.out.println(dateFormat.format(date));
+        System.out.println("OK...." + userTmp.get().getLogin());
         return new ResponseEntity<>(notificationList, HttpStatus.OK);
     }
 
     @GetMapping("/notifications/count")
-    ResponseEntity<Long> getNotificationsCount() {
+    public ResponseEntity<Long> getNotificationsCount() {
         Optional<User> currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
         Long notificationsCount;
         if (currentUser.isPresent()) {
@@ -54,7 +61,7 @@ public class NotificationsController {
     }
 
     @GetMapping("/notifications/markasreaded/{id}")
-    ResponseEntity markNotifyAsReaded(@PathVariable Long id) {
+    public ResponseEntity markNotifyAsReaded(@PathVariable Long id) {
         Optional<User> currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
         Long ALL_NOTIFICATIONS = 0L;
         if (id.equals(ALL_NOTIFICATIONS)) {

@@ -1,11 +1,10 @@
 package com.damian.domain.basket;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.damian.domain.product.Product;
 
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "baskets")
@@ -15,16 +14,19 @@ public class Basket {
     private String basketName;
     private BasketSezon basketSezon;
     private BasketType basketType;
-    private List<BasketItems> basketItems;
+    private Set<BasketItems> basketItems;
     private Integer basketTotalPrice;
     private Integer basketProductsPrice;
     private String season;
     private Integer stock;
     private Integer isAlcoholic;
     private Integer isAvailable;
-    private byte[] basketImageData;
+    private  BasketImage basketImage;
     private Integer isBasketImg;
     private Date lastStockEditDate;
+    private String imgNumber;
+
+
 
     public Basket() {
     }
@@ -62,7 +64,7 @@ public class Basket {
         this.basketId = basketId;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "basket_type")
     public BasketType getBasketType() {
         return basketType;
@@ -72,7 +74,7 @@ public class Basket {
         this.basketType = basketType;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "basket_sezon")
     public BasketSezon getBasketSezon() {
         return basketSezon;
@@ -82,13 +84,13 @@ public class Basket {
         this.basketSezon = basketSezon;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "basket_id", referencedColumnName = "basket_id")
-    public List<BasketItems> getBasketItems() {
+    public Set<BasketItems> getBasketItems() {
         return basketItems;
     }
 
-    public void setBasketItems(List<BasketItems> basketItems) {
+    public void setBasketItems(Set<BasketItems> basketItems) {
         this.basketItems = basketItems;
     }
 
@@ -162,18 +164,6 @@ public class Basket {
         this.isAvailable = isAvailable;
     }
 
-    @JsonIgnore
-    @Basic
-    @Column(name = "data", columnDefinition = "LONGBLOB")
-    public byte[] getBasketImageData() {
-        return basketImageData;
-    }
-
-    public void setBasketImageData(byte[] basketImageData) {
-        this.basketImageData = basketImageData;
-    }
-
-    @Basic
     @Column(name = "is_basket_img", length = 40, columnDefinition = "INT DEFAULT 0")
     public Integer getIsBasketImg() {
         return isBasketImg;
@@ -183,23 +173,43 @@ public class Basket {
         this.isBasketImg = isBasketImg;
     }
 
+
+    @Basic
+    @Column(name = "img_number", length = 200)
+    public String getImgNumber() {
+        return imgNumber;
+    }
+
+    public void setImgNumber(String imgNumber) {
+        this.imgNumber = imgNumber;
+    }
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "basket_image_id")
+    public BasketImage getBasketImage() {
+        return basketImage;
+    }
+
+    public void setBasketImage(BasketImage basketImage) {
+        this.basketImage = basketImage;
+    }
+
     @Override
-    public String toString() {
-        return "Basket{"
-            + "basketId=" + basketId
-            + ", basketName='" + basketName + '\''
-            + ", basketSezon=" + basketSezon
-            + ", basketType=" + basketType
-            + ", basketItems=" + basketItems
-            + ", basketTotalPrice=" + basketTotalPrice
-            + ", season='" + season + '\''
-            + ", stock=" + stock
-            + ", isAlcoholic=" + isAlcoholic
-            + ", isAvailable=" + isAvailable
-            + ", basketImageData=" + Arrays.toString(basketImageData)
-            + ", isBasketImg=" + isBasketImg
-            + ", lastStockEditDate=" + lastStockEditDate
-            + '}';
+    public int hashCode() {
+        return 13;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Product other = (Product) obj;
+        return basketId != null && basketId.equals(other.getId());
     }
 }
         

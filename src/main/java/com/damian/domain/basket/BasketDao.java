@@ -1,20 +1,33 @@
 package com.damian.domain.basket;
 
+import com.damian.domain.order.Order;
 import com.damian.dto.BasketDto;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
+import javax.persistence.QueryHint;
+import java.util.List;
+import java.util.Optional;
+
+
+@Transactional(readOnly = true)
 public interface BasketDao extends CrudRepository<Basket, Long>, JpaSpecificationExecutor<Basket> {
 
     public List<Basket> findAllBy();
     public List<Basket> findAllByOrderByBasketIdDesc();
+
     public Basket findByBasketId(Long basketId);
 
-    @Query(value = "SELECT data FROM baskets WHERE basket_id=?1", nativeQuery = true)
+    @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
+    @Query(value = "SELECT distinct b FROM Basket b LEFT JOIN FETCH b.basketItems bi LEFT JOIN FETCH b.basketType bt LEFT JOIN FETCH b.basketSezon bs left join FETCH  bi.product p LEFT JOIN FETCH p.productSeason ps LEFT JOIN FETCH p.productSubType pst LEFT JOIN FETCH p.suppliers  WHERE b.basketId= ?1")
+    public Optional<Basket> findById(Long basketId);
+
+    @QueryHints({ @QueryHint(name = "hibernate.query.passDistinctThrough", value = "false") })
+    @Query(value = "SELECT distinct bi.basketImage FROM Basket b join b.basketImage bi WHERE b.basketId=?1")
     public byte[] getBasketImageByBasketId(Long basketId);
 
     @Query(value = "SELECT NEW com.damian.dto.BasketDto(b) FROM Basket b WHERE b.basketType.basketTypeId != 99 AND b" +

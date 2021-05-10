@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
@@ -20,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
 
 @CrossOrigin
 @RestController
@@ -30,36 +34,58 @@ public class BasketController {
     private BasketDao basketDao;
     private BasketTypeDao basketTypeDao;
     private BasketSezonDao basketSezonDao;
+    private BasketImageDao basketImageDao;
 
-    public BasketController(BasketSezonDao basketSezonDao, BasketService basketService, BasketDao basketDao, BasketTypeDao basketTypeDao, BasketExtService basketExtService) {
+    public BasketController(BasketImageDao basketImageDao ,BasketSezonDao basketSezonDao, BasketService basketService, BasketDao basketDao, BasketTypeDao basketTypeDao, BasketExtService basketExtService) {
         this.basketDao = basketDao;
         this.basketService = basketService;
         this.basketTypeDao = basketTypeDao;
         this.basketExtService = basketExtService;
         this.basketSezonDao = basketSezonDao;
+        this.basketImageDao = basketImageDao;
     }
-
+    
     @GetMapping("/basket/{id}")
-    ResponseEntity<Basket> getBaskets(@PathVariable Long id) {
+    public ResponseEntity<Basket> getBaskets(@PathVariable Long id) {
         return basketDao.findById(id)
             .map(basket -> ResponseEntity.ok().body(basket))
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/basket/add")
-    ResponseEntity<Basket> createBasket(@RequestBody Basket basket) {
+    public ResponseEntity<Basket> createBasket(@RequestBody Basket basket) {
         Basket savedBasket = basketService.addBasket(basket);
         return new ResponseEntity<>(savedBasket, HttpStatus.CREATED);
     }
 
+    @PostMapping("/baskets_seasons/add")
+    public ResponseEntity<BasketSezon> createBasketSeason(@RequestBody BasketSezon basketSezon) {
+
+        Optional<BasketSezon> optBasketSezon = basketSezonDao.findByBasketSezonName(basketSezon.getBasketSezonName());
+
+       if(basketSezon.getBasketSezonId() == null && optBasketSezon.isPresent()) {
+           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+       }else{
+
+           if(basketSezon.getIsActive() == null) {
+               basketSezon.setIsActive(true);
+           }
+           BasketSezon savedBasketSezon = basketSezonDao.save(basketSezon);
+           return new ResponseEntity<>(savedBasketSezon, HttpStatus.CREATED);
+       }
+
+
+
+    }
+
     @PostMapping("/baskets")
-    ResponseEntity<Basket> createBasketWithImg(@RequestPart("basketimage") MultipartFile[] basketMultipartFiles, @RequestPart("basketobject") Basket basket) {
+    public ResponseEntity<Basket> createBasketWithImg(@RequestPart("basketimage") MultipartFile[] basketMultipartFiles, @RequestPart("basketobject") Basket basket) {
         Basket savedBasket = basketService.addBasketWithImg(basket, basketMultipartFiles);
         return new ResponseEntity<>(savedBasket, HttpStatus.CREATED);
     }
 
     @PostMapping("/basketext")
-    ResponseEntity<BasketExt> createExternalBasket(@RequestBody BasketExt basketExt) {
+    public ResponseEntity<BasketExt> createExternalBasket(@RequestBody BasketExt basketExt) {
 
         try{
             basketExtService.saveExternalBasket(basketExt);
@@ -71,50 +97,50 @@ public class BasketController {
     }
 
     @PostMapping("/basketswithoutimage")
-    ResponseEntity<Basket> editBasketWithoutImage(@RequestBody Basket basket) {
+    public ResponseEntity<Basket> editBasketWithoutImage(@RequestBody Basket basket) {
         Basket savedBasket = basketService.editBasketWithoutImage(basket);
         return new ResponseEntity<>(savedBasket, HttpStatus.CREATED);
     }
 
     @GetMapping("/baskets")
-    ResponseEntity<List<Basket>> getAllBasketsWithoutDeleted() {
+    public ResponseEntity<List<Basket>> getAllBasketsWithoutDeleted() {
         List<Basket> basketList = basketDao.findAllWithoutDeleted();
         return new ResponseEntity<>(basketList, HttpStatus.OK);
     }
 
     @GetMapping("/baskets_seasons")
-    ResponseEntity<List<BasketSezon>> getBasketsSeasons() {
-        List<BasketSezon> basketList = basketSezonDao.findAllBy();
+    public ResponseEntity<List<BasketSezon>> getBasketsSeasons() {
+        List<BasketSezon> basketList = basketSezonDao.findByIsActiveTrue();
         return new ResponseEntity<>(basketList, HttpStatus.OK);
     }
 
     @GetMapping("/basketpage")
-    ResponseEntity<BasketPageRequest> getBasketsPage(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size") int size, @RequestParam(value = "searchtext", required = false) String text, @RequestParam(value = "orderBy", required = false) String orderBy, @RequestParam(value = "sortingDirection", required = false, defaultValue = "1") int sortingDirection, @RequestParam(value = "onlyArchival", required = false) boolean onlyArchival, @RequestParam(value = "basketSeasonFilter", required = false) List<Integer> basketSeasonFilter) {
+    public ResponseEntity<BasketPageRequest> getBasketsPage(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size") int size, @RequestParam(value = "searchtext", required = false) String text, @RequestParam(value = "orderBy", required = false) String orderBy, @RequestParam(value = "sortingDirection", required = false, defaultValue = "1") int sortingDirection, @RequestParam(value = "onlyArchival", required = false) boolean onlyArchival, @RequestParam(value = "basketSeasonFilter", required = false) List<Integer> basketSeasonFilter) {
         BasketPageRequest basketsPage = basketService.getBasketsPage(page, size, text, orderBy, sortingDirection,
             onlyArchival, basketSeasonFilter);
         return new ResponseEntity<>(basketsPage, HttpStatus.OK);
     }
 
     @GetMapping("/basketsdto")
-    ResponseEntity<List<BasketDto>> getBasketsDto() {
+    public ResponseEntity<List<BasketDto>> getBasketsDto() {
         List<BasketDto> basketList = basketDao.findBasketDto();
         return new ResponseEntity<>(basketList, HttpStatus.OK);
     }
 
     @GetMapping("/basketswithdeleted")
-    ResponseEntity<List<Basket>> getBasketsWithDeleted() {
+    public ResponseEntity<List<Basket>> getBasketsWithDeleted() {
         List<Basket> basketList = basketDao.findAllWithDeleted();
         return new ResponseEntity<>(basketList, HttpStatus.OK);
     }
 
     @GetMapping("/deletedbaskets/")
-    ResponseEntity<List<Basket>> getDeletedBaskets() {
+    public ResponseEntity<List<Basket>> getDeletedBaskets() {
         List<Basket> basketList = basketDao.findAllDeleted();
         return new ResponseEntity<>(basketList, HttpStatus.OK);
     }
 
     @GetMapping("/baskets/types")
-    ResponseEntity<List<BasketType>> getBasketsTypes() {
+    public ResponseEntity<List<BasketType>> getBasketsTypes() {
         List<BasketType> basketTypesList = basketTypeDao.findAllBy();
         return new ResponseEntity<>(basketTypesList, HttpStatus.OK);
     }
@@ -148,21 +174,33 @@ public class BasketController {
             .body(new InputStreamResource(pdfFile));
     }
 
+    @RequestMapping(value = "/basket/pdf/catalogname/{id}", method = RequestMethod.GET, produces =
+        MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> getBasketProductsListPdfCatalogNameVersion(@PathVariable Long id) throws IOException {
+        ByteArrayInputStream pdfFile = basketService.prepareBasketProductsListCatalogNameVersionPdf(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=order.pdf");
+        return ResponseEntity.ok()
+            .headers(headers)
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(new InputStreamResource(pdfFile));
+    }
+
     @PostMapping("/basketextedit")
-    ResponseEntity<BasketExt> rditExternalBasket(@RequestBody BasketExt basketExt) {
+    public ResponseEntity<BasketExt> rditExternalBasket(@RequestBody BasketExt basketExt) {
         basketExtService.editExternalBasket(basketExt);
         return new ResponseEntity<>(basketExt, HttpStatus.CREATED);
     }
 
     @PostMapping("/basketextstatus")
-    ResponseEntity<BasketExt> externalBasketStatus(@RequestBody BasketExt basketExt) {
+    public ResponseEntity<BasketExt> externalBasketStatus(@RequestBody BasketExt basketExt) {
         Basket basketToChange = new Basket(basketExt);
         basketDao.save(basketToChange);
         return new ResponseEntity<>(basketExt, HttpStatus.CREATED);
     }
 
-    @GetMapping("/basketsextlist")
-    ResponseEntity<List<BasketExt>> getBasketsExtList() {
+    @GetMapping(value = "/basketsextlist",produces = "application/json; charset=utf-8")
+    public ResponseEntity<List<BasketExt>> getBasketsExtList() {
         List<Basket> basketList = basketDao.findALLExportBasket();
         List<BasketExt> basketExtList = new ArrayList<>();
         basketList.forEach(basket -> {
@@ -174,7 +212,7 @@ public class BasketController {
     }
 
     @GetMapping("/basket_ext_stock")
-    ResponseEntity<List<BasketExtStockDao>> getBasketsExtStock() {
+    public ResponseEntity<List<BasketExtStockDao>> getBasketsExtStock() {
         List<Basket> basketList = basketDao.findALLExportBasket();
         List<BasketExtStockDao> basketExtList = new ArrayList<>();
         basketList.forEach(basket -> basketExtList.add(new BasketExtStockDao(basket)));
@@ -182,7 +220,7 @@ public class BasketController {
     }
 
     @PostMapping(value = "/baskets/stockadd", produces = "application/json; charset=utf-8")
-    ResponseEntity<List<OrderItem>> addBasketsToStock(@RequestBody List<OrderItem> orderItems) {
+    public ResponseEntity<List<OrderItem>> addBasketsToStock(@RequestBody List<OrderItem> orderItems) {
         if (orderItems.isEmpty()) {
             return new ResponseEntity<>(orderItems, HttpStatus.BAD_REQUEST);
         }
@@ -191,13 +229,13 @@ public class BasketController {
     }
 
     @GetMapping(value = "/baskets/stockadd/{basketId}/{newValue}", produces = "application/json; charset=utf-8")
-    ResponseEntity<Long> addNewBasketsStateOfStock(@PathVariable Long basketId, @PathVariable Integer newValue) {
+    public ResponseEntity<Long> addNewBasketsStateOfStock(@PathVariable Long basketId, @PathVariable Integer newValue) {
         basketDao.saveNewStockOfBasket(basketId, newValue);
         return new ResponseEntity<>(basketId, HttpStatus.OK);
     }
 
-    @GetMapping("/extbaskets")
-    ResponseEntity<List<Basket>> getBasketsForExternalPartner() {
+    @GetMapping(value = "/extbaskets",produces = "application/json; charset=utf-8" )
+   public ResponseEntity<List<Basket>> getBasketsForExternalPartner() {
         List<Basket> basketList = basketDao.findAllBasketForExternalPartner();
         return new ResponseEntity<>(basketList, HttpStatus.OK);
     }

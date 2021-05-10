@@ -44,7 +44,7 @@ public class PrizeController {
     }
 
     @PostMapping("/order")
-    ResponseEntity<PrizeOrder> createOrder(@RequestBody PrizeOrder prizeOrder) {
+    public ResponseEntity<PrizeOrder> createOrder(@RequestBody PrizeOrder prizeOrder) {
         try {
             prizeOrderService.saveOrder(prizeOrder);
         } catch (NoPointsExceptions noPointsExceptions) {
@@ -58,19 +58,19 @@ public class PrizeController {
     }
 
     @DeleteMapping("/pointscheme/{id}")
-    ResponseEntity<PointScheme> deletePointScheme(@PathVariable Long id) {
+    public ResponseEntity<PointScheme> deletePointScheme(@PathVariable Long id) {
         pointsDao.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("orders")
-    ResponseEntity<List<PrizeOrder>> getPrizeOrders() {
+    public ResponseEntity<List<PrizeOrder>> getPrizeOrders() {
         List<PrizeOrder> prizeOrderList = prizeOrderDao.findAllByOrderByOrderDateDesc();
         return new ResponseEntity<>(prizeOrderList, HttpStatus.OK);
     }
 
     @GetMapping("userorders")
-    ResponseEntity<List<PrizeOrder>> getUserPrizeOrders() {
+    public ResponseEntity<List<PrizeOrder>> getUserPrizeOrders() {
         SecurityUtils.getCurrentUserLogin();
         Optional<User> user = userService.findOneByLogin(SecurityUtils.getCurrentUserLogin());
         List<PrizeOrder> prizeOrderList = prizeOrderDao.findAllByUser(user.get().getId());
@@ -78,19 +78,19 @@ public class PrizeController {
     }
 
     @GetMapping(value = "/order/{id}")
-    ResponseEntity<PrizeOrder> getPrizeOrder(@PathVariable Long id) {
+    public ResponseEntity<PrizeOrder> getPrizeOrder(@PathVariable Long id) {
         Optional<PrizeOrder> order = prizeOrderDao.findById(id);
         return new ResponseEntity<>(order.get(), HttpStatus.OK);
     }
 
     @GetMapping("/prizelist")
-    ResponseEntity<List<Prize>> getPrizes() {
+    public ResponseEntity<List<Prize>> getPrizes() {
         List<Prize> prizeList = prizeDao.findAllBy();
         return new ResponseEntity<>(prizeList, HttpStatus.OK);
     }
 
     @GetMapping("/prizelistnodel")
-    ResponseEntity<List<Prize>> getPrizesWithoutDel() {
+    public ResponseEntity<List<Prize>> getPrizesWithoutDel() {
         List<Prize> prizeList = prizeDao.findAllWithoutDel();
         return new ResponseEntity<>(prizeList, HttpStatus.OK);
     }
@@ -102,7 +102,7 @@ public class PrizeController {
     }
 
     @PostMapping("/pointscheme/add")
-    ResponseEntity<PointScheme> createPointScheme(@RequestBody PointScheme pointScheme) {
+    public ResponseEntity<PointScheme> createPointScheme(@RequestBody PointScheme pointScheme) {
         pointsDao.save(pointScheme);
         return new ResponseEntity<>(pointScheme, HttpStatus.CREATED);
     }
@@ -114,7 +114,7 @@ public class PrizeController {
     }
 
     @PostMapping("/add")
-    ResponseEntity createPrize(@RequestPart("prizeimage") MultipartFile[] basketMultipartFiles, @RequestPart(
+    public ResponseEntity createPrize(@RequestPart("prizeimage") MultipartFile[] basketMultipartFiles, @RequestPart(
         "prizeobject") Prize prize) {
         try {
             InputStream img = new ByteArrayInputStream(basketMultipartFiles[0].getBytes());
@@ -126,7 +126,7 @@ public class PrizeController {
     }
 
     @PostMapping("/editimage")
-    ResponseEntity editPrize(@RequestPart("prizeimage") MultipartFile[] basketMultipartFiles, @RequestPart(
+    public ResponseEntity editPrize(@RequestPart("prizeimage") MultipartFile[] basketMultipartFiles, @RequestPart(
         "prizeobject") Prize prize) {
         try {
             ftpService.sendFileViaFtp(new ByteArrayInputStream(basketMultipartFiles[0].getBytes()),
@@ -138,7 +138,7 @@ public class PrizeController {
     }
 
     @PostMapping(value = "/order/status/{id}/{statusId}", produces = "text/plain;charset=UTF-8")
-    ResponseEntity changeOrderStatus(@PathVariable Long id, @PathVariable Integer statusId) {
+    public ResponseEntity changeOrderStatus(@PathVariable Long id, @PathVariable Integer statusId) {
         PrizeOrder updatingOrder = prizeOrderDao.findById(id).get();
         PrizeOrderStatus updattingOrderNewStatus = new PrizeOrderStatus();
         updattingOrderNewStatus.setOrderStatusId(statusId);
@@ -148,7 +148,7 @@ public class PrizeController {
     }
 
     @PostMapping(value = "status/{prizeId}/{isAve}", produces = "text/plain;charset=UTF-8")
-    ResponseEntity changeOrderStatus(@PathVariable Long prizeId, @PathVariable Boolean isAve) {
+    public ResponseEntity changeOrderStatus(@PathVariable Long prizeId, @PathVariable Boolean isAve) {
         Prize updatingPrize = prizeDao.findById(prizeId).get();
         updatingPrize.setAvailable(isAve);
         prizeDao.save(updatingPrize);

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -22,6 +23,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u FROM User u join u.authorities a where a.name ='punkty' ")
     List<User> getAllProgramUser();
+
+    @Query("select u FROM User u  where u.isArchival =false ")
+    List<User> getUsersWithoutDel();
+
 
     @EntityGraph(attributePaths = "authorities")
     Optional<User> findOneWithAuthoritiesByLogin(String login);
@@ -82,8 +87,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE user set is_archival = true where id = ?1", nativeQuery = true)
+    @Query(value = "UPDATE user set is_archival = true, activated = 0 where id = ?1", nativeQuery = true)
     void markUserAsArchival(Long id);
+
+
 }
 
 

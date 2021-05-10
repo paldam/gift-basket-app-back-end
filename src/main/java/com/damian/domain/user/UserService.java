@@ -34,6 +34,7 @@ public class UserService {
         String encryptedPassword = passwordEncoder.encode(userDto.getPassword());
         user.setPassword(encryptedPassword);
         user.setActivated(true);
+        user.setArchival(false);
         userRepository.save(user);
         return user;
     }
@@ -54,7 +55,6 @@ public class UserService {
         return user;
     }
 
-    @Transactional
     public void resetProgramUserPassword(String email) {
         Optional<User> user = userRepository.findOneByEmail(email);
         if (user.isPresent()) {
@@ -67,7 +67,6 @@ public class UserService {
         }
     }
 
-    @Transactional
     public void deleteUser(String login) {
         userRepository.findOneByLogin(login).ifPresent(user -> {
             notificationDao.deleteByUser(user.getId());
@@ -75,12 +74,10 @@ public class UserService {
         });
     }
 
-    @Transactional
     public void deleteProgramUser(String login) {
         userRepository.findOneByLogin(login).ifPresent(userRepository::delete);
     }
 
-    @Transactional
     public User updateUser(UserDto userDto) {
         User user = userRepository.getOne(userDto.getId());
         user.setLogin(userDto.getLogin());

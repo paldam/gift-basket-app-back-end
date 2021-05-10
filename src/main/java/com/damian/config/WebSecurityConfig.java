@@ -3,12 +3,11 @@ package com.damian.config;
 import com.damian.security.Http401UnauthorizedEntryPoint;
 import com.damian.security.jwt.JWTConfigurer;
 import com.damian.security.jwt.TokenProvider;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -40,28 +39,28 @@ public class WebSecurityConfig {
         WebSecurityConfig.inMemoryPassword = password;
     }
 
+//    @Configuration
+//    @Order(1)
+//    public static class ApiWebSecurityHttpBasic0 extends WebSecurityConfigurerAdapter {
+//        @Override
+//        protected void configure(HttpSecurity http) throws Exception {
+//            http.authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock")
+//                .authenticated().and().httpBasic().and().csrf().disable();
+//        }
+//
+//        @Override
+//        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//
+//            auth.inMemoryAuthentication()
+//                .withUser(inMemoryUsername)
+//                .password(encoder.encode(inMemoryPassword))
+//                .roles("admin");
+//        }
+//    }
+
     @Configuration
-    @Order(2)
-    public static class ApiWebSecurityHttpBasic0 extends WebSecurityConfigurerAdapter {
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests().antMatchers("/extbaskets","/basketsextlist","/basket_ext_stock")
-                .authenticated().and().httpBasic();
-        }
-
-        @Override
-        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-            auth.inMemoryAuthentication()
-                .withUser(inMemoryUsername)
-                .password(encoder.encode(inMemoryPassword))
-                .roles("admin");
-        }
-    }
-
-    @Configuration
-    @Order(1)
+   // @Order(2)
     public static class ApiWebSecurityJWT extends WebSecurityConfigurerAdapter {
 
         private final TokenProvider tokenProvider;
@@ -83,7 +82,7 @@ public class WebSecurityConfig {
                 .antMatchers("/auth_loyalty_program").permitAll()
                 .antMatchers("/program_users/resetpassword/*").permitAll()
                 .antMatchers("/notification").permitAll()
-                .antMatchers("/new_order_notification").permitAll()
+                .antMatchers("/new_order_notification","/extbaskets","/basketsextlist","/basket_ext_stock","/products/types/inactive").permitAll()
                .anyRequest().authenticated()
                 .and().apply(securityConfigurerAdapter());
 
@@ -122,6 +121,12 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+
+    @Bean
+    public Hibernate5Module hibernate5Module() {
+        return new Hibernate5Module();
     }
 
 
