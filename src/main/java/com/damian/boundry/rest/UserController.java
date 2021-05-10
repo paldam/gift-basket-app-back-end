@@ -40,43 +40,49 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers() {
         List<User> userList = userRepository.findAll();
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
+    @GetMapping("/users_without_del")
+    public ResponseEntity<List<User>> getUserWithoutDel() {
+        List<User> userList = userRepository.getUsersWithoutDel();
+        return new ResponseEntity<>(userList, HttpStatus.OK);
+    }
+
 
     @GetMapping("/program_users")
-    ResponseEntity<List<User>> getAllProgramUsers() {
+    public ResponseEntity<List<User>> getAllProgramUsers() {
         List<User> userList = userRepository.getAllProgramUser();
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
     @GetMapping("/program_users/resetpassword/{email:.+}")
-    ResponseEntity resetPasswordForProgramUser(@PathVariable String email) {
+    public ResponseEntity resetPasswordForProgramUser(@PathVariable String email) {
         userService.resetProgramUserPassword(email);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/production_users")
-    ResponseEntity<List<ProductionUserDto>> getAllProductionUsers() {
+    public ResponseEntity<List<ProductionUserDto>> getAllProductionUsers() {
         List<ProductionUserDto> userList = userRepository.getAllProductionUser();
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
     @GetMapping("/current_user_points")
-    ResponseEntity<Integer> getCurrentUserPoints() {
+    public ResponseEntity<Integer> getCurrentUserPoints() {
         Integer userPoints = userRepository.getPoints(SecurityUtils.getCurrentUserLogin());
         return new ResponseEntity<>(userPoints, HttpStatus.OK);
     }
 
     @GetMapping("/current_user_name")
-    ResponseEntity<String> getCurrentUserName() {
+    public ResponseEntity<String> getCurrentUserName() {
         String userName = userRepository.getName(SecurityUtils.getCurrentUserLogin());
         return new ResponseEntity<>(userName, HttpStatus.OK);
     }
 
     @GetMapping("/is_first_time")
-    ResponseEntity<Boolean> isFirstTimeLog() {
+    public ResponseEntity<Boolean> isFirstTimeLog() {
         Boolean isFirstTimeLog = userRepository.isFirstLog(SecurityUtils.getCurrentUserLogin());
         return new ResponseEntity<>(isFirstTimeLog, HttpStatus.OK);
     }

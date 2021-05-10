@@ -1,9 +1,13 @@
 package com.damian.domain.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "products")
 public class Product {
@@ -19,8 +23,11 @@ public class Product {
     private Integer isArchival;
     private Set<Supplier> suppliers;
     private ProductSubType productSubType;
+    private ProductSeason productSeason;
     private Date lastStockEditDate;
     private Date lastNumberOfOrderedEditDate;
+    private byte[] productImageData;
+    private Integer isProductImg;
 
     @Basic
     @Column(name = "is_archival")
@@ -64,7 +71,7 @@ public class Product {
     }
 
     @Basic
-    @Column(name = "product_catalog_name",nullable = true, length = 300)
+    @Column(name = "product_catalog_name", nullable = true, length = 300)
     public String getProductCatalogName() {
         return productCatalogName;
     }
@@ -72,7 +79,6 @@ public class Product {
     public void setProductCatalogName(String productCatalogName) {
         this.productCatalogName = productCatalogName;
     }
-
 
     @Basic
     @Column(name = "product_name", nullable = false, length = 300)
@@ -114,7 +120,7 @@ public class Product {
         this.tmpOrdered = tmpOrdered;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "product_suppliers", joinColumns = {@JoinColumn(name = "id")},  //
         inverseJoinColumns = {@JoinColumn(name = "supplier_id")})
     public Set<Supplier> getSuppliers() {
@@ -125,7 +131,17 @@ public class Product {
         this.suppliers = suppliers;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_season_id")
+    public ProductSeason getProductSeason() {
+        return productSeason;
+    }
+
+    public void setProductSeason(ProductSeason productSeason) {
+        this.productSeason = productSeason;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_sub_type_id")
     public ProductSubType getProductSubType() {
         return productSubType;
@@ -153,5 +169,40 @@ public class Product {
 
     public void setLastNumberOfOrderedEditDate(Date lastNumberOfOrderedEditDate) {
         this.lastNumberOfOrderedEditDate = lastNumberOfOrderedEditDate;
+    }
+
+    @JsonIgnore
+    @Basic
+    @Column(name = "image", columnDefinition = "LONGBLOB")
+    public byte[] getProductImageData() {
+        return productImageData;
+    }
+
+    public void setProductImageData(byte[] productImageData) {
+        this.productImageData = productImageData;
+    }
+
+    @Basic
+    @Column(name = "is_product_img", length = 40, columnDefinition = "INT DEFAULT 0")
+    public Integer getIsProductImg() {
+        return isProductImg;
+    }
+
+    public void setIsProductImg(Integer isProductImg) {
+        this.isProductImg = isProductImg;
+    }
+
+    @Override
+    public int hashCode() {
+        return 13;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        Product other = (Product) obj;
+        return id != null && id.equals(other.getId());
     }
 }

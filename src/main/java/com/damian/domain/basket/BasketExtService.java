@@ -5,6 +5,8 @@ import com.damian.util.FtpService;
 import com.damian.util.FtpSpace;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.*;
 
 @Service
@@ -18,6 +20,7 @@ public class BasketExtService {
         this.basketDao = basketDao;
     }
 
+    @Transactional
     public void editExternalBasket(BasketExt basket) {
         Basket currBasketState = basketDao.findByBasketId(basket.getBasketId());
         currBasketState.setBasketName(basket.getBasketName());
@@ -31,7 +34,7 @@ public class BasketExtService {
         currBasketState.setBasketProductsPrice(total);
         basketDao.save(currBasketState);
     }
-
+    @Transactional
     public void saveExternalBasket(BasketExt basket) throws FtpConnectionException {
         basket.setBasketProductsPrice(computeTotalProductsPriceInBasket(basket));
         Basket externalBasket = new Basket(basket);
@@ -40,7 +43,7 @@ public class BasketExtService {
         Basket savedBasket = basketDao.save(externalBasket);
         InputStream basketImgtoStore = new ByteArrayInputStream(basket.getBasketImg());
         try {
-            ftpService.sendFileViaFtp(basketImgtoStore, savedBasket.getBasketId().toString(), FtpSpace.PRIZES);
+            ftpService.sendFileViaFtp(basketImgtoStore, savedBasket.getBasketId().toString(), FtpSpace.BASKETEXT);
         } catch (FtpConnectionException ioe) {
             basketDao.delete(savedBasket);
             throw new FtpConnectionException("Problem z połaczeniem FTP");

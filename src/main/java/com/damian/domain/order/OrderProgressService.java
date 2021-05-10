@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
+import static com.damian.config.Constants.ANSI_RESET;
+import static com.damian.config.Constants.ANSI_YELLOW;
 
 @Service
 public class OrderProgressService {
@@ -21,7 +23,6 @@ public class OrderProgressService {
         this.productDao = productDao;
     }
 
-    @Transactional
     public void changeOrderItemProgressOnSpecifiedPhase(
         Integer orderItemId, Long newStateValue, OrdersPreparePhase ordersPreparePhase) throws OrderStatusException {
         OrderItem currentOrderItemState = orderItemDao.findByOrderItemId(orderItemId);
@@ -82,7 +83,6 @@ public class OrderProgressService {
         orderDao.save(orderTmp);
     }
 
-    @Transactional
     public void changeOrderItemProgressOnSpecifiedPhaseByAddValue(
         Integer orderItemId, Long newStateValueToAdd, OrdersPreparePhase ordersPreparePhase) throws OrderStatusException{
         if (newStateValueToAdd < 0) throw new OrderStatusException("Wartość nie może być mniejsza od zera");
@@ -120,7 +120,6 @@ public class OrderProgressService {
         }
     }
 
-    @Transactional
     public void changeOrderProgressByAdmin(Long id, List<OrderItem> orderItemsList) throws OrderStatusException {
         Order updatingOrder = orderDao.findByOrderId(id);
         if (updatingOrder.getOrderStatus().getOrderStatusId() == 1) {
@@ -147,6 +146,8 @@ public class OrderProgressService {
                 throw new OrderStatusException("Stan koszy ukończonych nie może być większy od liczby koszy " +
                     "przygotowanych przez magazyn ");
             }
+
+            System.out.println(ANSI_YELLOW + oi.getQuantity() + " | " + oi.getStateOnLogistics() + ANSI_RESET);
             if (!oi.getQuantity().equals(oi.getStateOnLogistics())) {
                 completeOrderWatch = false;
             }
@@ -157,7 +158,7 @@ public class OrderProgressService {
         orderDao.save(updatingOrder);
     }
 
-    @Transactional
+
     public void changeProductsStockWhenWarehouseUpdateOrderProgressByAdmin(Long orderId,
                                                                            List<OrderItem> orderItemsListToChange) {
         List<OrderItem> currentOrderItemsState = orderDao.findByOrderId(orderId).getOrderItems();
